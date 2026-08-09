@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="financa_thank_you_page" model="website.page">
+        <field name="name">Gracias por solicitar un diagnóstico</field>
+        <field name="type">qweb</field>
+        <field name="key">financa_website.financa_thank_you_page</field>
+        <field name="url">/gracias-diagnostico</field>
+        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
+        <field name="is_published" eval="True"/>
+        <field name="website_indexed" eval="False"/>
+        <field name="arch" type="xml">
+            <t name="Gracias por solicitar un diagnóstico" t-name="financa_website.financa_thank_you_page">
+                <t t-call="website.layout">
+                    <t t-set="no_index" t-value="True"/>
+                    <div id="wrap" class="financa-thank-you oe_structure" data-financa-thank-you="diagnostico">
+                        <section class="financa-section">
+                            <div class="financa-container financa-thank-you-card">
+                                <span class="financa-thank-you-icon" aria-hidden="true">✓</span>
+                                <h1>Gracias por contactarnos</h1>
+                                <p>Recibimos tu solicitud. Revisaremos la información y nos pondremos en contacto para definir el siguiente paso.</p>
+                                <a href="/" class="financa-button financa-button-primary">Volver al inicio</a>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+
+    <record id="contactus_form_financa" model="ir.ui.view">
+        <field name="name">Financa Contact Form Tracking and Redirect</field>
+        <field name="key">financa_website.contactus_form_financa</field>
+        <field name="type">qweb</field>
+        <field name="inherit_id" ref="website.contactus"/>
+        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form[@id='contactus_form']" position="attributes">
+                <attribute name="data-success-mode">redirect</attribute>
+                <attribute name="data-success-page">/gracias-diagnostico?financa_submission=1</attribute>
+                <attribute name="data-financa-form-name">contacto_diagnostico</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+

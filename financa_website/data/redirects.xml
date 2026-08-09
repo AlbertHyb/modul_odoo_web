@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="redirect_financa_consultores_home" model="website.rewrite">
+        <field name="name">Financa: ruta anterior a homepage</field>
+        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
+        <field name="url_from">/financa-consultores</field>
+        <field name="url_to">/</field>
+        <field name="redirect_type">301</field>
+        <field name="sequence" eval="10"/>
+    </record>
+</odoo>
+

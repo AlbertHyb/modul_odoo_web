@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="financa_privacy_page" model="website.page">
+        <field name="name">Aviso de privacidad</field>
+        <field name="type">qweb</field>
+        <field name="key">financa_website.financa_privacy_page</field>
+        <field name="url">/aviso-de-privacidad</field>
+        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
+        <field name="is_published" eval="False"/>
+        <field name="website_indexed" eval="False"/>
+        <field name="website_meta_title">Aviso de privacidad | Financa Consultores</field>
+        <field name="website_meta_description">Aviso de privacidad provisional de Financa Consultores.</field>
+        <field name="arch" type="xml">
+            <t name="Aviso de privacidad" t-name="financa_website.financa_privacy_page">
+                <t t-call="website.layout">
+                    <div id="wrap" class="financa-legal oe_structure">
+                        <section class="financa-section">
+                            <div class="financa-container financa-legal-content">
+                                <p class="financa-eyebrow">Documento provisional</p>
+                                <h1>Aviso de privacidad</h1>
+                                <div class="financa-legal-warning" role="note">
+                                    Este contenido contiene marcadores pendientes y no debe publicarse hasta contar con datos definitivos y validación jurídica.
+                                </div>
+                                <h2>Identidad y domicilio del responsable</h2>
+                                <p>[PENDIENTE: identidad o razón social y domicilio del responsable].</p>
+                                <h2>Datos personales tratados</h2>
+                                <p>[PENDIENTE: categorías de datos personales recabados y, en su caso, datos sensibles].</p>
+                                <h2>Finalidades del tratamiento</h2>
+                                <p>[PENDIENTE: finalidades primarias y secundarias del tratamiento].</p>
+                                <h2>Transferencias</h2>
+                                <p>[PENDIENTE: transferencias previstas, destinatarios y fundamento].</p>
+                                <h2>Limitación del uso y divulgación</h2>
+                                <p>[PENDIENTE: mecanismos disponibles para limitar el uso o divulgación].</p>
+                                <h2>Conservación</h2>
+                                <p>[PENDIENTE: plazos o criterios de conservación y eliminación].</p>
+                                <h2>Derechos ARCO</h2>
+                                <p>[PENDIENTE: procedimiento, requisitos, plazos y medio para ejercer acceso, rectificación, cancelación u oposición].</p>
+                                <h2>Contacto de privacidad</h2>
+                                <p>[PENDIENTE: correo, teléfono y área responsable de privacidad].</p>
+                                <h2>Cambios al aviso</h2>
+                                <p>[PENDIENTE: medio y procedimiento para comunicar modificaciones].</p>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+</odoo>
+
