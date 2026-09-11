@@ -35,6 +35,7 @@ class StagingComposeContractTest(unittest.TestCase):
 
     def test_odoo_configuration_blocks_database_manager_and_real_smtp(self):
         config = (ROOT / "deploy/compose/odoo.conf").read_text()
+        self.assertIn("/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons", config)
         self.assertIn("db_name = financa_staging", config)
         self.assertIn("dbfilter = ^financa_staging$", config)
         self.assertIn("list_db = False", config)
