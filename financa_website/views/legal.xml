@@ -5,7 +5,7 @@
         <field name="type">qweb</field>
         <field name="key">financa_website.financa_privacy_page</field>
         <field name="url">/aviso-de-privacidad</field>
-        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
         <field name="is_published" eval="False"/>
         <field name="website_indexed" eval="False"/>
         <field name="website_meta_title">Aviso de privacidad | Financa Consultores</field>

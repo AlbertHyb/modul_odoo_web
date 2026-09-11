@@ -25,7 +25,8 @@ class FinancaContractTest(unittest.TestCase):
 
         redirects = (ADDON / "data/redirects.xml").read_text()
         self.assertIn("<field name=\"redirect_type\">301</field>", redirects)
-        self.assertIn("('domain', '=', 'https://financa-mx')", redirects)
+        self.assertIn("('domain', '=', '__FINANCA_DOMAIN__')", redirects)
+        self.assertNotIn("https://financa-mx", redirects)
 
         tracking = (ADDON / "static/src/js/financa_tracking.js").read_text()
         for event in (

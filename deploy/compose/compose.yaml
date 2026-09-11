@@ -1,0 +1,61 @@
+services:
+  db:
+    image: ${POSTGRES_IMAGE:?POSTGRES_IMAGE must be set}
+    platform: linux/amd64
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB must be set}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      TZ: ${TZ:-UTC}
+    volumes:
+      - ${POSTGRES_DATA_DIR:?POSTGRES_DATA_DIR must be set}:/var/lib/postgresql/data
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    mem_limit: 1g
+    networks: [internal]
+
+  odoo:
+    image: ${ODOO_IMAGE:?ODOO_IMAGE must be set}
+    platform: linux/amd64
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    environment:
+      HOST: db
+      PORT: 5432
+      USER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      PASSWORD_FILE: /run/secrets/postgres_password
+      TZ: ${TZ:-UTC}
+    ports:
+      - "127.0.0.1:${ODOO_PORT:-8069}:8069"
+    volumes:
+      - ${ODOO_DATA_DIR:?ODOO_DATA_DIR must be set}:/var/lib/odoo
+      - ${FINANCA_RELEASE_DIR:?FINANCA_RELEASE_DIR must be set}:/mnt/extra-addons/financa_website:ro
+      - ${ODOO_CONFIG_FILE:?ODOO_CONFIG_FILE must be set}:/etc/odoo/odoo.conf:ro
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"from urllib.request import urlopen; assert urlopen('http://127.0.0.1:8069/web/login', timeout=5).status == 200\""]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+    mem_limit: 2g
+    networks: [internal]
+
+networks:
+  internal:
+    internal: true
+
+secrets:
+  postgres_password:
+    file: ${POSTGRES_PASSWORD_FILE:?POSTGRES_PASSWORD_FILE must be set}
