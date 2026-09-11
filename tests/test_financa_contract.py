@@ -51,6 +51,7 @@ class FinancaContractTest(unittest.TestCase):
             "server/deploy_financa.sh",
             "server/financa-deploy.env.example",
             "odoo/preflight_financa.py",
+            "odoo/module_state_financa.py",
             "odoo/configure_financa.py",
             "odoo/postflight_financa.py",
         )
@@ -59,7 +60,12 @@ class FinancaContractTest(unittest.TestCase):
 
         server_script = (deploy_root / "server/deploy_financa.sh").read_text()
         self.assertIn("run_odoo_shell", server_script)
-        self.assertIn("run_odoo_upgrade", server_script)
+        self.assertIn('module_action == "install"', server_script)
+        self.assertIn("-i financa_website", server_script)
+        self.assertIn("-u financa_website", server_script)
+        self.assertIn("FINANCA_BACKUP_BIN", server_script)
+        self.assertIn("FINANCA_RESTORE_BIN", server_script)
+        self.assertIn("flock -n", server_script)
         self.assertIn("systemctl stop", server_script)
 
         ci_script = (deploy_root / "ci/publish_financa.sh").read_text()

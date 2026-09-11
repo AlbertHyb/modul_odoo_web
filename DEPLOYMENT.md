@@ -16,7 +16,7 @@ assert len(websites) == 1, f"Preflight detenido: {len(websites)} websites para {
 website = websites.ensure_one()
 assert website.name == "Financa Consultores", website.name
 assert website.auth_signup_uninvited == "b2b", website.auth_signup_uninvited
-?
+
 homepage_url = website.homepage_url or "/"
 homepages = env["website.page"].sudo().search([
     ("website_id", "in", [False, website.id]),
@@ -53,9 +53,11 @@ del módulo la sustituye únicamente para el website objetivo.
 
 ## 2. Instalación
 
-Agregar la carpeta que contiene `financa_website` al `addons_path`, actualizar
-la lista de aplicaciones e instalar **Financa Consultores Website**. En una
-actualización, ejecutar `-u financa_website`.
+El despliegue automatizado consulta `ir.module.module`: usa
+`-i financa_website` cuando el módulo es nuevo o está desinstalado y
+`-u financa_website` únicamente cuando está instalado. Cualquier estado
+transitorio detiene la liberación. Antes de modificar el addon se exige un
+punto de recuperación consistente de PostgreSQL y filestore.
 
 ## 3. Configuración posterior
 
