@@ -21,7 +21,7 @@ class FinancaContractTest(unittest.TestCase):
             ElementTree.parse(xml_file)
 
         snippets = (ADDON / "views/snippets.xml").read_text()
-        self.assertEqual(snippets.count("t-snippet=\"financa_website.snippet_"), 7)
+        self.assertEqual(snippets.count("t-snippet=\"financa_website.snippet_"), 9)
         self.assertEqual(snippets.count("<h1>"), 1)
 
         redirects = (ADDON / "data/redirects.xml").read_text()

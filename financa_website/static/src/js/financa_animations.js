@@ -5,6 +5,7 @@ document.documentElement.classList.add("js-financa");
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const observed = new WeakSet();
+const initializedCarousels = new WeakSet();
 
 function animateCount(element) {
     if (element.dataset.financaCounted === "1") {
@@ -63,6 +64,49 @@ function register(root = document) {
             element.querySelectorAll("[data-count]").forEach(animateCount);
         }
     }
+
+    const carousels = root.matches?.(".financa-hero-carousel")
+        ? [root]
+        : root.querySelectorAll?.(".financa-hero-carousel") || [];
+    carousels.forEach(initCarousel);
+}
+
+function initCarousel(carousel) {
+    if (initializedCarousels.has(carousel)) return;
+
+    const panels = [...carousel.querySelectorAll(".financa-hero-panel")];
+    const dots = [...carousel.querySelectorAll("[data-financa-carousel-dot]")];
+    const status = carousel.querySelector("[data-financa-carousel-status]");
+    if (panels.length !== 3 || dots.length !== panels.length) return;
+    initializedCarousels.add(carousel);
+
+    let active = 0;
+    function show(index, announce = true) {
+        active = (index + panels.length) % panels.length;
+        panels.forEach((panel, panelIndex) => {
+            const state = panelIndex === active ? "active" : panelIndex === (active + 1) % panels.length ? "next" : "previous";
+            panel.dataset.financaState = state;
+            panel.setAttribute("aria-hidden", String(state !== "active"));
+        });
+        dots.forEach((dot, dotIndex) => {
+            const selected = dotIndex === active;
+            dot.setAttribute("aria-current", String(selected));
+            dot.tabIndex = selected ? 0 : -1;
+        });
+        if (announce && status) status.textContent = `${panels[active].querySelector("h2")?.textContent || "Panel"}, panel ${active + 1} de ${panels.length}`;
+    }
+
+    carousel.querySelector("[data-financa-carousel-prev]")?.addEventListener("click", () => show(active - 1));
+    carousel.querySelector("[data-financa-carousel-next]")?.addEventListener("click", () => show(active + 1));
+    dots.forEach((dot, index) => dot.addEventListener("click", () => show(index)));
+    carousel.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        show(event.key === "Home" ? 0 : event.key === "End" ? panels.length - 1 : active + (event.key === "ArrowRight" ? 1 : -1));
+    });
+
+    show(0, false);
+    carousel.classList.add("is-enhanced");
 }
 
 function init() {
@@ -87,4 +131,3 @@ if (document.readyState === "loading") {
 } else {
     init();
 }
-
