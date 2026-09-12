@@ -315,6 +315,15 @@
 .financa-hero-carousel.is-enhanced {
     .financa-hero-panels { isolation: isolate; }
 
+    // ponytail: stacked deck needs opaque panels, else the panels behind bleed through
+    .financa-hero-panel {
+        background: var(--financa-dark);
+        backdrop-filter: none;
+    }
+
+    // composite of rgba(255,255,255,.07) glass over --financa-dark
+    .financa-dashboard.financa-hero-panel { background: #222222; }
+
     .financa-hero-panel {
         grid-area: 1 / 1;
         opacity: 0.38;
