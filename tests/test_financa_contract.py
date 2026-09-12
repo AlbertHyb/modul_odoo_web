@@ -54,6 +54,9 @@ class FinancaContractTest(unittest.TestCase):
         self.assertIn("_financa_archive_competing_homepage", model_file)
         self.assertIn("view_id.key", model_file)
 
+        model_init = (ADDON / "models/__init__.py").read_text()
+        self.assertIn("website_page", model_init)
+
     def test_qweb_fallbacks_are_domain_scoped(self):
         homepage = (ADDON / "views/homepage.xml").read_text()
         self.assertNotIn("$0", homepage)
