@@ -1,5 +1,8 @@
 /** @odoo-module **/
 
+// ponytail: content stays visible without JS; CSS only hides .financa-reveal when this class is present
+document.documentElement.classList.add("js-financa");
+
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const observed = new WeakSet();
 

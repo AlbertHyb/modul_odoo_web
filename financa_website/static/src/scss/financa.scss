@@ -1,6 +1,7 @@
 :root {
     --financa-dark: #111111;
     --financa-gold: #c6a15b;
+    --financa-gold-text: #8b6914;
     --financa-light: #f6f4ef;
     --financa-white: #ffffff;
     --financa-muted: #666666;
@@ -35,6 +36,7 @@
         font-weight: 700;
         letter-spacing: -0.03em;
         line-height: 1.12;
+        text-wrap: balance;
     }
 
     h2 {
@@ -65,13 +67,22 @@
     padding-block: 90px;
 }
 
+.financa-homepage section[id] {
+    scroll-margin-top: 90px;
+}
+
 .financa-eyebrow {
     margin-bottom: 14px;
-    color: var(--financa-gold);
+    color: var(--financa-gold-text);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
+}
+
+.financa-hero .financa-eyebrow,
+.financa-odoo-center .financa-eyebrow {
+    color: var(--financa-gold);
 }
 
 .financa-section-heading {
@@ -163,9 +174,9 @@
 
 .financa-hero-copy {
     h1 {
-        max-width: 760px;
+        max-width: 640px;
         margin-bottom: 24px;
-        font-size: clamp(2.55rem, 5.5vw, 5rem);
+        font-size: clamp(2.25rem, 4.2vw, 3.75rem);
     }
 }
 
@@ -235,7 +246,7 @@
 .financa-illustrative-note {
     margin: 14px 0 0;
     color: rgba(255, 255, 255, 0.5);
-    font-size: 0.76rem;
+    font-size: 0.82rem;
 }
 
 .financa-services {
@@ -508,7 +519,7 @@
     }
 
     span {
-        color: var(--financa-gold);
+        color: var(--financa-gold-text);
         font-size: 0.78rem;
         font-weight: 700;
     }
@@ -634,7 +645,7 @@
 
     h1 {
         margin-bottom: 28px;
-        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-size: clamp(2rem, 4.5vw, 3rem);
     }
 
     h2 {
@@ -685,7 +696,7 @@
     font-weight: 700;
 }
 
-.financa-reveal {
+.js-financa .financa-reveal {
     opacity: 0;
     transform: translateY(22px);
     transition: opacity 500ms ease, transform 500ms ease;
@@ -754,7 +765,7 @@
     }
 
     .financa-hero-copy h1 {
-        font-size: clamp(2.35rem, 12vw, 3.7rem);
+        font-size: clamp(2.1rem, 10vw, 3.1rem);
     }
 
     .financa-actions,
@@ -774,7 +785,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .financa-reveal,
+    .js-financa .financa-reveal,
     .financa-card,
     .financa-button {
         opacity: 1;

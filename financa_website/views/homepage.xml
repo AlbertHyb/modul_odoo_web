@@ -108,7 +108,7 @@
                                 <p>Más que números. Más que contabilidad. Más que fiscal.</p>
                             </div>
                             <div>
-                                <h2 class="financa-footer-heading">Servicios</h2>
+                                <h3 class="financa-footer-heading">Servicios</h3>
                                 <ul>
                                     <li><a href="/#servicios">Consultoría financiera</a></li>
                                     <li><a href="/#servicios">Atención fiscal y contable</a></li>
@@ -117,7 +117,7 @@
                                 </ul>
                             </div>
                             <div>
-                                <h2 class="financa-footer-heading">Empresa</h2>
+                                <h3 class="financa-footer-heading">Empresa</h3>
                                 <ul>
                                     <li><a href="/#diagnostico">Diagnóstico</a></li>
                                     <li><a href="/#proceso">Cómo trabajamos</a></li>
@@ -126,7 +126,7 @@
                                 </ul>
                             </div>
                             <div>
-                                <h2 class="financa-footer-heading">Legal</h2>
+                                <h3 class="financa-footer-heading">Legal</h3>
                                 <ul>
                                     <li><a href="/cookie-policy">Política de cookies</a></li>
                                     <li t-if="request.env['website.page'].sudo().search_count([('url', '=', '/aviso-de-privacidad'), ('website_id', '=', website.id), ('is_published', '=', True)])">
