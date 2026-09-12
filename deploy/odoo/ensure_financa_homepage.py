@@ -1,9 +1,10 @@
 """Run with `odoo-bin shell -d <database>` after updating financa_website.
 
 Odoo 19 resolves "/" with `website.page` ordered by `website_id asc`
-(website_page._get_page_info, _order = 'website_id'), so a generic page with
-website_id False wins over the Financa-specific homepage. Archive every other
-page at "/" so the Financa homepage is the one served.
+(website_page._get_page_info, _order = 'website_id'). A generic page
+(website_id False, key != the module's) wins over the Financa-specific
+homepage unless its URL is moved away. Archive every other page at "/" --
+generic or website-specific -- so the Financa homepage is the one served.
 """
 
 import json
@@ -27,7 +28,14 @@ if len(websites) != 1:
 website = websites.ensure_one()
 
 Page = env["website.page"].sudo()
-homepages = Page.search([("website_id", "=", website.id), ("url", "=", "/")])
+homepages = Page.search(
+    [
+        "|",
+        ("website_id", "=", False),
+        ("website_id", "=", website.id),
+        ("url", "=", "/"),
+    ]
+)
 module_homepage = homepages.filtered(lambda page: page.view_id.key == MODULE_HOMEPAGE_KEY)
 
 if not module_homepage:
@@ -36,13 +44,20 @@ if not module_homepage:
 others = homepages - module_homepage
 for page in others:
     archive_url = page.url + ARCHIVE_SUFFIX
-    while Page.search([("website_id", "=", website.id), ("url", "=", archive_url)]):
+    while Page.search([("url", "=", archive_url)]):
         archive_url += "2"
     page.write({"url": archive_url, "is_published": False})
-    if page.menu_ids:
-        page.menu_ids.write({"url": archive_url})
+    for menu in page.menu_ids:
+        menu.write({"url": archive_url, "active": False})
 
-remaining = Page.search([("website_id", "=", website.id), ("url", "=", "/")])
+remaining = Page.search(
+    [
+        "|",
+        ("website_id", "=", False),
+        ("website_id", "=", website.id),
+        ("url", "=", "/"),
+    ]
+)
 if len(remaining) != 1 or remaining.id != module_homepage.id:
     fail(f"expected the {MODULE_HOMEPAGE_KEY} page alone at '/', found {remaining.ids}")
 
