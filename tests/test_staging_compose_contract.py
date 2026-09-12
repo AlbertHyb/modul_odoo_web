@@ -17,6 +17,7 @@ class StagingComposeContractTest(unittest.TestCase):
         self.assertIn('      - "127.0.0.1:${ODOO_PORT:-8069}:8069"', compose)
         self.assertIn("    internal: true", compose)
         self.assertIn("condition: service_healthy", compose)
+        self.assertIn("    networks: [internal, edge]", compose)
         self.assertIn("postgres_password", compose)
 
     def test_images_are_pinned_and_environment_has_no_secret_value(self):
