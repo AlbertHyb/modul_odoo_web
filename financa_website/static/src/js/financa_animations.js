@@ -96,17 +96,42 @@ function initCarousel(carousel) {
         if (announce && status) status.textContent = `${panels[active].querySelector("h2")?.textContent || "Panel"}, panel ${active + 1} de ${panels.length}`;
     }
 
-    carousel.querySelector("[data-financa-carousel-prev]")?.addEventListener("click", () => show(active - 1));
-    carousel.querySelector("[data-financa-carousel-next]")?.addEventListener("click", () => show(active + 1));
-    dots.forEach((dot, index) => dot.addEventListener("click", () => show(index)));
+    carousel.querySelector("[data-financa-carousel-prev]")?.addEventListener("click", () => { show(active - 1); restart(); });
+    carousel.querySelector("[data-financa-carousel-next]")?.addEventListener("click", () => { show(active + 1); restart(); });
+    dots.forEach((dot, index) => dot.addEventListener("click", () => { show(index); restart(); }));
     carousel.addEventListener("keydown", (event) => {
         if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
         event.preventDefault();
         show(event.key === "Home" ? 0 : event.key === "End" ? panels.length - 1 : active + (event.key === "ArrowRight" ? 1 : -1));
+        restart();
     });
+
+    // ponytail: autoplay pauses on hover/focus/hidden tab/reduced-motion; no aria-live spam on auto-advance
+    const AUTOPLAY_MS = 5000;
+    let timer = null;
+    function stop() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+    function start() {
+        if (timer || reducedMotion.matches || document.hidden) return;
+        timer = setInterval(() => show(active + 1, false), AUTOPLAY_MS);
+    }
+    function restart() {
+        stop();
+        start();
+    }
+    carousel.addEventListener("pointerenter", stop);
+    carousel.addEventListener("pointerleave", start);
+    carousel.addEventListener("focusin", stop);
+    carousel.addEventListener("focusout", start);
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
 
     show(0, false);
     carousel.classList.add("is-enhanced");
+    start();
 }
 
 function init() {

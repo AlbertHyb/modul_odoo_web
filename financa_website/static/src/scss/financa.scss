@@ -127,7 +127,7 @@
     font-weight: 700;
     text-align: center;
     text-decoration: none !important;
-    transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
+    transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 
     &:hover {
         transform: translateY(-2px);
@@ -135,11 +135,13 @@
 }
 
 .financa-button-primary {
-    background: var(--financa-gold);
+    background: linear-gradient(135deg, #e8bc58, #d09d32);
     color: var(--financa-dark) !important;
+    box-shadow: 0 10px 30px rgba(212, 164, 55, 0.4);
 
     &:hover {
-        background: #dd9911;
+        background: linear-gradient(135deg, #f2c968, #ddaa3d);
+        box-shadow: 0 14px 38px rgba(212, 164, 55, 0.55);
     }
 }
 
