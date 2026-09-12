@@ -80,19 +80,24 @@
     </template>
 
     <template id="header_call_to_action_financa" inherit_id="website.header_call_to_action" name="Financa Header CTA">
-        <xpath expr="//a[hasclass('btn_cta')]" position="replace">
+        <xpath expr="//a[hasclass('btn_cta')]" position="attributes">
+            <attribute name="t-if" add="website.domain != '__FINANCA_DOMAIN__'" separator=" and "/>
+        </xpath>
+        <xpath expr="//a[hasclass('btn_cta')]" position="before">
             <a t-if="website.domain == '__FINANCA_DOMAIN__'"
                href="/contactus"
                class="oe_unremovable btn btn-primary btn_cta financa-header-cta"
                data-financa-cta="1"
                data-financa-cta-name="solicitar_diagnostico"
                data-financa-cta-location="header">Solicitar diagnóstico</a>
-            <t t-else="">$0</t>
         </xpath>
     </template>
 
     <template id="layout_financa_footer" inherit_id="website.layout" name="Financa Global Footer">
-        <xpath expr="//footer[@id='bottom']" position="replace">
+        <xpath expr="//footer[@id='bottom']" position="attributes">
+            <attribute name="t-if" add="website.domain != '__FINANCA_DOMAIN__'" separator=" and "/>
+        </xpath>
+        <xpath expr="//footer[@id='bottom']" position="before">
             <footer t-if="website.domain == '__FINANCA_DOMAIN__' and not no_footer"
                     id="bottom" class="financa-footer o_footer">
                 <div id="footer" class="oe_structure oe_structure_solo">
@@ -136,7 +141,6 @@
                     <div class="financa-container">&#169; 2026 Financa Consultores</div>
                 </div>
             </footer>
-            <t t-else="">$0</t>
         </xpath>
     </template>
 </odoo>

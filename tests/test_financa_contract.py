@@ -44,6 +44,13 @@ class FinancaContractTest(unittest.TestCase):
         experiments = (ADDON / "static/src/js/financa_experiments.js").read_text()
         self.assertIn("EXPERIMENTS_ENABLED = false", experiments)
 
+    def test_qweb_fallbacks_are_domain_scoped(self):
+        homepage = (ADDON / "views/homepage.xml").read_text()
+        self.assertNotIn("$0", homepage)
+        self.assertEqual(homepage.count("add=\"website.domain != '__FINANCA_DOMAIN__'\""), 2)
+        self.assertIn("t-if=\"website.domain == '__FINANCA_DOMAIN__'\"", homepage)
+        self.assertIn("t-if=\"website.domain == '__FINANCA_DOMAIN__' and not no_footer\"", homepage)
+
 
     def test_deployment_contract(self):
         deploy_root = ROOT / "deploy"
