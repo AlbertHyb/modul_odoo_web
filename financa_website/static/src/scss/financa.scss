@@ -56,7 +56,8 @@
 }
 
 .financa-container {
-    width: min(calc(100% - 40px), 1180px);
+    width: calc(100% - 40px);
+    max-width: 1180px;
     margin-inline: auto;
 }
 
@@ -733,7 +734,7 @@
 
 @media (max-width: 767.98px) {
     .financa-container {
-        width: min(calc(100% - 28px), 1180px);
+        width: calc(100% - 28px);
     }
 
     .financa-section {

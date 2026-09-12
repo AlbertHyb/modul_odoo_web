@@ -52,6 +52,13 @@ class FinancaContractTest(unittest.TestCase):
         self.assertIn("t-if=\"website.domain == '__FINANCA_DOMAIN__' and not no_footer\"", homepage)
 
 
+    def test_scss_avoids_libsass_min_with_calc(self):
+        scss = (ADDON / "static/src/scss/financa.scss").read_text()
+        self.assertNotIn("min(calc(", scss)
+        self.assertIn("width: calc(100% - 40px);", scss)
+        self.assertIn("width: calc(100% - 28px);", scss)
+        self.assertIn("max-width: 1180px;", scss)
+
     def test_deployment_contract(self):
         deploy_root = ROOT / "deploy"
         required_files = (
