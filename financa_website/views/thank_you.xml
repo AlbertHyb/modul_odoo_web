@@ -27,6 +27,28 @@
         </field>
     </record>
 
+    <record id="contactus_page_financa" model="ir.ui.view">
+        <field name="name">Financa Contact Page Styling</field>
+        <field name="key">financa_website.contactus_page_financa</field>
+        <field name="type">qweb</field>
+        <field name="inherit_id" ref="website.contactus"/>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='wrap']" position="attributes">
+                <attribute name="class" add="financa-contact" separator=" "/>
+            </xpath>
+            <xpath expr="//section[hasclass('s_title')]" position="attributes">
+                <attribute name="class" add="financa-contact-hero" separator=" "/>
+            </xpath>
+            <xpath expr="//section[hasclass('s_title')]//h1" position="before">
+                <p class="financa-eyebrow">Contacto</p>
+            </xpath>
+            <xpath expr="//section[hasclass('s_text_block')]//div[hasclass('offset-lg-1')]" position="attributes">
+                <attribute name="class" add="financa-contact-info" separator=" "/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="contactus_form_financa" model="ir.ui.view">
         <field name="name">Financa Contact Form Tracking and Redirect</field>
         <field name="key">financa_website.contactus_form_financa</field>
