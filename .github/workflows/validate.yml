@@ -3,7 +3,7 @@ name: Validate Financa staging
 on:
   pull_request:
   push:
-    branches: [master]
+    branches: [master, staging]
 
 jobs:
   validate:
