@@ -1,0 +1,1 @@
+"""Financa website model glue."""

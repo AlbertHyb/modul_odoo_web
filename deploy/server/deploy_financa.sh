@@ -156,7 +156,6 @@ mv "$release_dir" "$target_addon"
 swapped=true
 
 run_odoo_module_action
-run_odoo_shell "$deployment_scripts/ensure_financa_homepage.py"
 run_odoo_shell "$deployment_scripts/configure_financa.py"
 run_odoo_shell "$deployment_scripts/postflight_financa.py"
 

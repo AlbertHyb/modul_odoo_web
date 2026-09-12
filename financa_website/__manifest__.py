@@ -11,6 +11,7 @@
         "views/snippets.xml",
         "views/legal.xml",
         "views/thank_you.xml",
+        "data/homepage_ensure.xml",
     ],
     "assets": {
         "web.assets_frontend": [

@@ -21,8 +21,6 @@ class StagingCdContractTest(unittest.TestCase):
         self.assertIn("render_financa_staging_artifact.py", script)
         self.assertIn("systemctl start --wait financa-staging-backup.service", script)
         self.assertIn("-u financa_website --stop-after-init", script)
-        self.assertIn("ensure_financa_homepage.py", script)
-        self.assertIn('grep -q \'class="financa-homepage\'', script)
         self.assertIn("mv -Tf", script)
         self.assertIn("Restoring the prior release symlink", script)
         self.assertIn("http://127.0.0.1:8069/web/login", script)

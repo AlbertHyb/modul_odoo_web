@@ -15,6 +15,7 @@ class FinancaContractTest(unittest.TestCase):
         self.assertEqual(manifest["version"], "19.0.1.0.0")
         self.assertEqual(manifest["depends"], ["website"])
         self.assertEqual(len(manifest["assets"]["web.assets_frontend"]), 4)
+        self.assertIn("data/homepage_ensure.xml", manifest["data"])
 
         for xml_file in ADDON.rglob("*.xml"):
             ElementTree.parse(xml_file)
@@ -43,6 +44,15 @@ class FinancaContractTest(unittest.TestCase):
 
         experiments = (ADDON / "static/src/js/financa_experiments.js").read_text()
         self.assertIn("EXPERIMENTS_ENABLED = false", experiments)
+
+        homepage_ensure = (ADDON / "data/homepage_ensure.xml").read_text()
+        self.assertIn('model="website.page"', homepage_ensure)
+        self.assertIn("_financa_archive_competing_homepage", homepage_ensure)
+
+        model_file = (ADDON / "models/website_page.py").read_text()
+        self.assertIn("_inherit = \"website.page\"", model_file)
+        self.assertIn("_financa_archive_competing_homepage", model_file)
+        self.assertIn("view_id.key", model_file)
 
     def test_qweb_fallbacks_are_domain_scoped(self):
         homepage = (ADDON / "views/homepage.xml").read_text()
@@ -82,7 +92,6 @@ class FinancaContractTest(unittest.TestCase):
         self.assertIn("FINANCA_RESTORE_BIN", server_script)
         self.assertIn("flock -n", server_script)
         self.assertIn("systemctl stop", server_script)
-        self.assertIn("ensure_financa_homepage.py", server_script)
 
         ci_script = (deploy_root / "ci/publish_financa.sh").read_text()
         self.assertIn("StrictHostKeyChecking=yes", ci_script)

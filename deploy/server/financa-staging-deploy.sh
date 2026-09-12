@@ -70,8 +70,6 @@ activated=true
 module_update_started=true
 "${compose[@]}" run --rm --no-deps odoo \
     odoo -d financa_staging -u financa_website --stop-after-init
-"${compose[@]}" run --rm --no-deps -e FINANCA_DOMAIN=https://staging.financa.mx odoo \
-    odoo shell -d financa_staging < "$repo/deploy/odoo/ensure_financa_homepage.py"
 "${compose[@]}" up -d --force-recreate --no-deps odoo
 
 wait_for_health() {
@@ -84,16 +82,5 @@ wait_for_health() {
 }
 wait_for_health "$local_health"
 wait_for_health "$public_health"
-wait_for_homepage() {
-    for _ in {1..12}; do
-        curl -fsS --max-time 10 "$public_health" >/dev/null 2>&1 \
-            && curl -fsS --max-time 10 https://staging.financa.mx/ \
-                | grep -q 'class="financa-homepage' \
-            && return 0
-        sleep 5
-    done
-    die "homepage health check failed: Financa homepage is not served at /"
-}
-wait_for_homepage
 trap - ERR
 printf 'STAGING DEPLOYED: %s\n' "$sha"

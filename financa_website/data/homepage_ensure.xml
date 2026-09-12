@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Odoo 19 resolves "/" with website.page ordered by website_id asc
+        (website_page._get_page_info, _order = 'website_id'). A generic page
+        (website_id False) or another specific page wins over the Financa
+        homepage unless its URL is moved away. This runs on every module load
+        so the Financa homepage is the one served at "/".
+    -->
+    <function model="website.page" name="_financa_archive_competing_homepage"/>
+</odoo>
