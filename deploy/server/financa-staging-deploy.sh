@@ -70,6 +70,8 @@ activated=true
 module_update_started=true
 "${compose[@]}" run --rm --no-deps odoo \
     odoo -d financa_staging -u financa_website --stop-after-init
+"${compose[@]}" run --rm --no-deps -e FINANCA_DOMAIN=https://staging.financa.mx odoo \
+    odoo shell -d financa_staging < "$repo/deploy/odoo/ensure_financa_homepage.py"
 "${compose[@]}" up -d --force-recreate --no-deps odoo
 
 wait_for_health() {

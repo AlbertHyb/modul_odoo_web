@@ -82,6 +82,7 @@ class FinancaContractTest(unittest.TestCase):
         self.assertIn("FINANCA_RESTORE_BIN", server_script)
         self.assertIn("flock -n", server_script)
         self.assertIn("systemctl stop", server_script)
+        self.assertIn("ensure_financa_homepage.py", server_script)
 
         ci_script = (deploy_root / "ci/publish_financa.sh").read_text()
         self.assertIn("StrictHostKeyChecking=yes", ci_script)

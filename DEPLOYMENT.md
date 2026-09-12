@@ -49,7 +49,12 @@ Guardar la salida en la evidencia del despliegue. Si existe una página
 específica del website objetivo en `/`, respaldarla o asignarle una URL de
 archivo desde **Sitio web > Sitio > Páginas** antes de instalar. No eliminarla.
 La homepage genérica de Odoo permanece en la base y la nueva página específica
-del módulo la sustituye únicamente para el website objetivo.
+del módulo la sustituye únicamente para el website objetivo. El despliegue
+ejecuta `ensure_financa_homepage.py` tras instalar o actualizar el módulo:
+archiva (renombra y despublica) cualquier otra página en `/` del website
+objetivo para que la homepage de Financa sea la que se sirve. En Odoo 19 la
+resolución de `/` ordena por `website_id asc`, por lo que despublicar sola no
+basta; renombrar la URL es obligatorio para que la página específica gane.
 
 ## 2. Instalación
 
