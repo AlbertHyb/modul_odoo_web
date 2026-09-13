@@ -70,14 +70,14 @@
                     <h2>Cuando el negocio crece, la información también debe estar bajo control.</h2>
                 </div>
                 <ul class="financa-problems-grid">
-                    <li class="financa-problem"><span aria-hidden="true">01</span><p><strong>Información dispersa</strong> Cada área maneja sus datos por separado y nadie tiene una sola versión de la verdad.</p></li>
-                    <li class="financa-problem"><span aria-hidden="true">02</span><p><strong>Tareas manuales</strong> El equipo dedica horas a capturar y copiar información que ya existe en otro lugar.</p></li>
-                    <li class="financa-problem"><span aria-hidden="true">03</span><p><strong>Falta de visibilidad</strong> Es difícil saber con certeza cómo está el negocio en un momento dado.</p></li>
-                    <li class="financa-problem"><span aria-hidden="true">04</span><p><strong>Sistemas desconectados</strong> Las herramientas no se hablan entre sí y la información no fluye de un área a otra.</p></li>
-                    <li class="financa-problem"><span aria-hidden="true">05</span><p><strong>Reportes tardíos</strong> Los informes llegan cuando la decisión ya se tomó, o no llegan.</p></li>
-                    <li class="financa-problem"><span aria-hidden="true">06</span><p><strong>Crecimiento sin procesos</strong> El negocio crece, pero la forma de trabajar no crece con él.</p></li>
-                    <li class="financa-problem"><span aria-hidden="true">07</span><p><strong>Falta de indicadores</strong> No hay una forma clara de medir resultados ni de saber qué está funcionando.</p></li>
-                    <li class="financa-problem"><span aria-hidden="true">08</span><p><strong>Dependencia de Excel</strong> Las decisiones dependen de hojas de cálculo que se actualizan a mano.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-database"/></span><p><strong>Información dispersa</strong> Cada área maneja sus datos por separado y nadie tiene una sola versión de la verdad.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-keyboard-o"/></span><p><strong>Tareas manuales</strong> El equipo dedica horas a capturar y copiar información que ya existe en otro lugar.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-eye-slash"/></span><p><strong>Falta de visibilidad</strong> Es difícil saber con certeza cómo está el negocio en un momento dado.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-chain-broken"/></span><p><strong>Sistemas desconectados</strong> Las herramientas no se hablan entre sí y la información no fluye de un área a otra.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-clock-o"/></span><p><strong>Reportes tardíos</strong> Los informes llegan cuando la decisión ya se tomó, o no llegan.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-line-chart"/></span><p><strong>Crecimiento sin procesos</strong> El negocio crece, pero la forma de trabajar no crece con él.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-tachometer"/></span><p><strong>Falta de indicadores</strong> No hay una forma clara de medir resultados ni de saber qué está funcionando.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-file-excel-o"/></span><p><strong>Dependencia de Excel</strong> Las decisiones dependen de hojas de cálculo que se actualizan a mano.</p></li>
                 </ul>
             </div>
         </section>
@@ -146,12 +146,12 @@
                     <p>No vendemos una tecnología única: elegimos la herramienta adecuada para el problema de cada empresa.</p>
                 </div>
                 <ul class="financa-capabilities">
-                    <li>ERP</li>
-                    <li>Automatización</li>
-                    <li>Integraciones</li>
-                    <li>Desarrollo a medida</li>
-                    <li>Inteligencia artificial</li>
-                    <li>Analítica de datos</li>
+                    <li><i class="fa fa-th" aria-hidden="true"/><span>ERP</span></li>
+                    <li><i class="fa fa-bolt" aria-hidden="true"/><span>Automatización</span></li>
+                    <li><i class="fa fa-link" aria-hidden="true"/><span>Integraciones</span></li>
+                    <li><i class="fa fa-code" aria-hidden="true"/><span>Desarrollo a medida</span></li>
+                    <li><i class="fa fa-microchip" aria-hidden="true"/><span>Inteligencia artificial</span></li>
+                    <li><i class="fa fa-bar-chart" aria-hidden="true"/><span>Analítica de datos</span></li>
                 </ul>
             </div>
         </section>

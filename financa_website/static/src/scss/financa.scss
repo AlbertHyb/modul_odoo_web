@@ -463,6 +463,10 @@
     color: var(--financa-gold);
     font-size: 0.75rem;
     font-weight: 700;
+
+    .fa {
+        font-size: 1.1rem;
+    }
 }
 
 .financa-odoo-center {
@@ -559,7 +563,7 @@
     background: var(--financa-light);
 
     span {
-        color: var(--financa-gold);
+        color: var(--financa-gold-text);
         font-size: 0.78rem;
         font-weight: 700;
     }
@@ -602,18 +606,21 @@
     li:not(:last-child)::after {
         position: absolute;
         top: 50%;
-        right: -16px;
+        right: -17px;
         z-index: 1;
-        color: var(--financa-gold);
+        width: 18px;
+        color: var(--financa-gold-text);
         content: "\2192";
+        font-size: 1.35rem;
         font-weight: 700;
+        text-align: center;
         transform: translateY(-50%);
     }
 
     span {
         display: block;
         margin-bottom: 8px;
-        color: var(--financa-gold);
+        color: var(--financa-gold-text);
         font-size: 0.72rem;
         font-weight: 700;
     }
@@ -639,8 +646,10 @@
     li {
         display: flex;
         min-height: 120px;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+        gap: 12px;
         padding: 22px;
         border: 1px solid var(--financa-gold);
         border-radius: 16px;
@@ -648,6 +657,11 @@
         font-size: 1.05rem;
         font-weight: 700;
         text-align: center;
+    }
+
+    li .fa {
+        color: var(--financa-gold-text);
+        font-size: 1.5rem;
     }
 }
 
@@ -835,16 +849,14 @@
     background: var(--financa-dark);
     color: rgba(255, 255, 255, 0.68);
 
-    a,
-    a:visited,
-    a:hover,
-    a:focus {
+    // ponytail: .o_footer + :not(.btn) needed to beat Odoo's .o_footer a:not(.btn) link color
+    &.o_footer a:not(.btn) {
         color: var(--financa-white);
         text-decoration: none;
     }
 
-    a:hover {
-        opacity: 0.75;
+    &.o_footer a:not(.btn):hover {
+        color: var(--financa-gold);
         text-decoration: underline;
         text-underline-offset: 3px;
     }
@@ -1180,6 +1192,34 @@
 
     .financa-footer-main {
         padding-block: 48px;
+    }
+}
+
+// ponytail: Odoo renders the cookie bar in a modal outside #wrap, so this applies instance-wide
+.o_cookies_discrete {
+    .modal-content {
+        border-top: 1px solid rgba(198, 161, 91, 0.4);
+        background: var(--financa-dark);
+        color: rgba(255, 255, 255, 0.82);
+    }
+
+    p {
+        color: rgba(255, 255, 255, 0.82);
+    }
+
+    .o_cookies_bar_text_policy {
+        color: var(--financa-gold) !important;
+    }
+
+    #cookies-consent-essential {
+        border-color: rgba(255, 255, 255, 0.45);
+        color: var(--financa-white) !important;
+    }
+
+    #cookies-consent-all {
+        border-color: transparent;
+        background: var(--financa-gold);
+        color: var(--financa-dark) !important;
     }
 }
 
