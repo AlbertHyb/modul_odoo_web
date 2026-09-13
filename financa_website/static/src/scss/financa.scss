@@ -65,7 +65,7 @@
 }
 
 .financa-section {
-    padding-block: 90px;
+    padding-block: 64px;
 }
 
 .financa-homepage section[id] {
@@ -82,8 +82,7 @@
 }
 
 .financa-hero .financa-eyebrow,
-.financa-odoo-center .financa-eyebrow,
-.financa-contact-hero .financa-eyebrow {
+.financa-odoo-center .financa-eyebrow {
     color: var(--financa-gold);
 }
 
@@ -166,7 +165,7 @@
     min-height: calc(100svh - 88px);
     align-items: center;
     overflow: hidden;
-    padding-block: clamp(70px, 9vw, 124px);
+    padding-block: clamp(40px, 5vw, 72px);
     background:
         radial-gradient(circle at 78% 20%, rgba(198, 161, 91, 0.2), transparent 32%),
         var(--financa-dark);
@@ -968,7 +967,7 @@
 }
 
 .financa-contact-hero {
-    padding-block: clamp(70px, 9vw, 110px);
+    padding-block: clamp(36px, 5vw, 60px);
     background:
         radial-gradient(circle at 78% 20%, rgba(198, 161, 91, 0.2), transparent 32%),
         var(--financa-dark) !important;
@@ -990,7 +989,7 @@
 
 .financa-contact {
     .s_text_block {
-        padding-block: 80px;
+        padding-block: 48px;
     }
 
     .lead {
@@ -1136,7 +1135,7 @@
     }
 
     .financa-section {
-        padding-block: 64px;
+        padding-block: 48px;
     }
 
     .financa-section-heading {

@@ -40,9 +40,6 @@
             <xpath expr="//section[hasclass('s_title')]" position="attributes">
                 <attribute name="class" add="financa-contact-hero" separator=" "/>
             </xpath>
-            <xpath expr="//section[hasclass('s_title')]//h1" position="before">
-                <p class="financa-eyebrow">Contacto</p>
-            </xpath>
             <xpath expr="//section[hasclass('s_text_block')]//div[hasclass('offset-lg-1')]" position="attributes">
                 <attribute name="class" add="financa-contact-info" separator=" "/>
             </xpath>
