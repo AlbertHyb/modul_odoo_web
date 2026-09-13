@@ -166,8 +166,11 @@
     align-items: center;
     overflow: hidden;
     padding-block: clamp(40px, 5vw, 72px);
+    // ponytail: dim gradient keeps the owl watermark subtle; single-value size scales proportionally (no distortion)
     background:
         radial-gradient(circle at 78% 20%, rgba(198, 161, 91, 0.2), transparent 32%),
+        linear-gradient(rgba(17, 17, 17, 0.9), rgba(17, 17, 17, 0.9)),
+        url("../img/logo_financa_dorado.png") center / clamp(280px, 72vw, 560px) no-repeat,
         var(--financa-dark);
     color: var(--financa-white);
 
