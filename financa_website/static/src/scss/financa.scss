@@ -812,6 +812,13 @@
     }
 }
 
+// ponytail: experience reuses the timeline; the years are the content, not a label
+.financa-experience .financa-timeline span {
+    color: var(--financa-dark);
+    font-size: 1.5rem;
+    letter-spacing: -0.03em;
+}
+
 .financa-final-cta {
     background: var(--financa-gold);
 }
@@ -1244,14 +1251,7 @@
     .financa-problems-grid,
     .financa-integration-flow,
     .financa-capabilities,
-// ponytail: experience reuses the timeline; the years are the content, not a label
-.financa-experience .financa-timeline span {
-    color: var(--financa-dark);
-    font-size: 1.5rem;
-    letter-spacing: -0.03em;
-}
-
-.financa-cases-grid {
+    .financa-cases-grid {
         grid-template-columns: 1fr;
     }
 
