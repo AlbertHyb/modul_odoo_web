@@ -436,12 +436,7 @@
 
 .financa-service-card {
     padding: clamp(26px, 4vw, 40px);
-    transition: transform 180ms ease, box-shadow 180ms ease;
-
-    &:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 18px 42px rgba(17, 17, 17, 0.1);
-    }
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 
     h3 {
         margin-block: 22px 14px;
@@ -690,12 +685,7 @@
 
 .financa-case-card {
     padding: clamp(26px, 4vw, 40px);
-    transition: transform 180ms ease, box-shadow 180ms ease;
-
-    &:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 18px 42px rgba(17, 17, 17, 0.1);
-    }
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 
     h3 {
         margin-bottom: 10px;
@@ -705,6 +695,23 @@
         margin-bottom: 0;
         color: var(--financa-muted);
     }
+}
+
+// ponytail: lift only on real pointers; :focus-visible gives keyboard the same feedback
+@media (hover: hover) {
+    .financa-service-card:hover,
+    .financa-case-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(198, 161, 91, 0.55);
+        box-shadow: 0 18px 42px rgba(17, 17, 17, 0.12);
+    }
+}
+
+.financa-service-card:focus-visible,
+.financa-case-card:focus-visible {
+    transform: translateY(-6px);
+    border-color: rgba(198, 161, 91, 0.55);
+    box-shadow: 0 18px 42px rgba(17, 17, 17, 0.12);
 }
 
 .financa-diagnosis-grid {
@@ -999,10 +1006,55 @@
     font-weight: 700;
 }
 
+// ponytail: content stays visible without JS; these states only exist under .js-financa
 .js-financa .financa-reveal {
-    opacity: 0;
-    transform: translateY(22px);
-    transition: opacity 500ms ease, transform 500ms ease;
+    .financa-anim-lead,
+    .financa-anim-item {
+        opacity: 0;
+        transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1), transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+        transition-delay: var(--financa-delay, 0ms);
+    }
+
+    .financa-anim-lead {
+        transform: translateY(20px);
+    }
+
+    .financa-anim-item {
+        transform: translateY(16px);
+    }
+
+    // diagnóstico: copy desde la izquierda, checks desde la derecha
+    .financa-diagnosis-grid > .financa-anim-lead:first-child {
+        transform: translateX(-20px);
+    }
+
+    .financa-diagnosis-checks > .financa-anim-item {
+        transform: translateX(20px);
+    }
+
+    &.is-visible {
+        .financa-anim-lead,
+        .financa-anim-item {
+            opacity: 1;
+            transform: none;
+        }
+    }
+}
+
+// ponytail: gold line grows on section entry; no extra markup, decorative only
+.js-financa .financa-section-heading h2::after {
+    display: block;
+    width: 0;
+    height: 2px;
+    margin-top: 14px;
+    border-radius: 2px;
+    background: var(--financa-gold);
+    content: "";
+    transition: width 500ms cubic-bezier(0.22, 1, 0.36, 1) 150ms;
+}
+
+.js-financa .financa-reveal.is-visible .financa-section-heading h2::after {
+    width: 56px;
 }
 
 .financa-contact-hero {
@@ -1110,11 +1162,6 @@
     .fa {
         color: var(--financa-gold-text);
     }
-}
-
-.financa-reveal.is-visible {
-    opacity: 1;
-    transform: none;
 }
 
 @media (max-width: 991.98px) {
@@ -1271,13 +1318,19 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .js-financa .financa-reveal,
+    .js-financa .financa-reveal .financa-anim-lead,
+    .js-financa .financa-reveal .financa-anim-item,
     .financa-card,
     .financa-button,
     .financa-hero-carousel.is-enhanced .financa-hero-panel,
     .financa-hero-carousel.is-enhanced .financa-hero-panel[data-financa-state="next"] {
         opacity: 1;
         transform: none;
+        transition: none;
+    }
+
+    .js-financa .financa-section-heading h2::after {
+        width: 56px;
         transition: none;
     }
 

@@ -313,23 +313,23 @@
                 </div>
                 <ol class="financa-timeline">
                     <li>
-                        <span>+30 años</span>
+                        <span data-count="30" data-count-prefix="+" data-count-suffix=" años">+30 años</span>
                         <h3>Fiscal y contabilidad</h3>
                     </li>
                     <li>
-                        <span>+25 años</span>
+                        <span data-count="25" data-count-prefix="+" data-count-suffix=" años">+25 años</span>
                         <h3>Dirección empresarial</h3>
                     </li>
                     <li>
-                        <span>+20 años</span>
+                        <span data-count="20" data-count-prefix="+" data-count-suffix=" años">+20 años</span>
                         <h3>Planeación financiera</h3>
                     </li>
                     <li>
-                        <span>+15 años</span>
+                        <span data-count="15" data-count-prefix="+" data-count-suffix=" años">+15 años</span>
                         <h3>Estructuración empresarial</h3>
                     </li>
                     <li>
-                        <span>+10 años</span>
+                        <span data-count="10" data-count-prefix="+" data-count-suffix=" años">+10 años</span>
                         <h3>Implementaciones ERP</h3>
                     </li>
                 </ol>
