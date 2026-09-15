@@ -883,6 +883,11 @@
         opacity: 0.74;
     }
 
+    // ponytail: hides the editable header text block (stock Odoo phone/mail placeholder)
+    li:has(a[href^="tel:"]) {
+        display: none;
+    }
+
     .financa-header-cta {
         border-color: var(--financa-gold) !important;
         background: var(--financa-gold) !important;
