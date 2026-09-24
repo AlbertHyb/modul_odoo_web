@@ -65,6 +65,13 @@ class FinancaContractTest(unittest.TestCase):
         self.assertIn("t-if=\"website.domain == '__FINANCA_DOMAIN__' and not no_footer\"", homepage)
 
 
+    def test_contact_path_has_a_published_financa_page(self):
+        contact = (ADDON / "views/thank_you.xml").read_text()
+        self.assertIn('id="contactus_page_financa_route" model="website.page"', contact)
+        self.assertIn('<field name="url">/contactus</field>', contact)
+        self.assertIn('<field name="is_published" eval="True"/>', contact)
+        self.assertIn('t-call="website.contactus"', contact)
+
     def test_scss_avoids_libsass_min_with_calc(self):
         scss = (ADDON / "static/src/scss/financa.scss").read_text()
         self.assertNotIn("min(calc(", scss)

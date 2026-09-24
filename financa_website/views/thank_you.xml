@@ -27,6 +27,20 @@
         </field>
     </record>
 
+    <record id="contactus_page_financa_route" model="website.page">
+        <field name="name">Contacto</field>
+        <field name="type">qweb</field>
+        <field name="key">financa_website.contactus_page_financa_route</field>
+        <field name="url">/contactus</field>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
+        <field name="is_published" eval="True"/>
+        <field name="arch" type="xml">
+            <t name="Contacto" t-name="financa_website.contactus_page_financa_route">
+                <t t-call="website.contactus"/>
+            </t>
+        </field>
+    </record>
+
     <record id="contactus_page_financa" model="ir.ui.view">
         <field name="name">Financa Contact Page Styling</field>
         <field name="key">financa_website.contactus_page_financa</field>
