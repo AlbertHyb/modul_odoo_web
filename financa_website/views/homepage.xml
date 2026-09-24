@@ -9,21 +9,23 @@
         <field name="is_published" eval="True"/>
         <field name="website_indexed" eval="True"/>
         <field name="track" eval="True"/>
-        <field name="website_meta_title">Consultoría financiera, fiscal y tecnológica para crecer con control | Financa Consultores</field>
-        <field name="website_meta_description">Consultoría financiera, contable y tecnológica para conectar procesos, recuperar el control de la información y crecer con estructura y rentabilidad.</field>
+        <field name="website_meta_title">Crecer con control | Financa Consultores</field>
+        <field name="website_meta_description">Finanzas, negocio y tecnología para empresas que buscan tomar mejores decisiones, ordenar su operación y crecer con estructura y control.</field>
         <field name="arch" type="xml">
             <t name="Financa Consultores" t-name="financa_website.financa_homepage">
                 <t t-call="website.layout">
-                    <t t-set="additional_title">Consultoría financiera, fiscal y tecnológica para crecer con control | Financa Consultores</t>
+                    <t t-set="additional_title">Crecer con control | Financa Consultores</t>
                     <div id="wrap" class="financa-homepage oe_structure">
                         <t t-call="financa_website.snippet_hero"/>
                         <t t-call="financa_website.snippet_problems"/>
-                        <t t-call="financa_website.snippet_services"/>
                         <t t-call="financa_website.snippet_before_after"/>
+                        <t t-call="financa_website.snippet_services"/>
                         <t t-call="financa_website.snippet_technology"/>
                         <t t-call="financa_website.snippet_odoo_center"/>
                         <t t-call="financa_website.snippet_diagnosis"/>
                         <t t-call="financa_website.snippet_process"/>
+                        <t t-call="financa_website.snippet_experience"/>
+                        <t t-call="financa_website.snippet_cases"/>
                         <t t-call="financa_website.snippet_final_cta"/>
                     </div>
                 </t>
@@ -33,8 +35,8 @@
 
     <!-- Menus are attached to the root menu of the website selected by domain. -->
     <record id="menu_financa_services" model="website.menu">
-        <field name="name">Servicios</field>
-        <field name="url">/#servicios</field>
+        <field name="name">Ecosistema</field>
+        <field name="url">/#ecosistema</field>
         <field name="sequence" eval="20"/>
         <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
         <field name="parent_id" search="[('website_id.domain', '=', '__FINANCA_DOMAIN__'), ('parent_id', '=', False)]"/>
@@ -112,10 +114,10 @@
                             <div>
                                 <h3 class="financa-footer-heading">Soluciones</h3>
                                 <ul>
-                                    <li><a href="/#servicios">Finanzas y negocio</a></li>
-                                    <li><a href="/#servicios">Contabilidad y fiscal</a></li>
-                                    <li><a href="/#tecnologia">Tecnología empresarial</a></li>
-                                    <li><a href="/#tecnologia">Automatización e IA</a></li>
+                                    <li><a href="/#ecosistema">Finanzas y negocio</a></li>
+                                    <li><a href="/#ecosistema">Fiscal y contabilidad</a></li>
+                                    <li><a href="/#ecosistema">Tecnología ERP</a></li>
+                                    <li><a href="/#tecnologia">Integración y automatización</a></li>
                                     <li><a href="/#odoo-erp">Odoo ERP</a></li>
                                 </ul>
                             </div>
