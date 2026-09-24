@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run from any CI runner with OpenSSH, tar, and a checked-out repository.
+# Run from any CI runner with OpenSSH, python3, tar, and a checked-out repository.
 set -Eeuo pipefail
 
 die() {
@@ -7,12 +7,13 @@ die() {
     exit 1
 }
 
-for variable in DEPLOY_HOST DEPLOY_USER DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS; do
+for variable in DEPLOY_HOST DEPLOY_USER DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS DEPLOY_DOMAIN; do
     [[ -n ${!variable:-} ]] || die "missing CI variable: $variable"
 done
 [[ -f "$DEPLOY_SSH_KEY" ]] || die "DEPLOY_SSH_KEY must point to a private-key file"
 [[ -f "$DEPLOY_KNOWN_HOSTS" ]] || die "DEPLOY_KNOWN_HOSTS must point to a known_hosts file"
 [[ -d financa_website && -d deploy/odoo ]] || die "run from repository root"
+command -v python3 >/dev/null || die "python3 is required to render the artifact"
 
 deploy_port=${DEPLOY_PORT:-22}
 deploy_root=${DEPLOY_REMOTE_ROOT:-/var/tmp/financa-deploy}
@@ -25,8 +26,14 @@ deployment_id="${run_id}-${revision}"
 remote_target="${DEPLOY_USER}@${DEPLOY_HOST}"
 remote_stage="${deploy_root%/}/${deployment_id}"
 remote_archive="${remote_stage}/financa_website.tgz"
+render_root=$(mktemp -d "${TMPDIR:-/tmp}/financa-render.XXXXXX")
+artifact="${render_root}/artifact"
 local_archive=$(mktemp "${TMPDIR:-/tmp}/financa_website.XXXXXX.tgz")
-trap 'rm -f "$local_archive"' EXIT
+cleanup() {
+    rm -rf "$render_root"
+    rm -f "$local_archive"
+}
+trap cleanup EXIT
 
 ssh_options=(
     -i "$DEPLOY_SSH_KEY"
@@ -44,11 +51,22 @@ scp_options=(
     -o "UserKnownHostsFile=$DEPLOY_KNOWN_HOSTS"
 )
 
-tar --exclude='__pycache__' --exclude='*.pyc' -czf "$local_archive" financa_website deploy/odoo
+# The repository ships the __FINANCA_DOMAIN__ token, so the production hostname
+# only enters the pipeline here. The server preflight aborts when the resulting
+# artifact and /etc/financa/deploy.env disagree about that hostname.
+python3 deploy/ci/render_financa_artifact.py \
+    --source . \
+    --output "$artifact" \
+    --commit "$revision" \
+    --environment production \
+    --domain "$DEPLOY_DOMAIN"
+
+tar --exclude='__pycache__' --exclude='*.pyc' -C "$artifact" -czf "$local_archive" \
+    financa_website deploy/odoo artifact-manifest.json
 ssh "${ssh_options[@]}" "$remote_target" "install -d -m 0750 $(printf '%q' "$remote_stage")"
 scp "${scp_options[@]}" "$local_archive" "${remote_target}:${remote_archive}"
 ssh "${ssh_options[@]}" "$remote_target" \
     "tar -xzf $(printf '%q' "$remote_archive") -C $(printf '%q' "$remote_stage") && sudo -n /usr/local/sbin/financa-deploy $(printf '%q' "$remote_stage/financa_website") $(printf '%q' "$remote_stage/deploy/odoo")"
 
-printf 'Published revision %s to %s\n' "$revision" "$remote_target"
+printf 'Published revision %s for %s to %s\n' "$revision" "$DEPLOY_DOMAIN" "$remote_target"
 

@@ -7,7 +7,7 @@ import sys
 
 DOMAIN = os.environ["FINANCA_DOMAIN"]
 MODULE_HOMEPAGE_KEY = "financa_website.financa_homepage"
-EXPECTED_MODULE_DOMAIN = "https://financa-mx"
+EXPECTED_MODULE_DOMAIN = "__FINANCA_DOMAIN__"
 
 
 def fail(message):

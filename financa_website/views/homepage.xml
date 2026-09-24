@@ -5,23 +5,27 @@
         <field name="type">qweb</field>
         <field name="key">financa_website.financa_homepage</field>
         <field name="url">/</field>
-        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
         <field name="is_published" eval="True"/>
         <field name="website_indexed" eval="True"/>
         <field name="track" eval="True"/>
-        <field name="website_meta_title">Consultoría financiera y Odoo ERP | Financa Consultores</field>
-        <field name="website_meta_description">Consultoría financiera, fiscal y tecnológica para conectar procesos, mejorar la rentabilidad e implementar Odoo ERP con estructura.</field>
+        <field name="website_meta_title">Crecer con control | Financa Consultores</field>
+        <field name="website_meta_description">Finanzas, negocio y tecnología para empresas que buscan tomar mejores decisiones, ordenar su operación y crecer con estructura y control.</field>
         <field name="arch" type="xml">
             <t name="Financa Consultores" t-name="financa_website.financa_homepage">
                 <t t-call="website.layout">
-                    <t t-set="additional_title">Consultoría financiera y Odoo ERP | Financa Consultores</t>
+                    <t t-set="additional_title">Crecer con control | Financa Consultores</t>
                     <div id="wrap" class="financa-homepage oe_structure">
                         <t t-call="financa_website.snippet_hero"/>
-                        <t t-call="financa_website.snippet_services"/>
-                        <t t-call="financa_website.snippet_odoo_center"/>
+                        <t t-call="financa_website.snippet_problems"/>
                         <t t-call="financa_website.snippet_before_after"/>
+                        <t t-call="financa_website.snippet_services"/>
+                        <t t-call="financa_website.snippet_technology"/>
+                        <t t-call="financa_website.snippet_odoo_center"/>
                         <t t-call="financa_website.snippet_diagnosis"/>
                         <t t-call="financa_website.snippet_process"/>
+                        <t t-call="financa_website.snippet_experience"/>
+                        <t t-call="financa_website.snippet_cases"/>
                         <t t-call="financa_website.snippet_final_cta"/>
                     </div>
                 </t>
@@ -31,69 +35,74 @@
 
     <!-- Menus are attached to the root menu of the website selected by domain. -->
     <record id="menu_financa_services" model="website.menu">
-        <field name="name">Servicios</field>
-        <field name="url">/#servicios</field>
+        <field name="name">Ecosistema</field>
+        <field name="url">/#ecosistema</field>
         <field name="sequence" eval="20"/>
-        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
-        <field name="parent_id" search="[('website_id.domain', '=', 'https://financa-mx'), ('parent_id', '=', False)]"/>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
+        <field name="parent_id" search="[('website_id.domain', '=', '__FINANCA_DOMAIN__'), ('parent_id', '=', False)]"/>
     </record>
     <record id="menu_financa_odoo" model="website.menu">
         <field name="name">Odoo ERP</field>
         <field name="url">/#odoo-erp</field>
         <field name="sequence" eval="30"/>
-        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
-        <field name="parent_id" search="[('website_id.domain', '=', 'https://financa-mx'), ('parent_id', '=', False)]"/>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
+        <field name="parent_id" search="[('website_id.domain', '=', '__FINANCA_DOMAIN__'), ('parent_id', '=', False)]"/>
     </record>
     <record id="menu_financa_diagnosis" model="website.menu">
         <field name="name">Diagnóstico</field>
         <field name="url">/#diagnostico</field>
         <field name="sequence" eval="40"/>
-        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
-        <field name="parent_id" search="[('website_id.domain', '=', 'https://financa-mx'), ('parent_id', '=', False)]"/>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
+        <field name="parent_id" search="[('website_id.domain', '=', '__FINANCA_DOMAIN__'), ('parent_id', '=', False)]"/>
     </record>
     <record id="menu_financa_process" model="website.menu">
         <field name="name">Proceso</field>
         <field name="url">/#proceso</field>
         <field name="sequence" eval="50"/>
-        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
-        <field name="parent_id" search="[('website_id.domain', '=', 'https://financa-mx'), ('parent_id', '=', False)]"/>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
+        <field name="parent_id" search="[('website_id.domain', '=', '__FINANCA_DOMAIN__'), ('parent_id', '=', False)]"/>
     </record>
     <record id="menu_financa_contact" model="website.menu">
         <field name="name">Contacto</field>
         <field name="url">/contactus</field>
         <field name="sequence" eval="60"/>
-        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
-        <field name="parent_id" search="[('website_id.domain', '=', 'https://financa-mx'), ('parent_id', '=', False)]"/>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
+        <field name="parent_id" search="[('website_id.domain', '=', '__FINANCA_DOMAIN__'), ('parent_id', '=', False)]"/>
     </record>
     <record id="menu_financa_login" model="website.menu">
         <field name="name">Acceso a clientes</field>
         <field name="url">/web/login</field>
         <field name="sequence" eval="70"/>
-        <field name="website_id" search="[('domain', '=', 'https://financa-mx')]"/>
-        <field name="parent_id" search="[('website_id.domain', '=', 'https://financa-mx'), ('parent_id', '=', False)]"/>
+        <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
+        <field name="parent_id" search="[('website_id.domain', '=', '__FINANCA_DOMAIN__'), ('parent_id', '=', False)]"/>
     </record>
 
     <template id="layout_financa_header_class" inherit_id="website.layout" name="Financa Header Scope">
         <xpath expr="//header" position="attributes">
-            <attribute name="t-attf-class" add="#{'financa-site-header' if website.domain == 'https://financa-mx' else ''}" separator=" "/>
+            <attribute name="t-attf-class" add="#{'financa-site-header' if website.domain == '__FINANCA_DOMAIN__' else ''}" separator=" "/>
         </xpath>
     </template>
 
     <template id="header_call_to_action_financa" inherit_id="website.header_call_to_action" name="Financa Header CTA">
-        <xpath expr="//a[hasclass('btn_cta')]" position="replace">
-            <a t-if="website.domain == 'https://financa-mx'"
+        <xpath expr="//a[hasclass('btn_cta')]" position="attributes">
+            <attribute name="t-if" add="website.domain != '__FINANCA_DOMAIN__'" separator=" and "/>
+        </xpath>
+        <xpath expr="//a[hasclass('btn_cta')]" position="before">
+            <a t-if="website.domain == '__FINANCA_DOMAIN__'"
                href="/contactus"
                class="oe_unremovable btn btn-primary btn_cta financa-header-cta"
                data-financa-cta="1"
                data-financa-cta-name="solicitar_diagnostico"
                data-financa-cta-location="header">Solicitar diagnóstico</a>
-            <t t-else="">$0</t>
         </xpath>
     </template>
 
     <template id="layout_financa_footer" inherit_id="website.layout" name="Financa Global Footer">
-        <xpath expr="//footer[@id='bottom']" position="replace">
-            <footer t-if="website.domain == 'https://financa-mx' and not no_footer"
+        <xpath expr="//footer[@id='bottom']" position="attributes">
+            <attribute name="t-if" add="website.domain != '__FINANCA_DOMAIN__'" separator=" and "/>
+        </xpath>
+        <xpath expr="//footer[@id='bottom']" position="before">
+            <footer t-if="website.domain == '__FINANCA_DOMAIN__' and not no_footer"
                     id="bottom" class="financa-footer o_footer">
                 <div id="footer" class="oe_structure oe_structure_solo">
                     <section class="financa-footer-main" data-name="Financa Footer">
@@ -103,17 +112,19 @@
                                 <p>Más que números. Más que contabilidad. Más que fiscal.</p>
                             </div>
                             <div>
-                                <h2 class="financa-footer-heading">Servicios</h2>
+                                <h3 class="financa-footer-heading">Soluciones</h3>
                                 <ul>
-                                    <li><a href="/#servicios">Consultoría financiera</a></li>
-                                    <li><a href="/#servicios">Atención fiscal y contable</a></li>
+                                    <li><a href="/#ecosistema">Finanzas y negocio</a></li>
+                                    <li><a href="/#ecosistema">Fiscal y contabilidad</a></li>
+                                    <li><a href="/#ecosistema">Tecnología ERP</a></li>
+                                    <li><a href="/#tecnologia">Integración y automatización</a></li>
                                     <li><a href="/#odoo-erp">Odoo ERP</a></li>
-                                    <li><a href="/#servicios">Automatización e IA</a></li>
                                 </ul>
                             </div>
                             <div>
-                                <h2 class="financa-footer-heading">Empresa</h2>
+                                <h3 class="financa-footer-heading">Empresa</h3>
                                 <ul>
+                                    <li><a href="/#problemas">Problemas que resolvemos</a></li>
                                     <li><a href="/#diagnostico">Diagnóstico</a></li>
                                     <li><a href="/#proceso">Cómo trabajamos</a></li>
                                     <li><a href="/contactus">Contacto</a></li>
@@ -121,7 +132,7 @@
                                 </ul>
                             </div>
                             <div>
-                                <h2 class="financa-footer-heading">Legal</h2>
+                                <h3 class="financa-footer-heading">Legal</h3>
                                 <ul>
                                     <li><a href="/cookie-policy">Política de cookies</a></li>
                                     <li t-if="request.env['website.page'].sudo().search_count([('url', '=', '/aviso-de-privacidad'), ('website_id', '=', website.id), ('is_published', '=', True)])">
@@ -136,7 +147,6 @@
                     <div class="financa-container">&#169; 2026 Financa Consultores</div>
                 </div>
             </footer>
-            <t t-else="">$0</t>
         </xpath>
     </template>
 </odoo>

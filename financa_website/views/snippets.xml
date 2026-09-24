@@ -1,234 +1,377 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="snippet_hero" name="Hero Financa">
-        <section class="financa-hero financa-reveal"
-                 data-snippet="financa_website.snippet_hero"
-                 data-name="Hero Financa"
-                 data-financa-section="hero">
+        <section class="financa-hero" data-snippet="financa_website.snippet_hero" data-name="Hero Financa" data-financa-section="hero">
             <div class="financa-container financa-hero-grid">
                 <div class="financa-hero-copy">
-                    <p class="financa-eyebrow">Finanzas · Negocio · Tecnología</p>
-                    <h1>Consultoría financiera y Odoo ERP para empresas que quieren crecer con estructura.</h1>
-                    <p class="financa-hero-lead">Transformamos la información financiera en decisiones claras, conectando contabilidad, estrategia de negocio y tecnología ERP para impulsar control, rentabilidad y crecimiento.</p>
+                    <p class="financa-eyebrow">Finanzas · Fiscal y Contabilidad · ERP · Integración y Automatización</p>
+                    <h1>Crecer es importante. Crecer con control es indispensable.</h1>
+                    <p class="financa-hero-lead">Finanzas, negocio y tecnología para empresas que buscan tomar mejores decisiones, ordenar su operación y crecer con estructura.</p>
                     <div class="financa-actions">
-                        <a href="/contactus"
-                           class="financa-button financa-button-primary"
-                           data-financa-cta="1"
-                           data-financa-cta-name="solicitar_diagnostico"
-                           data-financa-cta-location="hero">Solicitar diagnóstico</a>
-                        <a href="#odoo-erp"
-                           class="financa-button financa-button-secondary"
-                           data-financa-cta="1"
-                           data-financa-cta-name="ver_soluciones_odoo"
-                           data-financa-cta-location="hero">Ver soluciones Odoo</a>
+                        <a href="/contactus" class="financa-button financa-button-primary" data-financa-cta="1" data-financa-cta-name="hablemos_empresa" data-financa-cta-location="hero">Hablemos de tu empresa</a>
+                        <a href="#ecosistema" class="financa-button financa-button-secondary" data-financa-cta="1" data-financa-cta-name="conoce_financa" data-financa-cta-location="hero">Conoce FINANCA</a>
                     </div>
                 </div>
-                <div class="financa-dashboard" role="img" aria-label="Dashboard ilustrativo con indicadores de ventas, contabilidad, inventario y CRM">
-                    <div class="financa-dashboard-header">
-                        <div>
-                            <span class="financa-dashboard-dot" aria-hidden="true"/>
-                            <span class="financa-dashboard-dot" aria-hidden="true"/>
-                            <span class="financa-dashboard-dot" aria-hidden="true"/>
+                <div class="financa-hero-carousel" role="region" aria-roledescription="carrusel" aria-label="Soluciones integrales Financa" tabindex="0">
+                    <div class="financa-hero-panels">
+                        <article class="financa-dashboard financa-hero-panel" role="group" aria-roledescription="diapositiva" aria-label="1 de 3: Control y decisiones">
+                            <div class="financa-dashboard-header">
+                                <div>
+                                    <span class="financa-dashboard-dot" aria-hidden="true"/>
+                                    <span class="financa-dashboard-dot" aria-hidden="true"/>
+                                    <span class="financa-dashboard-dot" aria-hidden="true"/>
+                                </div>
+                                <span>Visión del negocio</span>
+                            </div>
+                            <h2>Control y decisiones</h2>
+                            <div class="financa-dashboard-grid">
+                                <article><span>Ventas</span><strong data-count="18" data-count-prefix="+" data-count-suffix="%">+18%</strong><small>Crecimiento y rentabilidad</small></article>
+                                <article><span>Finanzas</span><strong>Reportes listos</strong><small>Información para decidir</small></article>
+                                <article><span>Operación</span><strong data-count="6" data-count-suffix=" alertas">6 alertas</strong><small>Procesos bajo control</small></article>
+                                <article><span>Comercial</span><strong data-count="24" data-count-suffix=" oportunidades">24 oportunidades</strong><small>Seguimiento visible</small></article>
+                            </div>
+                            <p class="financa-illustrative-note">Cifras únicamente ilustrativas; no representan datos reales.</p>
+                        </article>
+                        <article class="financa-hero-panel" role="group" aria-roledescription="diapositiva" aria-label="2 de 3: Empresa conectada">
+                            <p class="financa-hero-panel-kicker">Un solo flujo de información</p>
+                            <h2>Empresa conectada</h2>
+                            <ol class="financa-connected-flow">
+                                <li>Ventas</li><li>Finanzas</li><li>Compras</li><li>Inventarios / Operación</li><li>Contabilidad</li><li>Dirección</li>
+                            </ol>
+                        </article>
+                        <article class="financa-hero-panel" role="group" aria-roledescription="diapositiva" aria-label="3 de 3: Ecosistema Financa">
+                            <p class="financa-hero-panel-kicker">El ecosistema Financa</p>
+                            <h2>Una visión integral</h2>
+                            <ul class="financa-tech-grid">
+                                <li>Finanzas y negocio</li><li>Fiscal y contabilidad</li><li>Tecnología ERP</li><li>Integración y automatización</li>
+                            </ul>
+                        </article>
+                    </div>
+                    <div class="financa-carousel-controls" aria-label="Controles del carrusel">
+                        <button type="button" class="financa-carousel-arrow" data-financa-carousel-prev="1" aria-label="Mostrar panel anterior">&#8592;</button>
+                        <div class="financa-carousel-dots" aria-label="Elegir panel">
+                            <button type="button" data-financa-carousel-dot="0" aria-label="Mostrar Control y decisiones" aria-current="true"/>
+                            <button type="button" data-financa-carousel-dot="1" aria-label="Mostrar Empresa conectada" aria-current="false"/>
+                            <button type="button" data-financa-carousel-dot="2" aria-label="Mostrar Ecosistema Financa" aria-current="false"/>
                         </div>
-                        <span>Vista ejecutiva</span>
+                        <button type="button" class="financa-carousel-arrow" data-financa-carousel-next="1" aria-label="Mostrar panel siguiente">&#8594;</button>
                     </div>
-                    <div class="financa-dashboard-grid">
-                        <article>
-                            <span>Ventas</span>
-                            <strong data-count="18" data-count-prefix="+" data-count-suffix="%">+18%</strong>
-                            <small>Crecimiento ilustrativo</small>
-                        </article>
-                        <article>
-                            <span>Contabilidad</span>
-                            <strong>Reportes listos</strong>
-                            <small>Información ordenada</small>
-                        </article>
-                        <article>
-                            <span>Inventario</span>
-                            <strong data-count="6" data-count-suffix=" alertas">6 alertas</strong>
-                            <small>Atención prioritaria</small>
-                        </article>
-                        <article>
-                            <span>CRM</span>
-                            <strong data-count="24" data-count-suffix=" oportunidades">24 oportunidades</strong>
-                            <small>Pipeline conectado</small>
-                        </article>
-                    </div>
-                    <p class="financa-illustrative-note">Cifras únicamente ilustrativas; no representan datos reales.</p>
+                    <p class="financa-visually-hidden" data-financa-carousel-status="1" aria-live="polite" aria-atomic="true"/>
                 </div>
             </div>
         </section>
     </template>
 
-    <template id="snippet_services" name="Servicios Financa">
-        <section id="servicios"
-                 class="financa-section financa-services financa-reveal"
-                 data-snippet="financa_website.snippet_services"
-                 data-name="Servicios Financa"
-                 data-financa-section="servicios">
+    <template id="snippet_problems" name="El dolor">
+        <section id="problemas" class="financa-section financa-problems financa-reveal" data-snippet="financa_website.snippet_problems" data-name="El dolor" data-financa-section="problemas">
             <div class="financa-container">
                 <div class="financa-section-heading">
-                    <p class="financa-eyebrow">Una visión integral</p>
-                    <h2>Servicios Principales</h2>
-                    <p>Integramos finanzas, cumplimiento y tecnología para que la operación deje de depender de información aislada y avance con una estructura común.</p>
+                    <p class="financa-eyebrow">El dolor</p>
+                    <h2>¿Tu empresa está creciendo… pero también está creciendo el desorden?</h2>
+                </div>
+                <ul class="financa-problems-grid">
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-clock-o"/></span><p><strong>Información que llega tarde</strong> Los reportes llegan cuando la decisión ya se tomó.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-chain-broken"/></span><p><strong>Procesos desconectados</strong> Cada área trabaja por su lado y la información no fluye.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-database"/></span><p><strong>Inventarios difíciles de controlar</strong> No hay certeza sobre existencias, movimientos ni costos.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-eye-slash"/></span><p><strong>Decisiones con información incompleta</strong> Se decide con datos parciales o desactualizados.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-file-excel-o"/></span><p><strong>Obligaciones fiscales que no se anticipan</strong> Se atienden cuando ya urgen, no antes.</p></li>
+                    <li class="financa-problem"><span class="financa-icon" aria-hidden="true"><i class="fa fa-keyboard-o"/></span><p><strong>Sistemas que no se comunican</strong> Las herramientas no se hablan y el equipo hace el trabajo a mano.</p></li>
+                </ul>
+                <p class="financa-problems-closing">El crecimiento necesita estructura. <strong>FINANCA ayuda a conectar las piezas.</strong></p>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_services" name="Ecosistema Financa">
+        <section id="ecosistema" class="financa-section financa-services financa-reveal" data-snippet="financa_website.snippet_services" data-name="Ecosistema Financa" data-financa-section="ecosistema">
+            <div class="financa-container">
+                <div class="financa-section-heading">
+                    <p class="financa-eyebrow">El ecosistema Financa</p>
+                    <h2>Una empresa. Una visión integral.</h2>
                 </div>
                 <div class="financa-services-grid">
                     <article class="financa-card financa-service-card">
                         <span class="financa-icon" aria-hidden="true">01</span>
-                        <h3>Consultoría financiera y de negocio</h3>
-                        <p>Estrategias para entender costos, fortalecer la rentabilidad, administrar capital de trabajo y sostener el crecimiento.</p>
+                        <h3>Finanzas y negocio</h3>
+                        <p>Planeación, rentabilidad, flujo, presupuestos y estrategia.</p>
                     </article>
                     <article class="financa-card financa-service-card">
                         <span class="financa-icon" aria-hidden="true">02</span>
-                        <h3>Atención fiscal y contable</h3>
-                        <p>Cumplimiento con una lectura útil de la información financiera para decidir con mayor claridad y oportunidad.</p>
+                        <h3>Fiscal y contabilidad</h3>
+                        <p>Contabilidad, fiscal, nómina, SIROC, riesgos y cumplimiento.</p>
                     </article>
                     <article class="financa-card financa-service-card">
                         <span class="financa-icon" aria-hidden="true">03</span>
-                        <h3>Tecnología ERP Odoo</h3>
-                        <p>Conexión de ventas, contabilidad, inventarios, compras, CRM y operación dentro de una sola plataforma.</p>
+                        <h3>Tecnología ERP</h3>
+                        <p>Odoo, implementación, optimización y rescate.</p>
                     </article>
                     <article class="financa-card financa-service-card">
                         <span class="financa-icon" aria-hidden="true">04</span>
-                        <h3>Desarrollo, automatización e IA</h3>
-                        <p>Extensiones, integraciones y automatizaciones enfocadas en necesidades reales de la operación.</p>
+                        <h3>Integración y automatización</h3>
+                        <p>APIs, sistemas, automatización, IA y datos.</p>
                     </article>
                 </div>
+                <p class="financa-services-closing">Cuatro capacidades. Una sola visión: <strong>ayudar a tu empresa a tener mayor control.</strong></p>
             </div>
         </section>
     </template>
 
-    <template id="snippet_odoo_center" name="Odoo Centro de Control">
-        <section id="odoo-erp"
-                 class="financa-section financa-odoo-center financa-reveal"
-                 data-snippet="financa_website.snippet_odoo_center"
-                 data-name="Odoo Centro de Control"
-                 data-financa-section="odoo_erp">
+    <template id="snippet_before_after" name="Nuestra propuesta">
+        <section id="propuesta" class="financa-section financa-integration financa-reveal" data-snippet="financa_website.snippet_before_after" data-name="Nuestra propuesta" data-financa-section="propuesta">
+            <div class="financa-container">
+                <div class="financa-section-heading">
+                    <p class="financa-eyebrow">Nuestra propuesta</p>
+                    <h2>Entendemos la empresa antes de proponer la solución.</h2>
+                    <p>No comenzamos por un software. No comenzamos por una declaración. No comenzamos por un reporte. <strong>Comenzamos entendiendo cómo funciona tu negocio.</strong></p>
+                </div>
+                <ol class="financa-integration-flow">
+                    <li><span>01</span><h3>Diagnóstico</h3></li>
+                    <li><span>02</span><h3>Diseño</h3></li>
+                    <li><span>03</span><h3>Implementación</h3></li>
+                    <li><span>04</span><h3>Información</h3></li>
+                    <li><span>05</span><h3>Decisión</h3></li>
+                </ol>
+                <p class="financa-integration-closing">No somos solamente contadores. No somos solamente financieros. No somos solamente implementadores. <strong>Integramos las capacidades que una empresa necesita para entender, controlar y transformar su operación.</strong></p>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_technology" name="Integración y automatización">
+        <section id="tecnologia" class="financa-section financa-technology financa-reveal" data-snippet="financa_website.snippet_technology" data-name="Integración y automatización" data-financa-section="tecnologia">
+            <div class="financa-container">
+                <div class="financa-section-heading">
+                    <p class="financa-eyebrow">Integración y automatización</p>
+                    <h2>Cuando los sistemas no hablan entre sí, las personas terminan haciendo el trabajo.</h2>
+                    <p>FINANCA conecta ERP, sistemas administrativos, plataformas, APIs y datos, y automatiza procesos repetitivos para reducir trabajo manual y mejorar la calidad de la información.</p>
+                </div>
+                <ul class="financa-capabilities">
+                    <li><i class="fa fa-link" aria-hidden="true"/><span>Integración</span></li>
+                    <li><i class="fa fa-bolt" aria-hidden="true"/><span>Automatización</span></li>
+                    <li><i class="fa fa-code" aria-hidden="true"/><span>Desarrollo</span></li>
+                    <li><i class="fa fa-microchip" aria-hidden="true"/><span>IA aplicada</span></li>
+                </ul>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_odoo_center" name="Odoo especializado">
+        <section id="odoo-erp" class="financa-section financa-odoo-center financa-reveal" data-snippet="financa_website.snippet_odoo_center" data-name="Odoo especializado" data-financa-section="odoo_erp">
             <div class="financa-container">
                 <div class="financa-section-heading financa-section-heading-light">
-                    <p class="financa-eyebrow">Operación conectada</p>
-                    <h2>Odoo ERP como centro de control empresarial</h2>
-                    <p>Una plataforma común convierte cada movimiento operativo en información financiera útil para dirigir el negocio.</p>
+                    <p class="financa-eyebrow">Tecnología y Odoo ERP</p>
+                    <h2>La tecnología debe convertir la operación en información.</h2>
+                    <p>Implementamos Odoo desde una perspectiva financiera y empresarial: conectamos Ventas → Compras → Inventario → Operación → Finanzas para obtener información confiable, control y decisiones.</p>
                 </div>
-                <div class="financa-odoo-map" aria-label="Módulos empresariales conectados con Odoo ERP">
+                <div class="financa-odoo-map" aria-label="Servicios de Odoo que ofrece Financa">
                     <div class="financa-odoo-core">
-                        <span>Centro de control</span>
+                        <span>De la operación a la decisión</span>
                         <strong>Odoo ERP</strong>
                     </div>
                     <div class="financa-odoo-modules">
-                        <article><span>01</span><div><h3>Ventas</h3><p>Cotizaciones, pedidos y facturación conectados.</p></div></article>
-                        <article><span>02</span><div><h3>Contabilidad</h3><p>Registro, conciliación y reportes oportunos.</p></div></article>
-                        <article><span>03</span><div><h3>Inventarios</h3><p>Existencias y movimientos con trazabilidad.</p></div></article>
-                        <article><span>04</span><div><h3>CRM</h3><p>Oportunidades y seguimiento comercial visible.</p></div></article>
-                        <article><span>05</span><div><h3>Compras</h3><p>Abastecimiento alineado con demanda y caja.</p></div></article>
-                        <article><span>06</span><div><h3>Automatización</h3><p>Menos captura repetida y mejores controles.</p></div></article>
+                        <article>
+                            <span>01</span>
+                            <div>
+                                <h3>Implementación</h3>
+                                <p>Puesta en marcha ordenada, por etapas y alineada a tus procesos.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span>02</span>
+                            <div>
+                                <h3>Configuración</h3>
+                                <p>Parámetros y estructura ajustados a la operación real, no al revés.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span>03</span>
+                            <div>
+                                <h3>Optimización</h3>
+                                <p>Ajustes para que el sistema rinda y deje de generar fricción.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span>04</span>
+                            <div>
+                                <h3>Rescate de proyectos</h3>
+                                <p>Recuperamos implementaciones detenidas o mal encaminadas.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span>05</span>
+                            <div>
+                                <h3>Integraciones</h3>
+                                <p>Conexión con tus herramientas para un flujo de información continuo.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span>06</span>
+                            <div>
+                                <h3>Automatización</h3>
+                                <p>Menos captura repetida y más controles automáticos.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span>07</span>
+                            <div>
+                                <h3>Desarrollo específico</h3>
+                                <p>Funcionalidades a medida cuando el estándar no alcanza.</p>
+                            </div>
+                        </article>
+                        <article>
+                            <span>08</span>
+                            <div>
+                                <h3>Mejora continua</h3>
+                                <p>Acompañamiento para que el sistema evolucione con el negocio.</p>
+                            </div>
+                        </article>
                     </div>
                 </div>
             </div>
         </section>
     </template>
 
-    <template id="snippet_before_after" name="Antes vs Después">
-        <section class="financa-section financa-before-after financa-reveal"
-                 data-snippet="financa_website.snippet_before_after"
-                 data-name="Antes vs Después"
-                 data-financa-section="antes_despues">
-            <div class="financa-container">
-                <div class="financa-section-heading">
-                    <p class="financa-eyebrow">Del dato aislado a la decisión</p>
-                    <h2>Cuando Odoo está bien implementado, la empresa deja de operar a ciegas</h2>
-                </div>
-                <div class="financa-comparison-grid">
-                    <article class="financa-comparison financa-comparison-before">
-                        <span class="financa-comparison-label">Antes</span>
-                        <h3>Información dispersa y reacción tardía</h3>
-                        <ul>
-                            <li>Procesos desconectados entre áreas.</li>
-                            <li>Capturas duplicadas y errores difíciles de rastrear.</li>
-                            <li>Reportes que llegan cuando la decisión ya pasó.</li>
-                            <li>Poca claridad sobre rentabilidad, caja e inventario.</li>
-                        </ul>
-                    </article>
-                    <article class="financa-comparison financa-comparison-after">
-                        <span class="financa-comparison-label">Después</span>
-                        <h3>Control compartido y decisiones oportunas</h3>
-                        <ul>
-                            <li>Una operación conectada de principio a fin.</li>
-                            <li>Datos consistentes y trazabilidad por movimiento.</li>
-                            <li>Indicadores disponibles para dirigir el negocio.</li>
-                            <li>Mejor coordinación entre finanzas y operación.</li>
-                        </ul>
-                    </article>
-                </div>
-            </div>
-        </section>
-    </template>
-
-    <template id="snippet_diagnosis" name="Diagnóstico Odoo">
-        <section id="diagnostico"
-                 class="financa-section financa-diagnosis financa-reveal"
-                 data-snippet="financa_website.snippet_diagnosis"
-                 data-name="Diagnóstico Odoo"
-                 data-financa-section="diagnostico">
+    <template id="snippet_diagnosis" name="Rescate de implementación Odoo">
+        <section id="diagnostico" class="financa-section financa-diagnosis financa-reveal" data-snippet="financa_website.snippet_diagnosis" data-name="Rescate de implementación Odoo" data-financa-section="diagnostico">
             <div class="financa-container financa-diagnosis-grid">
                 <div>
-                    <p class="financa-eyebrow">Recupera el control</p>
-                    <h2>¿Tu implementación de Odoo no quedó como esperabas?</h2>
+                    <p class="financa-eyebrow">Rescate de implementación Odoo</p>
+                    <h2>¿Tu Odoo ya está implementado pero no funciona como esperabas?</h2>
                     <p>Financa revisa configuración, procesos contables y operación para detectar errores, desconexiones y oportunidades de mejora. La salida esperada es una ruta útil, ordenada y alineada al crecimiento.</p>
-                    <a href="/contactus"
-                       class="financa-button financa-button-primary"
-                       data-financa-cta="1"
-                       data-financa-cta-name="solicitar_diagnostico_odoo"
-                       data-financa-cta-location="diagnostico">Solicitar diagnóstico Odoo</a>
+                    <a href="/contactus" class="financa-button financa-button-primary" data-financa-cta="1" data-financa-cta-name="rescatar_implementacion" data-financa-cta-location="rescate">Rescatar mi implementación</a>
                 </div>
                 <div class="financa-diagnosis-checks">
-                    <div><span aria-hidden="true">✓</span><p><strong>Configuración y módulos</strong> Revisión de la estructura que sostiene la operación.</p></div>
-                    <div><span aria-hidden="true">✓</span><p><strong>Procesos contables</strong> Validación del flujo desde la operación hasta los reportes.</p></div>
-                    <div><span aria-hidden="true">✓</span><p><strong>Datos e integraciones</strong> Identificación de duplicidades, huecos y desconexiones.</p></div>
-                    <div><span aria-hidden="true">✓</span><p><strong>Uso cotidiano</strong> Detección de fricciones que frenan adopción y control.</p></div>
+                    <div>
+                        <span aria-hidden="true">✓</span>
+                        <p>
+                            <strong>Configuración y módulos</strong> Revisión de la estructura que sostiene la operación.</p>
+                    </div>
+                    <div>
+                        <span aria-hidden="true">✓</span>
+                        <p>
+                            <strong>Procesos contables</strong> Validación del flujo desde la operación hasta los reportes.</p>
+                    </div>
+                    <div>
+                        <span aria-hidden="true">✓</span>
+                        <p>
+                            <strong>Datos e integraciones</strong> Identificación de duplicidades, huecos y desconexiones.</p>
+                    </div>
+                    <div>
+                        <span aria-hidden="true">✓</span>
+                        <p>
+                            <strong>Uso cotidiano</strong> Detección de fricciones que frenan adopción y control.</p>
+                    </div>
                 </div>
             </div>
         </section>
     </template>
 
-    <template id="snippet_process" name="Proceso Financa">
-        <section id="proceso"
-                 class="financa-section financa-process financa-reveal"
-                 data-snippet="financa_website.snippet_process"
-                 data-name="Proceso Financa"
-                 data-financa-section="proceso">
+    <template id="snippet_process" name="Método Financa">
+        <section id="proceso" class="financa-section financa-process financa-reveal" data-snippet="financa_website.snippet_process" data-name="Método Financa" data-financa-section="proceso">
             <div class="financa-container">
                 <div class="financa-section-heading">
-                    <p class="financa-eyebrow">Cómo trabajamos</p>
-                    <h2>Un método claro para ordenar y avanzar</h2>
+                    <p class="financa-eyebrow">Método Financa</p>
+                    <h2>No vendemos soluciones aisladas. Construimos soluciones que funcionan.</h2>
                 </div>
                 <ol class="financa-timeline">
-                    <li><span>01</span><h3>Diagnóstico</h3><p>Entendemos procesos, objetivos y puntos críticos.</p></li>
-                    <li><span>02</span><h3>Diseño</h3><p>Definimos prioridades, responsables y una ruta viable.</p></li>
-                    <li><span>03</span><h3>Implementación</h3><p>Configuramos y conectamos la operación por etapas.</p></li>
-                    <li><span>04</span><h3>Adopción</h3><p>Acompañamos al equipo con capacitación y controles.</p></li>
-                    <li><span>05</span><h3>Mejora</h3><p>Medimos resultados y ajustamos donde aporta valor.</p></li>
+                    <li>
+                        <span>01</span>
+                        <h3>Diagnóstico</h3>
+                        <p>Entendemos tu empresa.</p>
+                    </li>
+                    <li>
+                        <span>02</span>
+                        <h3>Diseño</h3>
+                        <p>Definimos la solución.</p>
+                    </li>
+                    <li>
+                        <span>03</span>
+                        <h3>Implementación</h3>
+                        <p>La llevamos a la operación.</p>
+                    </li>
+                    <li>
+                        <span>04</span>
+                        <h3>Información</h3>
+                        <p>Construimos información útil y confiable.</p>
+                    </li>
+                    <li>
+                        <span>05</span>
+                        <h3>Decisión</h3>
+                        <p>La convertimos en control y acción.</p>
+                    </li>
                 </ol>
+                <p class="financa-process-closing">Porque una herramienta solamente genera valor cuando realmente mejora la forma en que funciona la empresa.</p>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_experience" name="Experiencia Financa">
+        <section id="experiencia" class="financa-section financa-process financa-experience financa-reveal" data-snippet="financa_website.snippet_experience" data-name="Experiencia Financa" data-financa-section="experiencia">
+            <div class="financa-container">
+                <div class="financa-section-heading">
+                    <p class="financa-eyebrow">Experiencia</p>
+                    <h2>Experiencia que se convierte en criterio.</h2>
+                </div>
+                <ol class="financa-timeline">
+                    <li>
+                        <span data-count="30" data-count-prefix="+" data-count-suffix=" años">+30 años</span>
+                        <h3>Fiscal y contabilidad</h3>
+                    </li>
+                    <li>
+                        <span data-count="25" data-count-prefix="+" data-count-suffix=" años">+25 años</span>
+                        <h3>Dirección empresarial</h3>
+                    </li>
+                    <li>
+                        <span data-count="20" data-count-prefix="+" data-count-suffix=" años">+20 años</span>
+                        <h3>Planeación financiera</h3>
+                    </li>
+                    <li>
+                        <span data-count="15" data-count-prefix="+" data-count-suffix=" años">+15 años</span>
+                        <h3>Estructuración empresarial</h3>
+                    </li>
+                    <li>
+                        <span data-count="10" data-count-prefix="+" data-count-suffix=" años">+10 años</span>
+                        <h3>Implementaciones ERP</h3>
+                    </li>
+                </ol>
+                <p class="financa-process-closing">Distintas empresas. Distintos retos. Una misma premisa: <strong>entender primero para decidir mejor.</strong></p>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippet_cases" name="Casos Financa">
+        <section id="casos" class="financa-section financa-services financa-reveal" data-snippet="financa_website.snippet_cases" data-name="Casos Financa" data-financa-section="casos">
+            <div class="financa-container">
+                <div class="financa-section-heading">
+                    <p class="financa-eyebrow">Casos</p>
+                    <h2>De los problemas a las soluciones.</h2>
+                </div>
+                <div class="financa-cases-grid">
+                    <article class="financa-card financa-case-card">
+                        <h3>Multisucursal</h3>
+                        <p>Finanzas + Inventario + Odoo</p>
+                    </article>
+                    <article class="financa-card financa-case-card">
+                        <h3>Empresa comercial</h3>
+                        <p>Integración + Automatización</p>
+                    </article>
+                    <article class="financa-card financa-case-card">
+                        <h3>Empresa en crecimiento</h3>
+                        <p>Planeación financiera + Estructura</p>
+                    </article>
+                </div>
             </div>
         </section>
     </template>
 
     <template id="snippet_final_cta" name="CTA Financa">
-        <section class="financa-section financa-final-cta financa-reveal"
-                 data-snippet="financa_website.snippet_final_cta"
-                 data-name="CTA Financa"
-                 data-financa-section="cta_final">
+        <section class="financa-section financa-final-cta financa-reveal" data-snippet="financa_website.snippet_final_cta" data-name="CTA Financa" data-financa-section="cta_final">
             <div class="financa-container financa-final-cta-inner">
                 <div>
-                    <p class="financa-eyebrow">El siguiente paso</p>
-                    <h2>¿Listo para ver más allá de los números?</h2>
-                    <p>Conversemos sobre la estructura financiera, operativa y tecnológica que necesita tu empresa.</p>
+                    <p class="financa-eyebrow">El cierre</p>
+                    <h2>Tu empresa puede crecer. La pregunta es si está creciendo con control.</h2>
+                    <p>FINANCA puede ayudarte a encontrar la respuesta.</p>
                 </div>
-                <a href="/contactus"
-                   class="financa-button financa-button-light"
-                   data-financa-cta="1"
-                   data-financa-cta-name="solicitar_diagnostico"
-                   data-financa-cta-location="cta_final">Solicitar diagnóstico</a>
+                <a href="/contactus" class="financa-button financa-button-light" data-financa-cta="1" data-financa-cta-name="hablemos_empresa" data-financa-cta-location="cta_final">Hablemos de tu empresa</a>
             </div>
         </section>
     </template>
@@ -236,22 +379,34 @@
     <template id="snippets" inherit_id="website.snippets" name="Financa Building Blocks">
         <xpath expr="//snippets[@id='snippet_structure']/*[1]" position="before">
             <t t-snippet="financa_website.snippet_hero" string="Hero Financa">
-                <keywords>Financa hero consultoría Odoo</keywords>
+                <keywords>Financa hero consultoría</keywords>
             </t>
-            <t t-snippet="financa_website.snippet_services" string="Servicios Financa">
-                <keywords>Financa servicios consultoría</keywords>
+            <t t-snippet="financa_website.snippet_problems" string="El dolor">
+                <keywords>Financa problemas dolor</keywords>
             </t>
-            <t t-snippet="financa_website.snippet_odoo_center" string="Odoo Centro de Control">
-                <keywords>Financa Odoo ERP módulos</keywords>
+            <t t-snippet="financa_website.snippet_before_after" string="Nuestra propuesta">
+                <keywords>Financa propuesta diagnóstico diseño</keywords>
             </t>
-            <t t-snippet="financa_website.snippet_before_after" string="Antes vs Después">
-                <keywords>Financa comparación resultados</keywords>
+            <t t-snippet="financa_website.snippet_services" string="Ecosistema Financa">
+                <keywords>Financa ecosistema capacidades</keywords>
             </t>
-            <t t-snippet="financa_website.snippet_diagnosis" string="Diagnóstico Odoo">
-                <keywords>Financa diagnóstico Odoo</keywords>
+            <t t-snippet="financa_website.snippet_technology" string="Integración y automatización">
+                <keywords>Financa integración automatización IA</keywords>
             </t>
-            <t t-snippet="financa_website.snippet_process" string="Proceso Financa">
-                <keywords>Financa proceso pasos</keywords>
+            <t t-snippet="financa_website.snippet_odoo_center" string="Tecnología y Odoo ERP">
+                <keywords>Financa Odoo ERP implementación</keywords>
+            </t>
+            <t t-snippet="financa_website.snippet_diagnosis" string="Rescate Odoo">
+                <keywords>Financa rescate Odoo implementación</keywords>
+            </t>
+            <t t-snippet="financa_website.snippet_process" string="Método Financa">
+                <keywords>Financa método pasos</keywords>
+            </t>
+            <t t-snippet="financa_website.snippet_experience" string="Experiencia Financa">
+                <keywords>Financa experiencia años</keywords>
+            </t>
+            <t t-snippet="financa_website.snippet_cases" string="Casos Financa">
+                <keywords>Financa casos problemas soluciones</keywords>
             </t>
             <t t-snippet="financa_website.snippet_final_cta" string="CTA Financa">
                 <keywords>Financa llamada acción diagnóstico</keywords>
@@ -259,4 +414,3 @@
         </xpath>
     </template>
 </odoo>
-
