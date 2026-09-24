@@ -56,8 +56,9 @@ runuser -u ubuntu -- git -C "$repo" checkout --detach --quiet "$sha"
 
 release="$releases/$sha"
 if [[ ! -e "$release" ]]; then
-    runuser -u ubuntu -- python3 "$repo/deploy/ci/render_financa_staging_artifact.py" \
-        --source "$repo" --output "$release" --commit "$sha" --domain https://staging.financa.mx
+    runuser -u ubuntu -- python3 "$repo/deploy/ci/render_financa_artifact.py" \
+        --source "$repo" --output "$release" --commit "$sha" \
+        --environment staging --domain https://staging.financa.mx
 fi
 [[ -f "$release/artifact-manifest.json" ]] || die 'rendered release has no manifest'
 grep -Fq "\"commit\": \"$sha\"" "$release/artifact-manifest.json" \

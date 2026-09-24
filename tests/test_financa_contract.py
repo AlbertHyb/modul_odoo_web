@@ -76,6 +76,7 @@ class FinancaContractTest(unittest.TestCase):
         deploy_root = ROOT / "deploy"
         required_files = (
             "ci/publish_financa.sh",
+            "ci/render_financa_artifact.py",
             "server/deploy_financa.sh",
             "server/financa-deploy.env.example",
             "odoo/preflight_financa.py",
@@ -99,6 +100,20 @@ class FinancaContractTest(unittest.TestCase):
         ci_script = (deploy_root / "ci/publish_financa.sh").read_text()
         self.assertIn("StrictHostKeyChecking=yes", ci_script)
         self.assertIn("/usr/local/sbin/financa-deploy", ci_script)
+        self.assertIn("DEPLOY_DOMAIN", ci_script)
+        self.assertIn("render_financa_artifact.py", ci_script)
+        self.assertIn("--environment production", ci_script)
+        self.assertIn("artifact-manifest.json", ci_script)
+
+        renderer = (deploy_root / "ci/render_financa_artifact.py").read_text()
+        self.assertIn("__FINANCA_DOMAIN__", renderer)
+        self.assertIn("STAGING_DOMAIN", renderer)
+        self.assertIn("deploy/odoo/preflight_financa.py", renderer)
+        self.assertIn('parser.add_argument("--domain", required=True)', renderer)
+        self.assertIn('parser.add_argument("--environment", choices=ENVIRONMENTS, required=True)', renderer)
+
+        env_example = (deploy_root / "server/financa-deploy.env.example").read_text()
+        self.assertIn("DEPLOY_DOMAIN", env_example)
 
 if __name__ == "__main__":
     unittest.main()

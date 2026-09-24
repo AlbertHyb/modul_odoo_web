@@ -26,8 +26,9 @@ docker compose --env-file .env config
 No ejecutar `up` hasta que el artifact haya sido renderizado y validado:
 
 ```bash
-python3 ../ci/render_financa_staging_artifact.py \
-  --source ../.. --output /tmp/financa-artifact --commit <commit>
+python3 ../ci/render_financa_artifact.py \
+  --source ../.. --output /tmp/financa-artifact --commit <commit> \
+  --environment staging --domain https://staging.financa.mx
 ```
 
 La primera ejecución real, migración, backup y configuración de Caddy se

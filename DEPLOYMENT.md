@@ -1,6 +1,8 @@
 # Despliegue de `financa_website`
 
-El módulo selecciona el website por `domain = https://financa-mx`. El preflight
+El módulo selecciona el website por el dominio del ambiente: en el repositorio
+esa búsqueda contiene el token `__FINANCA_DOMAIN__`, que el render del artefacto
+reemplaza por el hostname real (ver `deploy/README.md`). El preflight
 es obligatorio porque una búsqueda XML no valida unicidad ni puede documentar
 el estado anterior de la base.
 
@@ -9,7 +11,7 @@ el estado anterior de la base.
 Ejecutar antes de instalar o actualizar:
 
 ```python
-DOMAIN = "https://financa-mx"
+DOMAIN = "<hostname del ambiente>"
 websites = env["website"].search([("domain", "=", DOMAIN)])
 assert len(websites) == 1, f"Preflight detenido: {len(websites)} websites para {DOMAIN}"
 
@@ -64,9 +66,19 @@ El despliegue automatizado consulta `ir.module.module`: usa
 transitorio detiene la liberación. Antes de modificar el addon se exige un
 punto de recuperación consistente de PostgreSQL y filestore.
 
+### Dominio del artefacto
+
+El repositorio no fija ningún hostname: el módulo y los checks de despliegue
+usan el token `__FINANCA_DOMAIN__`. `deploy/ci/publish_financa.sh` renderiza el
+artefacto con la variable `DEPLOY_DOMAIN`, y el servidor debe declarar ese mismo
+valor en `FINANCA_DOMAIN` de `/etc/financa/deploy.env`. El preflight compara
+ambos y detiene la liberación cuando difieren, antes de tocar el addon o la
+base. Para mover el sitio a otro dominio basta actualizar la variable del
+pipeline y el archivo del servidor: el módulo no necesita cambios.
+
 ## 3. Configuración posterior
 
-En el website cuyo dominio es `https://financa-mx`:
+En el website del dominio del ambiente (`DEPLOY_DOMAIN` y `FINANCA_DOMAIN`):
 
 1. Activar la barra nativa de cookies en **Seguimiento y SEO**.
 2. Confirmar que GA4 conserva el ID esperado del ambiente y que el tag base se

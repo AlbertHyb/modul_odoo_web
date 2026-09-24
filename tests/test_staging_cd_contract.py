@@ -18,7 +18,9 @@ class StagingCdContractTest(unittest.TestCase):
 
     def test_deploy_renders_backups_updates_and_checks_health(self):
         script = SCRIPT.read_text()
-        self.assertIn("render_financa_staging_artifact.py", script)
+        self.assertIn("render_financa_artifact.py", script)
+        self.assertIn("--environment staging", script)
+        self.assertIn("--domain https://staging.financa.mx", script)
         self.assertIn("systemctl start --wait financa-staging-backup.service", script)
         self.assertIn("-u financa_website --stop-after-init", script)
         self.assertIn("mv -Tf", script)
