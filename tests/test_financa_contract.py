@@ -57,6 +57,17 @@ class FinancaContractTest(unittest.TestCase):
         model_init = (ADDON / "models/__init__.py").read_text()
         self.assertIn("website_page", model_init)
 
+    def test_the_module_ships_no_third_party_tag(self):
+        """The analytics tag is configured natively in the website, never in the addon."""
+        forbidden = ("googletagmanager.com", "google-analytics.com", "GTM-")
+        for path in ADDON.rglob("*"):
+            if not path.is_file() or path.suffix not in {".js", ".py", ".scss", ".xml"}:
+                continue
+            text = path.read_text(errors="replace")
+            for token in forbidden:
+                with self.subTest(file=str(path.relative_to(ROOT)), token=token):
+                    self.assertNotIn(token, text)
+
     def test_qweb_fallbacks_are_domain_scoped(self):
         homepage = (ADDON / "views/homepage.xml").read_text()
         self.assertNotIn("$0", homepage)

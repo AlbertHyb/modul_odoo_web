@@ -125,6 +125,16 @@ class RenderArtifactTest(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("unexpected absolute host https://financa-mx", result.stderr)
 
+    def test_rejects_a_host_in_a_scanned_asset(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            source = self.write_source(Path(temporary_directory) / "source")
+            stray = source / "financa_website/static/src/js/legacy.js"
+            stray.parent.mkdir(parents=True, exist_ok=True)
+            stray.write_text("var container = 'https://www.googletagmanager.com/gtm.js?id=GTM-TEST';\n")
+            result = self.render(Path(temporary_directory) / "artifact", source=source)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("unexpected absolute host https://www.googletagmanager.com", result.stderr)
+
     def test_rejects_a_template_without_the_token(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             source = self.write_source(Path(temporary_directory) / "source")
