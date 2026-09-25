@@ -18,6 +18,10 @@ die() {
 sha=${BASH_REMATCH[1]}
 [[ -d "$repo/.git" && -f "$repo/deploy/compose/.env" ]] || die 'staging checkout is incomplete'
 
+for command in cmp curl docker flock readlink realpath runuser systemctl; do
+    command -v "$command" >/dev/null || die "$command is required on the server"
+done
+
 exec 9>/run/lock/financa-staging-deploy.lock
 flock -n 9 || die 'another staging deployment is running'
 
@@ -53,6 +57,15 @@ runuser -u ubuntu -- git -C "$repo" fetch --quiet origin staging
 [[ $(runuser -u ubuntu -- git -C "$repo" rev-parse origin/staging) == "$sha" ]] \
     || die 'requested SHA is not the current origin/staging tip'
 runuser -u ubuntu -- git -C "$repo" checkout --detach --quiet "$sha"
+
+# This script is installed as the restricted SSH forced command, so the host keeps
+# a frozen copy of it. Renaming a file it calls used to break staging with a bare
+# python error; refuse to deploy with privileged logic that is not the reviewed
+# revision instead.
+installed_command=$(realpath "${BASH_SOURCE[0]}")
+expected_command="$repo/deploy/server/financa-staging-deploy.sh"
+cmp -s "$installed_command" "$expected_command" \
+    || die "the installed forced command differs from $expected_command; reinstall it with: sudo install -o root -g root -m 0750 $expected_command $installed_command"
 
 release="$releases/$sha"
 if [[ ! -e "$release" ]]; then

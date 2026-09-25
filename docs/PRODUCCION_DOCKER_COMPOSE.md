@@ -59,6 +59,12 @@ de validación requerido antes de habilitar el despliegue.
    sudo install -o root -g root -m 0750 deploy/ci/verify_financa_artifact.py /usr/local/sbin/verify-financa-artifact
    ```
 
+   El script instalado es una copia congelada, no un enlace: cuando
+   `deploy/server/financa-production-deploy.sh` cambie en el repositorio hay que
+   reinstalarlo. El despliegue compara su propia copia instalada con la del SHA
+   aprobado y se detiene imprimiendo el comando de reinstalación si no coinciden,
+   para no ejecutar lógica privilegiada que no es la revisada.
+
 9. Instalar los hooks `FINANCA_BACKUP_BIN` y `FINANCA_RESTORE_BIN`. Deben ser
    archivos regulares, canónicos, ejecutables, propiedad de root y no
    escribibles por grupo u otros. El backup devuelve un token para el mismo
