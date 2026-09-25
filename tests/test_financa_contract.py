@@ -90,6 +90,8 @@ class FinancaContractTest(unittest.TestCase):
             "odoo/module_state_financa.py",
             "odoo/configure_financa.py",
             "odoo/postflight_financa.py",
+            "odoo/cleanup_financa_legacy.py",
+            "odoo/financa_legacy.json",
         )
         for relative_path in required_files:
             self.assertTrue((deploy_root / relative_path).is_file(), relative_path)

@@ -86,8 +86,38 @@ docker compose --env-file /etc/financa-production/compose.env -f /etc/financa-pr
 
 Después, ejecutar **Deploy Financa production** manualmente desde GitHub
 Actions sobre `master`, aprobar el gate y conservar como evidencia: SHA,
-preflight, token de recuperación, acción `install` o `update`, ambos health
-checks y smoke posterior.
+preflight, token de recuperación, acción `install` o `update`, reporte de
+saneamiento, gate de navegación, ambos health checks y smoke posterior.
+
+## Contenido heredado del sitio anterior
+
+El addon solo crea sus propios registros: nunca borra las páginas ni los menús
+que dejó el sitio anterior en la base. Por eso producción servía la navegación
+antigua junto a la nueva, mientras que un staging con base nueva no hereda nada
+y no reproduce el defecto. El despliegue de producción lo neutraliza en tres
+pasos, después de actualizar el módulo:
+
+1. `deploy/odoo/cleanup_financa_legacy.py` despublica en su lugar las páginas
+   catalogadas (nunca las borra) y desactiva sus menús. Si un menú a desactivar
+   contiene menús del módulo, los vuelve a colgar de la raíz para no ocultarlos.
+   Es idempotente: la segunda ejecución no reporta cambios.
+2. `deploy/odoo/configure_financa.py` aplica el resto de la configuración.
+3. `deploy/odoo/postflight_financa.py` falla si el contenido catalogado sigue
+   activo o publicado, si los seis menús del módulo no están activos y colgados
+   de la raíz, o si un menú ajeno duplica una etiqueta de la navegación de
+   Financa. Un fallo restaura release, base y filestore.
+
+`deploy/odoo/financa_legacy.json` es la lista revisada de ese contenido y el
+pipeline la pasa como `FINANCA_LEGACY_INVENTORY`. Cada entrada se empareja por
+`name` (sin distinguir acentos ni mayúsculas), por `url` o por la URL de la
+página enlazada; los registros con `xml_id` de `financa_website` nunca se tocan.
+
+Ambos pasos imprimen en JSON el estado previo, las acciones aplicadas y los
+menús y páginas ajenos que permanecen en el website. Esa evidencia es la que
+amplía la lista con datos y no por suposición: cuando el gate falla, nombra los
+registros exactos que faltan catalogar. Una página compartida (`website_id`
+vacío) que coincida con el inventario se reporta pero no se toca, porque
+despublicarla afectaría a otros websites.
 
 ## Deuda técnica de salida a producción
 

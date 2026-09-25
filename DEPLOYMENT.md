@@ -76,6 +76,17 @@ ambos y detiene la liberación cuando difieren, antes de tocar el addon o la
 base. Para mover el sitio a otro dominio basta actualizar la variable del
 pipeline y el archivo del servidor: el módulo no necesita cambios.
 
+### Contenido heredado
+
+El módulo solo crea sus propios registros: no elimina las páginas ni los menús
+que dejó el sitio anterior. En una base que ya sirvió ese sitio, la navegación
+antigua sigue apareciendo junto a la nueva, y por eso el defecto se ve en
+producción y no en un staging con base nueva. Ejecutar
+`deploy/odoo/cleanup_financa_legacy.py` después de la actualización, con
+`FINANCA_LEGACY_INVENTORY` apuntando a `deploy/odoo/financa_legacy.json`; el
+despliegue automatizado ya lo hace y `postflight_financa.py` falla si el
+contenido catalogado sobrevive. Ver `docs/PRODUCCION_DOCKER_COMPOSE.md`.
+
 ## 3. Configuración posterior
 
 En el website del dominio del ambiente (`DEPLOY_DOMAIN` y `FINANCA_DOMAIN`):
