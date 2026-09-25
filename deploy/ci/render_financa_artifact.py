@@ -13,9 +13,11 @@ exactly one environment:
   targets staging.
 
 The rendered output is then scanned: the token must be gone, and the only
-absolute host left in any Python or XML file must be the target one. That is
-what catches a leftover literal from another environment (for example the
-historical ``https://financa-mx``) in a file the token never reached.
+absolute host left in any Python, XML, JavaScript or SCSS file must be the target
+one. That is what catches a leftover literal from another environment (for
+example the historical ``https://financa-mx``) in a file the token never reached,
+and an analytics or third-party tag pasted into the addon instead of configured
+natively in the website.
 """
 
 import argparse
@@ -40,7 +42,7 @@ TEMPLATE_PATHS = (
     "deploy/odoo/preflight_financa.py",
 )
 COPIED_PATHS = ("financa_website", "deploy/odoo")
-SCANNED_SUFFIXES = frozenset({".py", ".xml"})
+SCANNED_SUFFIXES = frozenset({".js", ".py", ".scss", ".xml"})
 
 
 def fail(message):

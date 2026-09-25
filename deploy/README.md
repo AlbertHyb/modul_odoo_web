@@ -20,7 +20,7 @@ desplegar en silencio.
 El render acepta un único hostname `https://` sin ruta ni puerto, escribe
 `artifact-manifest.json` con el commit, el ambiente, el dominio y el hash de
 cada archivo, y falla cuando el token sobrevive o cuando queda cualquier otro
-host absoluto en un archivo Python o XML. El staging se renderiza en el servidor
+host absoluto en un archivo Python, XML, JavaScript o SCSS. El staging se renderiza en el servidor
 con `--environment staging`; para producción se rechaza el host de staging, de
 modo que una variable de pipeline copiada por error no puede publicar un
 artefacto de producción apuntando a staging.
@@ -89,7 +89,8 @@ como secreto del CI.
    registrar ningún ID en el repositorio.
 5. Postflight: homepage, redirección 301, página privada sin publicar y cookies.
 6. Render del artefacto por ambiente: token reemplazado, ningún otro host
-   absoluto en archivos Python o XML, y manifiesto con commit, dominio y hashes.
+   absoluto en archivos Python, XML, JavaScript o SCSS, y manifiesto con commit,
+   dominio y hashes.
 
 La validación visual, la respuesta HTTP real y GA4 DebugView requieren un job
 de navegador posterior al despliegue, porque dependen del dominio en ejecución.
