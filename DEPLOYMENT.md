@@ -92,8 +92,15 @@ contenido catalogado sobrevive. Ver `docs/PRODUCCION_DOCKER_COMPOSE.md`.
 En el website del dominio del ambiente (`DEPLOY_DOMAIN` y `FINANCA_DOMAIN`):
 
 1. Activar la barra nativa de cookies en **Seguimiento y SEO**.
-2. Confirmar que GA4 conserva el ID esperado del ambiente y que el tag base se
-   carga una sola vez. El módulo no contiene el ID ni carga `gtag.js`.
+2. Confirmar el tag de analítica en **Seguimiento y SEO**, campo *Measurement ID
+   or Tag*: acepta un ID de medición GA4 (`G-XXXXXXXXXX`) o un contenedor de
+   Google Tag Manager (`GTM-XXXXXXX`). Odoo lo carga una sola vez en el `<head>`
+   con consent mode y el despliegue registra en qué quedó
+   (`analytics_tag_kind`: `ga4`, `gtm`, `other` o `none`). El módulo no contiene
+   el ID ni carga tags de terceros: no pegar el snippet de GTM en una plantilla,
+   porque el render del artefacto rechaza cualquier host que no sea el del
+   ambiente y detendría la liberación. Esta vía nativa no genera el `<noscript>`
+   del `<body>`.
 3. Mantener **Cuenta de cliente** en **Por invitación**.
 4. Mantener la indexación desactivada en ambientes de prueba.
 5. No publicar `/aviso-de-privacidad` hasta reemplazar todos los marcadores y

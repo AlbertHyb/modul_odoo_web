@@ -8,6 +8,18 @@ import sys
 DOMAIN = os.environ["FINANCA_DOMAIN"]
 REQUIRE_GA4 = os.environ.get("REQUIRE_GA4", "true").lower() == "true"
 
+
+def analytics_tag_kind(tag):
+    """Classify the native website tag: Odoo loads GA4 and GTM from one field."""
+    if not tag:
+        return "none"
+    if tag.upper().startswith("GTM-"):
+        return "gtm"
+    if tag.upper().startswith("G-"):
+        return "ga4"
+    return "other"
+
+
 websites = env["website"].sudo().search([("domain", "=", DOMAIN)])
 if len(websites) != 1:
     print(f"CONFIGURATION FAILED: expected one website for {DOMAIN!r}", file=sys.stderr)
@@ -25,7 +37,11 @@ for menu in contact_menus:
     if menu.active:
         menu.active = False
 if REQUIRE_GA4 and not website.google_analytics_key:
-    print("CONFIGURATION FAILED: GA4 is required but not configured on the target website", file=sys.stderr)
+    print(
+        "CONFIGURATION FAILED: the target website has no analytics tag; set the GA4 "
+        "measurement ID or the Google Tag Manager container in Website > Settings",
+        file=sys.stderr,
+    )
     raise SystemExit(1)
 
 print(
@@ -33,6 +49,7 @@ print(
         {
             "website_id": website.id,
             "cookies_bar": website.cookies_bar,
+            "analytics_tag_kind": analytics_tag_kind(website.google_analytics_key),
             "ga4_configured": bool(website.google_analytics_key),
         },
         sort_keys=True,

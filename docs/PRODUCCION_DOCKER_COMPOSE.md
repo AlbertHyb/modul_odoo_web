@@ -129,6 +129,27 @@ registros exactos que faltan catalogar. Una página compartida (`website_id`
 vacío) que coincida con el inventario se reporta pero no se toca, porque
 despublicarla afectaría a otros websites.
 
+## Analítica del sitio
+
+El tag de analítica se configura en el website, no en el repositorio. En
+**Website > Settings > Google Analytics** el campo *Measurement ID or Tag* acepta
+un ID de medición GA4 o un contenedor de Google Tag Manager; Odoo lo carga una
+sola vez en el `<head>` con consent mode. Los eventos del módulo
+(`financa_cta_click`, `financa_section_view`, `generate_lead`) se siguen emitiendo
+por `gtag()`; si al activar el contenedor alguno no aparece como disparador en GTM
+Preview, hay que migrar `financa_tracking.js` a `dataLayer.push()`, que es el
+formato que GTM interpreta de forma nativa.
+
+Cada ambiente declara el suyo: el mismo contenedor en staging y en producción
+mezcla ambos sitios en un solo informe. La evidencia de `configure_financa.py`
+imprime `analytics_tag_kind` (`ga4`, `gtm`, `other` o `none`), que es la forma de
+comprobar qué tag quedó vivo sin entrar a la base.
+
+El ID no vive en el módulo: `render_financa_artifact.py` rechaza cualquier host
+absoluto que no sea el del ambiente en archivos Python, XML, JavaScript o SCSS, y
+`tests/test_financa_contract.py` falla antes, en CI, si alguien pega el snippet en
+el addon.
+
 ## Deuda técnica de salida a producción
 
 Mientras una fila permanezca abierta, la automatización está implementada pero
