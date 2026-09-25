@@ -30,7 +30,7 @@ done
 [[ -f "$COMPOSE_ENV_FILE" ]] || die "missing Compose environment: $COMPOSE_ENV_FILE"
 [[ "$PRODUCTION_DOMAIN" =~ ^https://[A-Za-z0-9.-]+$ ]] || die 'PRODUCTION_DOMAIN must be one HTTPS hostname'
 
-for command in curl docker flock mktemp realpath rm runuser stat tar; do
+for command in cmp curl docker flock mktemp realpath rm runuser stat tar; do
     command -v "$command" >/dev/null || die "$command is required"
 done
 
@@ -88,6 +88,14 @@ runuser -u "$REPO_USER" -- git -C "$repo" fetch --quiet origin master
 runuser -u "$REPO_USER" -- git -C "$repo" checkout --detach --quiet "$sha"
 [[ -z $(runuser -u "$REPO_USER" -- git -C "$repo" status --porcelain --untracked-files=all) ]] \
     || die 'production checkout changed while selecting the approved SHA'
+
+# This script is installed as the restricted SSH forced command, so the host keeps
+# a frozen copy of it. Deploying with privileged logic that is not the reviewed
+# revision would run stale steps against production, so require an exact match.
+installed_command=$(realpath "${BASH_SOURCE[0]}")
+expected_command="$repo/deploy/server/financa-production-deploy.sh"
+cmp -s "$installed_command" "$expected_command" \
+    || die "the installed forced command differs from $expected_command; reinstall it with: sudo install -o root -g root -m 0750 $expected_command $installed_command"
 
 mkdir -p "$releases"
 previous=$(readlink -f "$current")
