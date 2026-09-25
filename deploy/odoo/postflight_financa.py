@@ -50,9 +50,24 @@ def is_module_record(record):
     return bool((record.get_external_id().get(record.id) or "").startswith(MODULE_RECORD_PREFIX))
 
 
-def legacy_menu_matches(menu, entry):
+def menu_labels(menus, languages):
+    """Return the label of every menu in each active language.
+
+    One menu record renders as "Noticias" in Spanish and "Blog" in English, so an
+    entry written with the label an operator sees on the website would never
+    match a shell running in another language.
+    """
+    return {
+        menu.id: [menu.with_context(lang=code).name for code in languages] for menu in menus
+    }
+
+
+def legacy_menu_matches(menu, entry, labels=None):
     name = entry.get("name")
-    if isinstance(name, str) and normalize_label(menu.name) == normalize_label(name):
+    candidates = labels if labels is not None else [menu.name]
+    if isinstance(name, str) and any(
+        normalize_label(candidate) == normalize_label(name) for candidate in candidates
+    ):
         return True
     url = entry.get("url")
     if not isinstance(url, str):
@@ -61,12 +76,15 @@ def legacy_menu_matches(menu, entry):
     return url in {candidate for candidate in (menu.url, linked) if candidate}
 
 
-def legacy_menus(menus, inventory):
+def legacy_menus(menus, inventory, labels=None):
+    labels = labels or {}
     return [
         menu
         for menu in menus
         if not is_module_record(menu)
-        and any(legacy_menu_matches(menu, entry) for entry in inventory["menus"])
+        and any(
+            legacy_menu_matches(menu, entry, labels.get(menu.id)) for entry in inventory["menus"]
+        )
     ]
 
 
@@ -153,6 +171,9 @@ website_menus = Menu.search([("website_id", "=", website.id)])
 foreign_menus = website_menus - root_menu
 website_pages = Page.search([("website_id", "=", website.id)])
 
+languages = env["res.lang"].sudo().search([("active", "=", True)]).mapped("code") or ["en_US"]
+labels = menu_labels(list(foreign_menus), languages)
+
 try:
     inventory = load_legacy_inventory(LEGACY_INVENTORY)
 except ValueError as error:
@@ -174,7 +195,9 @@ if absent:
 if detached:
     fail("these Financa menus are no longer top-level navigation items: " + ", ".join(detached))
 
-surviving_menus = [menu for menu in legacy_menus(list(foreign_menus), inventory) if menu.active]
+surviving_menus = [
+    menu for menu in legacy_menus(list(foreign_menus), inventory, labels) if menu.active
+]
 surviving_pages = [
     page for page in legacy_pages(list(website_pages), inventory, website.id) if page.is_published
 ]
@@ -188,11 +211,17 @@ if surviving_menus or surviving_pages:
         + f". Add the reviewed entries to {LEGACY_INVENTORY} and redeploy."
     )
 
-labels = {normalize_label(menu.name) for menu in module_menus}
+module_labels = {
+    normalize_label(label) for menu in module_menus for label in labels.get(menu.id, [menu.name])
+}
 duplicates = [
     menu
     for menu in foreign_menus
-    if menu.active and not is_module_record(menu) and normalize_label(menu.name) in labels
+    if menu.active
+    and not is_module_record(menu)
+    and any(
+        normalize_label(label) in module_labels for label in labels.get(menu.id, [menu.name])
+    )
 ]
 if duplicates:
     fail(
