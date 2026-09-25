@@ -1,0 +1,11 @@
+{
+  "menus": [
+    {"name": "Servicios", "url": "/our-services"},
+    {"name": "Noticias"},
+    {"name": "Histórias de éxito"},
+    {"name": "Sobre nosotros"}
+  ],
+  "pages": [
+    "/our-services"
+  ]
+}

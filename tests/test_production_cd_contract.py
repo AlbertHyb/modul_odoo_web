@@ -50,6 +50,8 @@ class ProductionCdContractTest(unittest.TestCase):
             "-u financa_website",
             "module_state_financa.py",
             "preflight_financa.py",
+            "cleanup_financa_legacy.py",
+            "FINANCA_LEGACY_INVENTORY",
             "mv -Tf",
             "--max-time 10",
             "for _ in {1..12}",

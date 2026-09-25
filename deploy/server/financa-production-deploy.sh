@@ -113,6 +113,8 @@ fi
     --environment production --domain "$PRODUCTION_DOMAIN"
 
 require_ga4=${REQUIRE_GA4:-true}
+legacy_inventory="$release/deploy/odoo/financa_legacy.json"
+[[ -f "$legacy_inventory" ]] || die "the release has no legacy content inventory: $legacy_inventory"
 local_health="http://127.0.0.1:${ODOO_PORT}/web/login"
 public_health="${PRODUCTION_DOMAIN}/web/login"
 module_action=
@@ -132,6 +134,7 @@ run_odoo_shell() {
     "${compose[@]}" run --rm --no-deps -T \
         -e FINANCA_DOMAIN="$PRODUCTION_DOMAIN" \
         -e REQUIRE_GA4="$require_ga4" \
+        -e FINANCA_LEGACY_INVENTORY="$legacy_inventory" \
         odoo odoo shell -d "$ODOO_DB" < "$script"
 }
 
@@ -207,6 +210,7 @@ printf 'Recovery point created: %s\n' "$recovery_point"
 activate "$release"
 activated=true
 run_module_action
+run_odoo_shell "$release/deploy/odoo/cleanup_financa_legacy.py"
 run_odoo_shell "$release/deploy/odoo/configure_financa.py"
 run_odoo_shell "$release/deploy/odoo/postflight_financa.py"
 "${compose[@]}" up -d --force-recreate --no-deps odoo
