@@ -60,9 +60,24 @@ def is_module_record(record):
     return bool((record.get_external_id().get(record.id) or "").startswith(MODULE_RECORD_PREFIX))
 
 
-def legacy_menu_matches(menu, entry):
+def menu_labels(menus, languages):
+    """Return the label of every menu in each active language.
+
+    One menu record renders as "Noticias" in Spanish and "Blog" in English, so an
+    entry written with the label an operator sees on the website would never
+    match a shell running in another language.
+    """
+    return {
+        menu.id: [menu.with_context(lang=code).name for code in languages] for menu in menus
+    }
+
+
+def legacy_menu_matches(menu, entry, labels=None):
     name = entry.get("name")
-    if isinstance(name, str) and normalize_label(menu.name) == normalize_label(name):
+    candidates = labels if labels is not None else [menu.name]
+    if isinstance(name, str) and any(
+        normalize_label(candidate) == normalize_label(name) for candidate in candidates
+    ):
         return True
     url = entry.get("url")
     if not isinstance(url, str):
@@ -71,12 +86,15 @@ def legacy_menu_matches(menu, entry):
     return url in {candidate for candidate in (menu.url, linked) if candidate}
 
 
-def legacy_menus(menus, inventory):
+def legacy_menus(menus, inventory, labels=None):
+    labels = labels or {}
     return [
         menu
         for menu in menus
         if not is_module_record(menu)
-        and any(legacy_menu_matches(menu, entry) for entry in inventory["menus"])
+        and any(
+            legacy_menu_matches(menu, entry, labels.get(menu.id)) for entry in inventory["menus"]
+        )
     ]
 
 
@@ -152,7 +170,12 @@ root_menu = website_root_menu(Menu, website)
 foreign_menus = Menu.search([("website_id", "=", website.id)]) - root_menu
 website_pages = Page.search([("website_id", "=", website.id)])
 
-targets = Menu.browse([menu.id for menu in legacy_menus(list(foreign_menus), inventory)])
+languages = env["res.lang"].sudo().search([("active", "=", True)]).mapped("code") or ["en_US"]
+labels = menu_labels(list(foreign_menus), languages)
+
+targets = Menu.browse(
+    [menu.id for menu in legacy_menus(list(foreign_menus), inventory, labels)]
+)
 
 subtree = Menu.browse()
 for menu in targets:

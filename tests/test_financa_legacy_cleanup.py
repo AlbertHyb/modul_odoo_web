@@ -1,3 +1,4 @@
+import copy
 import io
 import json
 import os
@@ -36,13 +37,20 @@ def helpers(script):
 
 class Stub:
     def __init__(self, **fields):
+        self.translations = fields.pop("translations", None) or {}
         self.__dict__.update(fields)
+
+    def with_context(self, lang=None, **kwargs):
+        clone = copy.copy(self)
+        if lang and self.translations:
+            clone.name = self.translations.get(lang, self.name)
+        return clone
 
     def get_external_id(self):
         return {self.id: self.xmlid}
 
 
-def menu(identifier, name, url="", page_url=None, xmlid=False, active=True):
+def menu(identifier, name, url="", page_url=None, xmlid=False, active=True, translations=None):
     return Stub(
         id=identifier,
         name=name,
@@ -50,6 +58,7 @@ def menu(identifier, name, url="", page_url=None, xmlid=False, active=True):
         page_id=Stub(id=identifier + 1000, url=page_url) if page_url else False,
         xmlid=xmlid,
         active=active,
+        translations=translations,
     )
 
 
@@ -74,13 +83,16 @@ class FinancaLegacyInventoryTest(unittest.TestCase):
 
     def test_inventory_catalogues_the_observed_legacy_content(self):
         inventory = self.cleanup["load_legacy_inventory"](INVENTORY)
-        self.assertEqual(inventory["pages"], ["/our-services"])
+        self.assertEqual(inventory["pages"], ["/our-services", "/about-us"])
         labels = {entry.get("name") for entry in inventory["menus"]}
         self.assertIn("Servicios", labels)
         self.assertIn("Noticias", labels)
-        self.assertIn("Histórias de éxito", labels)
+        self.assertIn("Historias de éxito", labels)
         self.assertIn("Sobre nosotros", labels)
         self.assertIn({"name": "Servicios", "url": "/our-services"}, inventory["menus"])
+        self.assertIn({"name": "Noticias", "url": "/blog/3"}, inventory["menus"])
+        self.assertIn({"name": "Historias de éxito", "url": "/blog/4"}, inventory["menus"])
+        self.assertIn({"name": "Sobre nosotros", "url": "/about-us"}, inventory["menus"])
 
     def test_inventory_rejects_broken_documents(self):
         load = self.cleanup["load_legacy_inventory"]
@@ -116,6 +128,19 @@ class FinancaLegacyInventoryTest(unittest.TestCase):
         self.assertTrue(matches(menu(2, "Servicios", page_url="/our-services"), {"url": "/our-services"}))
         self.assertFalse(matches(menu(3, "Contacto", url="/contactus"), {"url": "/our-services"}))
         self.assertFalse(matches(menu(4, "Noticias"), {"url": "/our-services"}))
+
+    def test_menu_labels_cover_every_active_language(self):
+        labels = self.cleanup["menu_labels"]
+        record = menu(1, "Blog", translations={"en_US": "Blog", "es_MX": "Noticias"})
+        self.assertEqual(labels([record], ["en_US", "es_MX"]), {1: ["Blog", "Noticias"]})
+        self.assertEqual(labels([record], ["en_US"]), {1: ["Blog"]})
+
+    def test_a_menu_named_only_in_another_language_needs_its_labels(self):
+        matches = self.cleanup["legacy_menu_matches"]
+        record = menu(1, "Blog", translations={"en_US": "Blog", "es_MX": "Noticias"})
+        entry = {"name": "Noticias"}
+        self.assertFalse(matches(record, entry, ["Blog"]))
+        self.assertTrue(matches(record, entry, ["Blog", "Noticias"]))
 
     def test_module_records_are_never_legacy(self):
         selection = self.cleanup["legacy_menus"]
@@ -187,15 +212,31 @@ class FinancaLegacyDeploymentContractTest(unittest.TestCase):
 class FakeRecord:
     def __init__(self, model, **values):
         self._model = model
+        self.translations = values.pop("translations", None) or {}
         self.__dict__.update(values)
 
     def write(self, values):
+        resolved = {}
         for name, value in values.items():
             target = self._model.relations.get(name)
             if target and isinstance(value, int):
                 value = self._model.env[target].by_id(value)
-            self.__dict__[name] = value
+            resolved[name] = value
+        if "parent_id" in resolved and hasattr(self, "child_id") and self.parent_id:
+            self.parent_id.child_id = Recordset(
+                self._model, [r for r in self.parent_id.child_id if r.id != self.id]
+            )
+        self.__dict__.update(resolved)
+        if "parent_id" in resolved and hasattr(self, "child_id") and self.parent_id:
+            if self.id not in [r.id for r in self.parent_id.child_id]:
+                self.parent_id.child_id = self.parent_id.child_id | self
         return True
+
+    def with_context(self, lang=None, **kwargs):
+        clone = copy.copy(self)
+        if lang and self.translations:
+            clone.name = self.translations.get(lang, self.name)
+        return clone
 
     def get_external_id(self):
         return {self.id: self._model.xmlids.get(self.id) or False}
@@ -266,6 +307,9 @@ class Recordset:
         assert len(self._records) == 1, f"expected one record, found {len(self._records)}"
         return self._records[0]
 
+    def mapped(self, field):
+        return [getattr(record, field) for record in self._records]
+
     def sudo(self):
         return self
 
@@ -305,7 +349,14 @@ class FakeModel:
 
 
 class FakeEnv:
-    MODELS = ("ir.ui.view", "website", "website.menu", "website.page", "website.rewrite")
+    MODELS = (
+        "ir.ui.view",
+        "res.lang",
+        "website",
+        "website.menu",
+        "website.page",
+        "website.rewrite",
+    )
     RELATIONS = {
         "website.menu": {
             "website_id": "website",
@@ -320,6 +371,9 @@ class FakeEnv:
         self.models = {name: FakeModel(self, name) for name in self.MODELS}
         for name, relations in self.RELATIONS.items():
             self.models[name].relations = dict(relations)
+        self.models["res.lang"].add(id=1, code="en_US", active=True)
+        self.models["res.lang"].add(id=2, code="es_MX", active=True)
+        self.models["res.lang"].add(id=3, code="fr_FR", active=False)
 
     def __getitem__(self, name):
         return self.models[name]
@@ -335,7 +389,12 @@ class FakeEnv:
 
 
 def build_production_like_env():
-    """Recreate the production database: the new module plus the previous site's menu tree."""
+    """Recreate production: the new module plus the previous site's top-level menus.
+
+    Mirrors the 2026-09-25 live state: eleven sibling items under the root menu,
+    where "Noticias" is the Spanish label of the menu the English site renders as
+    "Blog", and the previous site's pages are still published.
+    """
     env = FakeEnv()
     website = env["website"].add(
         id=1,
@@ -356,7 +415,7 @@ def build_production_like_env():
     )
     website.menu_id = root
 
-    def add_menu(identifier, name, url="", parent=None, xmlid=None, page_id=False):
+    def add_menu(identifier, name, url="", parent=root, xmlid=None, page_id=False, translations=None):
         record = env["website.menu"].add(
             id=identifier,
             name=name,
@@ -367,6 +426,7 @@ def build_production_like_env():
             child_id=Recordset(env["website.menu"], []),
             website_id=website,
             xmlid=xmlid,
+            translations=translations,
         )
         if parent is not None:
             parent.child_id = parent.child_id | record
@@ -382,24 +442,25 @@ def build_production_like_env():
             key=key,
         )
 
-    legacy_landing = add_page(202, "/our-services", True, False)
-    add_menu(101, "Inicio", url="/")
-    add_menu(102, "Servicios", url="/our-services", page_id=legacy_landing)
-    noticias = add_menu(103, "Noticias", url="/noticias")
-    add_menu(104, "Histórias de éxito", url="/casos", parent=noticias)
-    add_menu(105, "Sobre nosotros", url="/nosotros", parent=noticias)
+    services_page = add_page(202, "/our-services", True, False)
+    add_page(204, "/about-us", True, False)
+
+    add_menu(101, "Home", url="/", translations={"es_MX": "Inicio", "en_US": "Home"})
+    add_menu(102, "Servicios", url="/our-services", page_id=services_page)
     add_menu(
-        106,
-        "Proceso",
-        url="/#proceso",
-        parent=noticias,
-        xmlid="financa_website.menu_financa_process",
+        103,
+        "Blog",
+        url="/blog/3",
+        translations={"es_MX": "Noticias", "en_US": "Blog"},
     )
-    add_menu(110, "Ecosistema", url="/#ecosistema", parent=root, xmlid="financa_website.menu_financa_services")
-    add_menu(111, "Odoo ERP", url="/#odoo-erp", parent=root, xmlid="financa_website.menu_financa_odoo")
-    add_menu(112, "Diagnóstico", url="/#diagnostico", parent=root, xmlid="financa_website.menu_financa_diagnosis")
-    add_menu(113, "Contacto", url="/contactus", parent=root, xmlid="financa_website.menu_financa_contact")
-    add_menu(114, "Acceso a clientes", url="/web/login", parent=root, xmlid="financa_website.menu_financa_login")
+    add_menu(104, "Historias de éxito", url="/blog/4")
+    add_menu(105, "Sobre nosotros", url="/about-us")
+    add_menu(110, "Ecosistema", url="/#ecosistema", xmlid="financa_website.menu_financa_services")
+    add_menu(111, "Odoo ERP", url="/#odoo-erp", xmlid="financa_website.menu_financa_odoo")
+    add_menu(112, "Diagnóstico", url="/#diagnostico", xmlid="financa_website.menu_financa_diagnosis")
+    add_menu(106, "Proceso", url="/#proceso", xmlid="financa_website.menu_financa_process")
+    add_menu(113, "Contacto", url="/contactus", xmlid="financa_website.menu_financa_contact")
+    add_menu(114, "Acceso a clientes", url="/web/login", xmlid="financa_website.menu_financa_login")
 
     add_page(200, "/", True, "financa_website.financa_homepage")
     add_page(201, "/aviso-de-privacidad", False, "financa_website.financa_privacy_page")
@@ -414,6 +475,13 @@ def build_production_like_env():
         website_id=website,
     )
     return env
+
+
+def nest_a_module_menu_under_a_legacy_parent(environment):
+    """Drift a module menu under a legacy parent, as a legacy megamenu would."""
+    legacy = environment["website.menu"].by_id(103)
+    environment["website.menu"].by_id(106).write({"parent_id": legacy})
+    return legacy
 
 
 def run_step(script, environment):
@@ -452,17 +520,19 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
         self.assertEqual(
             {entry["id"] for entry in evidence["deactivated_menus"]}, {102, 103, 104, 105}
         )
-        self.assertEqual([entry["id"] for entry in evidence["reparented_menus"]], [106])
-        self.assertEqual([entry["id"] for entry in evidence["unpublished_pages"]], [202])
+        self.assertEqual(evidence["reparented_menus"], [])
+        self.assertEqual(
+            [entry["id"] for entry in evidence["unpublished_pages"]], [202, 204]
+        )
 
-        self.assertFalse(menu(102).active)
-        self.assertFalse(menu(103).active)
-        self.assertFalse(menu(104).active)
-        self.assertFalse(menu(105).active)
+        for identifier in (102, 103, 104, 105):
+            self.assertFalse(menu(identifier).active)
         self.assertTrue(menu(101).active)
-        self.assertEqual(menu(106).parent_id, environment["website"].by_id(1).menu_id)
-        self.assertEqual(menu(110).parent_id, environment["website"].by_id(1).menu_id)
+        for identifier in (110, 111, 112, 106, 113, 114):
+            self.assertTrue(menu(identifier).active)
+            self.assertEqual(menu(identifier).parent_id, environment["website"].by_id(1).menu_id)
         self.assertFalse(environment["website.page"].by_id(202).is_published)
+        self.assertFalse(environment["website.page"].by_id(204).is_published)
         self.assertTrue(environment["website.page"].by_id(200).is_published)
         self.assertEqual(
             [entry["id"] for entry in evidence["audit"]["remaining_foreign_active_menus"]], [101]
@@ -470,6 +540,29 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
         self.assertEqual(
             [entry["url"] for entry in evidence["audit"]["shared_legacy_pages"]], ["/our-services"]
         )
+
+    def test_cleanup_matches_a_menu_the_shell_language_does_not_name(self):
+        environment = build_production_like_env()
+        noticias = environment["website.menu"].by_id(103)
+        self.assertEqual(noticias.name, "Blog")
+        stdout, _, status = run_step(CLEANUP, environment)
+        self.assertEqual(status, 0)
+        evidence = json.loads(stdout)
+        self.assertIn(103, {entry["id"] for entry in evidence["deactivated_menus"]})
+        self.assertFalse(noticias.active)
+
+    def test_cleanup_reparents_a_module_menu_under_a_legacy_parent(self):
+        environment = build_production_like_env()
+        legacy_parent = nest_a_module_menu_under_a_legacy_parent(environment)
+        stdout, _, status = run_step(CLEANUP, environment)
+        self.assertEqual(status, 0)
+        evidence = json.loads(stdout)
+        procesal = environment["website.menu"].by_id(106)
+
+        self.assertFalse(legacy_parent.active)
+        self.assertIn(106, {entry["id"] for entry in evidence["reparented_menus"]})
+        self.assertTrue(procesal.active)
+        self.assertEqual(procesal.parent_id, environment["website"].by_id(1).menu_id)
 
     def test_cleanup_is_idempotent(self):
         environment = build_production_like_env()
@@ -510,10 +603,8 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
 
     def test_postflight_rejects_a_module_menu_that_left_the_top_level(self):
         environment = build_production_like_env()
-        run_step(CLEANUP, environment)
-        noticias = environment["website.menu"].by_id(103)
-        noticias.write({"active": True})
-        environment["website.menu"].by_id(113).write({"parent_id": noticias})
+        nest_a_module_menu_under_a_legacy_parent(environment)
+        environment["website.menu"].by_id(103).write({"active": False})
         stdout, stderr, status = run_step(POSTFLIGHT, environment)
         self.assertEqual(status, 1)
         self.assertEqual(stdout, "")

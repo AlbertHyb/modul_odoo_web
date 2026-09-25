@@ -109,8 +109,12 @@ pasos, después de actualizar el módulo:
 
 `deploy/odoo/financa_legacy.json` es la lista revisada de ese contenido y el
 pipeline la pasa como `FINANCA_LEGACY_INVENTORY`. Cada entrada se empareja por
-`name` (sin distinguir acentos ni mayúsculas), por `url` o por la URL de la
-página enlazada; los registros con `xml_id` de `financa_website` nunca se tocan.
+`name` o por `url`, y basta con que coincida una de las dos. El `name` se compara
+con la etiqueta del menú en todos los idiomas activos, sin distinguir acentos ni
+mayúsculas: el mismo registro se ve como «Noticias» en español y «Blog» en
+inglés, y una entrada escrita con la etiqueta del sitio no debe depender del
+idioma con el que corre el shell. Los registros con `xml_id` de `financa_website`
+nunca se tocan.
 
 Ambos pasos imprimen en JSON el estado previo, las acciones aplicadas y los
 menús y páginas ajenos que permanecen en el website. Esa evidencia es la que
