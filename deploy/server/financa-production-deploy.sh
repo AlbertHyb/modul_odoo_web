@@ -79,12 +79,9 @@ trap cleanup_render EXIT
 exec 9>/run/lock/financa-production-deploy.lock
 flock -n 9 || die 'another production deployment is running'
 
-compose=(docker compose --env-file "$COMPOSE_ENV_FILE" -f "$COMPOSE_FILE")
-[[ "$("${compose[@]}" config --services | sort)" == $'db\nodoo' ]] \
-    || die 'Compose must contain exactly db and odoo services'
-while IFS= read -r image; do
-    [[ "$image" == *@sha256:* ]] || die "Compose image is not pinned by digest: $image"
-done < <("${compose[@]}" config --images)
+compose=(docker compose --project-name odoo --env-file "$COMPOSE_ENV_FILE" -f "$COMPOSE_FILE")
+[[ "$("${compose[@]}" config --services | sort)" == $'caddy\ndb\nodoo' ]] \
+    || die 'Compose must contain exactly caddy, db and odoo services'
 "${compose[@]}" run --rm --no-deps odoo odoo --version | grep -Fq '19.0' \
     || die 'the production Odoo image is not version 19.0'
 

@@ -22,24 +22,26 @@ for variable in COMPOSE_ENV_FILE COMPOSE_FILE R2_ENDPOINT R2_BUCKET R2_PREFIX R2
 done
 [[ "$R2_PREFIX" =~ ^[A-Za-z0-9._/-]+$ && "$R2_PREFIX" != /* && "$R2_PREFIX" != */ ]] || die 'R2_PREFIX is invalid'
 
-for command in aws docker grep mktemp mv rm sha256sum tar; do
+for command in aws docker grep mktemp rm sha256sum tar; do
     command -v "$command" >/dev/null || die "$command is required"
 done
 [[ -f "$COMPOSE_ENV_FILE" && -f "$COMPOSE_FILE" ]] || die 'Compose configuration is incomplete'
 # shellcheck disable=SC1090
 source "$COMPOSE_ENV_FILE"
 
-for variable in POSTGRES_USER ODOO_DATA_DIR; do
+for variable in POSTGRES_USER; do
     [[ -n ${!variable:-} ]] || die "missing $variable in $COMPOSE_ENV_FILE"
 done
 
-filestore="$ODOO_DATA_DIR/filestore/$database"
-parent=${filestore%/*}
-[[ -d "$parent" ]] || die "missing filestore parent: $parent"
+compose=(docker compose --project-name odoo --env-file "$COMPOSE_ENV_FILE" -f "$COMPOSE_FILE")
+"${compose[@]}" ps --status running --services | grep -Fxq odoo \
+    && die 'odoo must be stopped before restore'
+"${compose[@]}" exec -T db psql -U "$POSTGRES_USER" -d postgres -tAc \
+    "SELECT 1 FROM pg_database WHERE datname = '$database'" | grep -Fxq 1 \
+    || die 'target database does not exist'
 
 workdir=$(mktemp -d /var/tmp/financa-r2-restore.XXXXXX)
-staged_filestore=
-trap 'rm -rf -- "$workdir" "${staged_filestore:-}"' EXIT
+trap 'rm -rf -- "$workdir"' EXIT
 
 base="s3://$R2_BUCKET/$R2_PREFIX/$token"
 aws_args=(--profile "$R2_AWS_PROFILE" --endpoint-url "$R2_ENDPOINT")
@@ -52,23 +54,23 @@ done
 (cd "$workdir" && sha256sum -c manifest.sha256)
 tar -tzf "$workdir/filestore.tar.gz" | grep -Fxq "$database/"
 
-staged_filestore=$(mktemp -d "$parent/.${database}.restore.XXXXXX")
-tar -C "$staged_filestore" -xzf "$workdir/filestore.tar.gz"
-[[ -d "$staged_filestore/$database" ]] || die 'recovery point has no filestore'
-
-docker compose --env-file "$COMPOSE_ENV_FILE" -f "$COMPOSE_FILE" exec -T db \
+"${compose[@]}" exec -T db \
     pg_restore -U "$POSTGRES_USER" --clean --if-exists -d "$database" < "$workdir/database.dump"
 
-previous_filestore="$parent/.${database}.previous.$token"
-[[ ! -e "$previous_filestore" ]] || die "previous filestore path exists: $previous_filestore"
-
-if [[ -e "$filestore" ]]; then
-    mv "$filestore" "$previous_filestore"
-fi
-if ! mv "$staged_filestore/$database" "$filestore"; then
-    [[ ! -e "$filestore" && -e "$previous_filestore" ]] && mv "$previous_filestore" "$filestore" || true
-    die 'could not activate restored filestore'
-fi
-
-staged_filestore=
-rm -rf -- "$previous_filestore"
+"${compose[@]}" run --rm --no-deps -T --entrypoint sh odoo -c '
+    set -eu
+    base=/var/lib/odoo/filestore
+    staged="$base/.restore"
+    previous="$base/.previous"
+    rm -rf -- "$staged"
+    mkdir "$staged"
+    tar -C "$staged" -xzf -
+    test -d "$staged/'"$database"'"
+    rm -rf -- "$previous"
+    test ! -e "$base/'"$database"'" || mv "$base/'"$database"'" "$previous"
+    if ! mv "$staged/'"$database"'" "$base/'"$database"'"; then
+        test ! -e "$base/'"$database"'" && test -e "$previous" && mv "$previous" "$base/'"$database"'" || true
+        exit 1
+    fi
+    rm -rf -- "$previous" "$staged"
++' < "$workdir/filestore.tar.gz"

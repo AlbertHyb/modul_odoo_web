@@ -16,7 +16,7 @@ class ProductionQaRegressionTest(unittest.TestCase):
 
     def test_root_executes_only_installed_trusted_deploy_files(self):
         script = SCRIPT.read_text()
-        self.assertIn('compose=(docker compose --env-file "$COMPOSE_ENV_FILE" -f "$COMPOSE_FILE")', script)
+        self.assertIn('compose=(docker compose --project-name odoo --env-file "$COMPOSE_ENV_FILE" -f "$COMPOSE_FILE")', script)
         self.assertIn('validate_root_file "$COMPOSE_FILE"', script)
         self.assertIn('validate_root_executable "$FINANCA_VERIFY_BIN"', script)
         self.assertNotIn('python3 "$repo/deploy/ci/verify_financa_artifact.py"', script)

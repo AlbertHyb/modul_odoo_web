@@ -28,12 +28,9 @@ done
 # shellcheck disable=SC1090
 source "$COMPOSE_ENV_FILE"
 
-for variable in POSTGRES_USER ODOO_DATA_DIR; do
+for variable in POSTGRES_USER; do
     [[ -n ${!variable:-} ]] || die "missing $variable in $COMPOSE_ENV_FILE"
 done
-
-filestore="$ODOO_DATA_DIR/filestore/$database"
-[[ -d "$filestore" ]] || die "missing filestore: $filestore"
 
 workdir=$(mktemp -d /var/tmp/financa-r2-backup.XXXXXX)
 token=${workdir##*.}
@@ -42,9 +39,10 @@ trap 'rm -rf -- "$workdir"' EXIT
 base="s3://$R2_BUCKET/$R2_PREFIX/$token"
 aws_args=(--profile "$R2_AWS_PROFILE" --endpoint-url "$R2_ENDPOINT")
 
-docker compose --env-file "$COMPOSE_ENV_FILE" -f "$COMPOSE_FILE" exec -T db \
+docker compose --project-name odoo --env-file "$COMPOSE_ENV_FILE" -f "$COMPOSE_FILE" exec -T db \
     pg_dump -U "$POSTGRES_USER" --format=custom "$database" > "$workdir/database.dump"
-tar -C "$ODOO_DATA_DIR/filestore" -czf "$workdir/filestore.tar.gz" "$database"
+docker compose --project-name odoo --env-file "$COMPOSE_ENV_FILE" -f "$COMPOSE_FILE" run --rm --no-deps -T \
+    --entrypoint tar odoo -C /var/lib/odoo/filestore -czf - "$database" > "$workdir/filestore.tar.gz"
 printf '%s\n' "$database" > "$workdir/database.name"
 (cd "$workdir" && sha256sum database.dump filestore.tar.gz database.name > manifest.sha256)
 
