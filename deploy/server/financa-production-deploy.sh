@@ -55,10 +55,18 @@ validate_root_file() {
     [[ $(stat -c '%u' "$path") -eq 0 ]] || die "trusted file must be owned by root: $path"
     mode=$(stat -c '%a' "$path")
     (( (8#$mode & 8#22) == 0 )) || die "trusted file cannot be group/world writable: $path"
+
+
 }
 
 validate_root_file "$COMPOSE_FILE"
 validate_root_file "$COMPOSE_ENV_FILE"
+
+# shellcheck disable=SC1090
+source "$COMPOSE_ENV_FILE"
+[[ ${FINANCA_RELEASE_DIR:-} == "$current/financa_website" ]] \
+    || die "FINANCA_RELEASE_DIR must be $current/financa_website"
+
 source_export=
 staged_release=
 cleanup_render() {

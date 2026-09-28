@@ -10,7 +10,8 @@ ROOT = Path(__file__).parents[1]
 WORKFLOW = ROOT / ".github/workflows/deploy-production.yml"
 SCRIPT = ROOT / "deploy/server/financa-production-deploy.sh"
 VERIFIER = ROOT / "deploy/ci/verify_financa_artifact.py"
-
+BACKUP = ROOT / "deploy/server/financa-production-r2-backup.sh"
+RESTORE = ROOT / "deploy/server/financa-production-r2-restore.sh"
 
 class ProductionCdContractTest(unittest.TestCase):
     def test_workflow_is_manual_protected_and_separate_from_staging(self):
@@ -58,6 +59,34 @@ class ProductionCdContractTest(unittest.TestCase):
             "RECOVERY FAILED: Odoo remains stopped",
         ):
             self.assertIn(contract, script)
+
+    def test_r2_hooks_create_and_restore_one_paired_recovery_point(self):
+        backup = BACKUP.read_text()
+        restore = RESTORE.read_text()
+
+        for script in (backup, restore):
+            self.assertIn("R2_ENDPOINT", script)
+            self.assertIn("R2_BUCKET", script)
+            self.assertIn("R2_AWS_PROFILE", script)
+            self.assertIn("--endpoint-url", script)
+            self.assertIn("docker compose --env-file", script)
+
+        self.assertIn("pg_dump", backup)
+        self.assertIn("filestore.tar.gz", backup)
+        self.assertIn("manifest.sha256", backup)
+        self.assertIn("pg_restore", restore)
+        self.assertIn("sha256sum -c manifest.sha256", restore)
+        self.assertIn("recovery point is for another database", restore)
+
+    def test_r2_hooks_are_valid_bash(self):
+        for script in (BACKUP, RESTORE):
+            result = subprocess.run(
+                ["bash", "-n", str(script)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_verifier_accepts_exact_payload_and_rejects_changes(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
