@@ -1,0 +1,59 @@
+name: odoo
+
+services:
+  db:
+    image: ${POSTGRES_IMAGE:?POSTGRES_IMAGE must be set}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB must be set}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    secrets: [postgres_password]
+  odoo:
+    image: odoo-odoo
+    restart: unless-stopped
+    environment:
+      HOST: db
+      PORT: 5432
+      USER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      PASSWORD_FILE: /run/secrets/postgres_password
+    ports:
+      - "127.0.0.1:${ODOO_PORT:-8069}:8069"
+      - "${ODOO_BIND_IP:?ODOO_BIND_IP must be set}:8069:8069"
+    volumes:
+      - odoo_data:/var/lib/odoo
+      - ${ODOO_RESOLV_CONF:?ODOO_RESOLV_CONF must be set}:/etc/resolv.conf:ro
+      - ${ODOO_ADDONS_DIR:?ODOO_ADDONS_DIR must be set}:/mnt/extra-addons:ro
+      - ${FINANCA_RELEASE_DIR:?FINANCA_RELEASE_DIR must be set}:/mnt/extra-addons/financa_website:ro
+    secrets: [postgres_password]
+  caddy:
+    image: ${CADDY_IMAGE:?CADDY_IMAGE must be set}
+    restart: unless-stopped
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ${CADDYFILE:?CADDYFILE must be set}:/etc/caddy/Caddyfile:ro
+
+networks:
+  default:
+    name: odoo_default
+    external: true
+
+volumes:
+  postgres_data:
+    name: odoo_odoo-db-data
+    external: true
+  odoo_data:
+    name: odoo_odoo-web-data
+    external: true
+  caddy_data:
+    name: odoo_caddy_data
+    external: true
+  caddy_config:
+    name: odoo_caddy_config
+    external: true
+
+secrets:
+  postgres_password:
+    file: ${POSTGRES_PASSWORD_FILE:?POSTGRES_PASSWORD_FILE must be set}

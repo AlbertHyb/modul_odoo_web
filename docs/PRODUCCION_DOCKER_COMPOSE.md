@@ -65,17 +65,19 @@ de validación requerido antes de habilitar el despliegue.
    aprobado y se detiene imprimiendo el comando de reinstalación si no coinciden,
    para no ejecutar lógica privilegiada que no es la revisada.
 
-9. Instalar los hooks `FINANCA_BACKUP_BIN` y `FINANCA_RESTORE_BIN`. Deben ser
-   archivos regulares, canónicos, ejecutables, propiedad de root y no
-   escribibles por grupo u otros. El backup devuelve un token para el mismo
-   punto consistente de PostgreSQL y filestore; restore recibe la base y ese
-   token. Retener cada punto al menos siete días.
+9. Instalar los hooks `FINANCA_BACKUP_BIN` y `FINANCA_RESTORE_BIN`.
+configurar AWS CLI como root con R2_AWS_PROFILE, mantener credenciales fuera de Git, crear una lifecycle rule R2 de mínimo siete días e instalar
+    ´´´bash
+    sudo install -o root -g root -m 0750 deploy/server/financa-production-r2-backup.sh /usr/local/sbin/financa-production-r2-backup
+    sudo install -o root -g root -m 0750 deploy/server/financa-production-r2-restore.sh /usr/local/sbin/financa-production-r2-restore
+    ´´´
+
 10. Mantener el usuario SSH fuera del grupo `docker`. Autorizar solo el script
     y conservar `SSH_ORIGINAL_COMMAND`:
 
     ```text
     Defaults:financa-deploy env_keep += "SSH_ORIGINAL_COMMAND"
-    financa-deploy ALL=(root) NOPASSWD: /usr/local/sbin/financa-production-deploy
+   financa-deploy ALL=(root) NOPASSWD: /usr/local/sbin/financa-production-deploy
     ```
 
     La clave pública usa el comando forzado:

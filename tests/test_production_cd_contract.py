@@ -10,7 +10,9 @@ ROOT = Path(__file__).parents[1]
 WORKFLOW = ROOT / ".github/workflows/deploy-production.yml"
 SCRIPT = ROOT / "deploy/server/financa-production-deploy.sh"
 VERIFIER = ROOT / "deploy/ci/verify_financa_artifact.py"
-
+BACKUP = ROOT / "deploy/server/financa-production-r2-backup.sh"
+RESTORE = ROOT / "deploy/server/financa-production-r2-restore.sh"
+PRODUCTION_COMPOSE = ROOT / "deploy/compose/compose.production.yaml"
 
 class ProductionCdContractTest(unittest.TestCase):
     def test_workflow_is_manual_protected_and_separate_from_staging(self):
@@ -58,6 +60,77 @@ class ProductionCdContractTest(unittest.TestCase):
             "RECOVERY FAILED: Odoo remains stopped",
         ):
             self.assertIn(contract, script)
+
+    def test_r2_hooks_create_and_restore_one_paired_recovery_point(self):
+        backup = BACKUP.read_text()
+        restore = RESTORE.read_text()
+
+        for script in (backup, restore):
+            self.assertIn("R2_ENDPOINT", script)
+            self.assertIn("R2_BUCKET", script)
+            self.assertIn("R2_AWS_PROFILE", script)
+            self.assertIn("--endpoint-url", script)
+            self.assertIn("docker compose --project-name odoo --env-file", script)
+
+        self.assertIn("pg_dump", backup)
+        self.assertIn("filestore.tar.gz", backup)
+        self.assertIn("manifest.sha256", backup)
+        self.assertIn("pg_restore", restore)
+        self.assertIn("sha256sum -c manifest.sha256", restore)
+        self.assertIn("recovery point is for another database", restore)
+
+    def test_production_compose_reuses_existing_docker_resources(self):
+        compose = PRODUCTION_COMPOSE.read_text()
+        self.assertIn("name: odoo", compose)
+        self.assertNotIn("build:", compose)
+        self.assertNotIn("/srv/financa-production/data", compose)
+        self.assertNotIn("ODOO_DATA_DIR", compose)
+        self.assertIn("image: odoo-odoo", compose)
+        self.assertIn("name: odoo_default", compose)
+        self.assertEqual(compose.count("external: true"), 5)
+        for service in ("db:", "odoo:", "caddy:"):
+            self.assertIn(f"  {service}", compose)
+        self.assertIn("POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password", compose)
+        self.assertIn("PASSWORD_FILE: /run/secrets/postgres_password", compose)
+        self.assertIn(":/mnt/extra-addons:ro", compose)
+        self.assertIn(":/mnt/extra-addons/financa_website:ro", compose)
+        self.assertIn("odoo_odoo-db-data", compose)
+        self.assertIn("odoo_odoo-web-data", compose)
+        self.assertIn("odoo_caddy_data", compose)
+        self.assertIn("odoo_caddy_config", compose)
+        self.assertIn(":/etc/caddy/Caddyfile:ro", compose)
+        self.assertIn('"127.0.0.1:${ODOO_PORT:-8069}:8069"', compose)
+        self.assertIn('"${ODOO_BIND_IP:?ODOO_BIND_IP must be set}:8069:8069"', compose)
+        deploy = SCRIPT.read_text()
+        self.assertIn("exactly caddy, db and odoo services", deploy)
+        for script in (deploy, BACKUP.read_text(), RESTORE.read_text()):
+            self.assertIn("docker compose --project-name odoo", script)
+        self.assertNotIn("stop caddy", deploy)
+        self.assertNotIn("stop db", deploy)
+        self.assertNotIn("up -d --force-recreate --no-deps caddy", deploy)
+        self.assertNotIn("up -d --force-recreate --no-deps db", deploy)
+
+    def test_restore_uses_the_odoo_volume_only_after_its_guard(self):
+        restore = RESTORE.read_text()
+        backup = BACKUP.read_text()
+        for script in (backup, restore):
+            self.assertNotIn("ODOO_DATA_DIR", script)
+            self.assertIn("/var/lib/odoo/filestore", script)
+        self.assertIn("odoo must be stopped before restore", restore)
+        self.assertLess(restore.index("odoo must be stopped before restore"), restore.index("pg_restore"))
+        self.assertIn("target database does not exist", restore)
+        self.assertIn('pg_restore -U "$POSTGRES_USER" --clean --if-exists -d "$database"', restore)
+        self.assertNotIn("--create", restore)
+
+    def test_r2_hooks_are_valid_bash(self):
+        for script in (BACKUP, RESTORE):
+            result = subprocess.run(
+                ["bash", "-n", str(script)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_verifier_accepts_exact_payload_and_rejects_changes(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
