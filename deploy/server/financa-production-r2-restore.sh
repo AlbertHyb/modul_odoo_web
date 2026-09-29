@@ -59,7 +59,8 @@ done
 
 [[ $(<"$workdir/database.name") == "$database" ]] || die 'recovery point is for another database'
 (cd "$workdir" && sha256sum -c manifest.sha256)
-tar -tzf "$workdir/filestore.tar.gz" | grep -Fxq "$database/"
+tar -tzf "$workdir/filestore.tar.gz" > "$workdir/filestore.list"
+grep -Fxq "$database/" "$workdir/filestore.list"
 
 "${compose[@]}" run --rm --no-deps -T --entrypoint sh odoo -c '
     set -eu

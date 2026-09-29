@@ -169,7 +169,7 @@ class FinancaLegacyDeploymentContractTest(unittest.TestCase):
         script = PRODUCTION.read_text()
         self.assertIn('legacy_inventory="$release/deploy/odoo/financa_legacy.json"', script)
         self.assertIn('[[ -f "$legacy_inventory" ]]', script)
-        self.assertIn('-e FINANCA_LEGACY_INVENTORY="$legacy_inventory"', script)
+        self.assertIn('-e FINANCA_LEGACY_INVENTORY=/mnt/extra-addons/financa_website/deploy/odoo/financa_legacy.json', script)
         self.assertEqual(script.count("cleanup_financa_legacy.py"), 1)
         order = [
             "run_module_action\n",
