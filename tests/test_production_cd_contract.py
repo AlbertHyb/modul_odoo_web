@@ -54,6 +54,7 @@ class ProductionCdContractTest(unittest.TestCase):
             "preflight_financa.py",
             "cleanup_financa_legacy.py",
             "FINANCA_LEGACY_INVENTORY",
+            "FINANCA_LEGACY_INVENTORY=/mnt/extra-addons/financa_website/deploy/odoo/financa_legacy.json",
             "mv -Tf",
             "--max-time 10",
             "for _ in {1..12}",
@@ -78,6 +79,9 @@ class ProductionCdContractTest(unittest.TestCase):
         self.assertIn("pg_restore", restore)
         self.assertIn("sha256sum -c manifest.sha256", restore)
         self.assertIn("recovery point is for another database", restore)
+        self.assertIn('tar -tzf "$workdir/filestore.tar.gz" > "$workdir/filestore.list"', restore)
+        self.assertIn('grep -Fxq "$database/" "$workdir/filestore.list"', restore)
+        self.assertNotIn('tar -tzf "$workdir/filestore.tar.gz" | grep -Fxq "$database/"', restore)
 
     def test_production_compose_reuses_existing_docker_resources(self):
         compose = PRODUCTION_COMPOSE.read_text()
