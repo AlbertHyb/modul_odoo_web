@@ -13,6 +13,12 @@ services:
   odoo:
     image: odoo-odoo
     restart: unless-stopped
+    command: >
+      odoo
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/var/lib/odoo/addons/19.0,/usr/lib/python3/dist-packages/addons,/mnt/extra-addons
+      --workers=2
+      --max-cron-threads=1
+      --proxy-mode
     environment:
       HOST: db
       PORT: 5432
@@ -30,6 +36,9 @@ services:
   caddy:
     image: ${CADDY_IMAGE:?CADDY_IMAGE must be set}
     restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
       - caddy_data:/data
       - caddy_config:/config

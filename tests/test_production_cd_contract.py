@@ -103,6 +103,9 @@ class ProductionCdContractTest(unittest.TestCase):
         self.assertNotIn("/home/deploy/odoo", compose)
         self.assertIn('"127.0.0.1:${ODOO_PORT:-8069}:8069"', compose)
         self.assertIn('"${ODOO_BIND_IP:?ODOO_BIND_IP must be set}:8069:8069"', compose)
+        self.assertIn("--proxy-mode", compose)
+        self.assertIn('"80:80"', compose)
+        self.assertIn('"443:443"', compose)
         deploy = SCRIPT.read_text()
         self.assertIn("exactly caddy, db and odoo services", deploy)
         for script in (deploy, BACKUP.read_text(), RESTORE.read_text()):
