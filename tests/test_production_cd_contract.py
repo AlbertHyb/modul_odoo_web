@@ -98,7 +98,9 @@ class ProductionCdContractTest(unittest.TestCase):
         self.assertIn("odoo_odoo-web-data", compose)
         self.assertIn("odoo_caddy_data", compose)
         self.assertIn("odoo_caddy_config", compose)
-        self.assertIn(":/etc/caddy/Caddyfile:ro", compose)
+        self.assertIn("/etc/financa-production/Caddyfile:/etc/caddy/Caddyfile:ro", compose)
+        self.assertIn("/etc/financa-production/odoo-resolv.conf:/etc/resolv.conf:ro", compose)
+        self.assertNotIn("/home/deploy/odoo", compose)
         self.assertIn('"127.0.0.1:${ODOO_PORT:-8069}:8069"', compose)
         self.assertIn('"${ODOO_BIND_IP:?ODOO_BIND_IP must be set}:8069:8069"', compose)
         deploy = SCRIPT.read_text()
@@ -121,6 +123,19 @@ class ProductionCdContractTest(unittest.TestCase):
         self.assertIn("target database does not exist", restore)
         self.assertIn('pg_restore -U "$POSTGRES_USER" --clean --if-exists -d "$database"', restore)
         self.assertNotIn("--create", restore)
+        self.assertLess(restore.index('test -d "$staged/$2"'), restore.index("pg_restore"))
+        self.assertIn('if ! mv "$staged/$database" "$base/$database"; then', restore)
+        self.assertIn('test ! -e "$base/$database" && test -e "$previous" && mv "$previous" "$base/$database"', restore)
+        self.assertLess(
+            restore.index('test ! -e "$previous"'),
+            restore.index("pg_restore"),
+        )
+
+    def test_r2_retention_is_enforced_by_bucket_policy_not_a_local_variable(self):
+        backup = BACKUP.read_text()
+        environment = (ROOT / "deploy/server/financa-production-deploy.env.example").read_text()
+        self.assertNotIn("R2_RETENTION_DAYS", backup)
+        self.assertNotIn("R2_RETENTION_DAYS", environment)
 
     def test_r2_hooks_are_valid_bash(self):
         for script in (BACKUP, RESTORE):

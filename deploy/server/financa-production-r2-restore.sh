@@ -41,7 +41,14 @@ compose=(docker compose --project-name odoo --env-file "$COMPOSE_ENV_FILE" -f "$
     || die 'target database does not exist'
 
 workdir=$(mktemp -d /var/tmp/financa-r2-restore.XXXXXX)
-trap 'rm -rf -- "$workdir"' EXIT
+staged=".restore-$token"
+previous=".previous-$token"
+cleanup() {
+    rm -rf -- "$workdir"
+    "${compose[@]}" run --rm --no-deps -T --entrypoint sh odoo -c \
+        'rm -rf -- "/var/lib/odoo/filestore/$1"' -- "$staged" >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
 
 base="s3://$R2_BUCKET/$R2_PREFIX/$token"
 aws_args=(--profile "$R2_AWS_PROFILE" --endpoint-url "$R2_ENDPOINT")
@@ -54,23 +61,33 @@ done
 (cd "$workdir" && sha256sum -c manifest.sha256)
 tar -tzf "$workdir/filestore.tar.gz" | grep -Fxq "$database/"
 
+"${compose[@]}" run --rm --no-deps -T --entrypoint sh odoo -c '
+    set -eu
+    base=/var/lib/odoo/filestore
+    staged="$base/$1"
+    previous="$base/$3"
+    test ! -e "$staged"
+    test ! -e "$previous"
+    mkdir "$staged"
+    tar -C "$staged" -xzf -
+    test -d "$staged/$2"
+' -- "$staged" "$database" "$previous" < "$workdir/filestore.tar.gz"
+
 "${compose[@]}" exec -T db \
     pg_restore -U "$POSTGRES_USER" --clean --if-exists -d "$database" < "$workdir/database.dump"
 
 "${compose[@]}" run --rm --no-deps -T --entrypoint sh odoo -c '
     set -eu
     base=/var/lib/odoo/filestore
-    staged="$base/.restore"
-    previous="$base/.previous"
-    rm -rf -- "$staged"
-    mkdir "$staged"
-    tar -C "$staged" -xzf -
-    test -d "$staged/'"$database"'"
-    rm -rf -- "$previous"
-    test ! -e "$base/'"$database"'" || mv "$base/'"$database"'" "$previous"
-    if ! mv "$staged/'"$database"'" "$base/'"$database"'"; then
-        test ! -e "$base/'"$database"'" && test -e "$previous" && mv "$previous" "$base/'"$database"'" || true
+    staged="$base/$1"
+    previous="$base/$2"
+    database="$3"
+    test ! -e "$previous"
+    test -d "$staged/$database"
+    test ! -e "$base/$database" || mv "$base/$database" "$previous"
+    if ! mv "$staged/$database" "$base/$database"; then
+        test ! -e "$base/$database" && test -e "$previous" && mv "$previous" "$base/$database" || true
         exit 1
     fi
     rm -rf -- "$previous" "$staged"
-+' < "$workdir/filestore.tar.gz"
+' -- "$staged" "$previous" "$database"

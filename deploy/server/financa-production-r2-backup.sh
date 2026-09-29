@@ -14,12 +14,11 @@ database=${1:?usage: financa-production-r2-backup <database>}
 # shellcheck disable=SC1090
 source "$deploy_env"
 
-for variable in COMPOSE_ENV_FILE COMPOSE_FILE R2_ENDPOINT R2_BUCKET R2_PREFIX R2_AWS_PROFILE R2_RETENTION_DAYS; do
+for variable in COMPOSE_ENV_FILE COMPOSE_FILE R2_ENDPOINT R2_BUCKET R2_PREFIX R2_AWS_PROFILE; do
     [[ -n ${!variable:-} ]] || die "missing $variable in $deploy_env"
 done
 [[ "$database" =~ ^[A-Za-z0-9_]+$ ]] || die 'database name is invalid'
 [[ "$R2_PREFIX" =~ ^[A-Za-z0-9._/-]+$ && "$R2_PREFIX" != /* && "$R2_PREFIX" != */ ]] || die 'R2_PREFIX is invalid'
-[[ "$R2_RETENTION_DAYS" =~ ^[0-9]+$ && "$R2_RETENTION_DAYS" -ge 7 ]] || die 'R2_RETENTION_DAYS must be at least 7'
 
 for command in aws docker mktemp rm sha256sum tar; do
     command -v "$command" >/dev/null || die "$command is required"
