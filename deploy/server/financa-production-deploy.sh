@@ -147,7 +147,7 @@ run_odoo_shell() {
     "${compose[@]}" run --rm --no-deps -T \
         -e FINANCA_DOMAIN="$PRODUCTION_DOMAIN" \
         -e REQUIRE_GA4="$require_ga4" \
-        -e FINANCA_LEGACY_INVENTORY=/mnt/extra-addons/financa_website/deploy/odoo/financa_legacy.json \
+        -e FINANCA_LEGACY_INVENTORY=/mnt/financa-release/deploy/odoo/financa_legacy.json \
         odoo odoo shell -d "$ODOO_DB" < "$script"
 }
 
