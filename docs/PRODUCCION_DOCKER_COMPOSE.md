@@ -45,6 +45,9 @@ de validación requerido antes de habilitar el despliegue.
 5. Instalar `deploy/compose/compose.yaml` como
    `/etc/financa-production/compose.yaml`, propiedad `root:root`, modo `0644`.
    El despliegue no ejecuta Compose desde el checkout modificable.
+   Copiar también `Caddyfile` y `odoo-resolv.conf` a
+   `/etc/financa-production/`, ambos propiedad de `root:root` y no escribibles
+   por `deploy`.
 6. Crear `/etc/financa-production/odoo.conf` para Odoo 19 con `db_name` y
    `dbfilter` exclusivos, `list_db = False`, `proxy_mode = True` y
    `admin_passwd` fuera del repositorio.
@@ -86,11 +89,18 @@ configurar AWS CLI como root con R2_AWS_PROFILE, mantener credenciales fuera de 
     restrict,command="sudo -n /usr/local/sbin/financa-production-deploy" ssh-ed25519 <clave-publica-produccion>
     ```
 
-Antes del primer despliegue ejecutar:
+Antes del primer despliegue, validar la configuración y que el Odoo ya
+ejecutándose responde usando su configuración y secreto montados:
 
 ```bash
 docker compose --env-file /etc/financa-production/compose.env -f /etc/financa-production/compose.yaml config
+docker compose --env-file /etc/financa-production/compose.env -f /etc/financa-production/compose.yaml ps
+curl --fail --silent --show-error http://127.0.0.1:8069/web/login >/dev/null
 ```
+
+El último comando debe terminar con estado cero y el servicio `odoo` debe
+figurar como saludable; si falla, no iniciar el workflow de despliegue. No se
+crea otro contenedor ni se imprime la contraseña.
 
 Después, ejecutar **Deploy Financa production** manualmente desde GitHub
 Actions sobre `master`, aprobar el gate y conservar como evidencia: SHA,

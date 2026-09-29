@@ -23,7 +23,7 @@ services:
       - "${ODOO_BIND_IP:?ODOO_BIND_IP must be set}:8069:8069"
     volumes:
       - odoo_data:/var/lib/odoo
-      - ${ODOO_RESOLV_CONF:?ODOO_RESOLV_CONF must be set}:/etc/resolv.conf:ro
+      - /etc/financa-production/odoo-resolv.conf:/etc/resolv.conf:ro
       - ${ODOO_ADDONS_DIR:?ODOO_ADDONS_DIR must be set}:/mnt/extra-addons:ro
       - ${FINANCA_RELEASE_DIR:?FINANCA_RELEASE_DIR must be set}:/mnt/extra-addons/financa_website:ro
     secrets: [postgres_password]
@@ -33,7 +33,7 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
-      - ${CADDYFILE:?CADDYFILE must be set}:/etc/caddy/Caddyfile:ro
+      - /etc/financa-production/Caddyfile:/etc/caddy/Caddyfile:ro
 
 networks:
   default:
