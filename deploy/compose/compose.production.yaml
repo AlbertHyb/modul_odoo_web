@@ -32,6 +32,7 @@ services:
       - /etc/financa-production/odoo-resolv.conf:/etc/resolv.conf:ro
       - ${ODOO_ADDONS_DIR:?ODOO_ADDONS_DIR must be set}:/mnt/extra-addons:ro
       - ${FINANCA_RELEASE_DIR:?FINANCA_RELEASE_DIR must be set}:/mnt/extra-addons/financa_website:ro
+      - /srv/financa-production/releases/current:/mnt/financa-release:ro
     secrets: [postgres_password]
   caddy:
     image: ${CADDY_IMAGE:?CADDY_IMAGE must be set}

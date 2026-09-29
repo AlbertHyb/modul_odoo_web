@@ -54,7 +54,7 @@ class ProductionCdContractTest(unittest.TestCase):
             "preflight_financa.py",
             "cleanup_financa_legacy.py",
             "FINANCA_LEGACY_INVENTORY",
-            "FINANCA_LEGACY_INVENTORY=/mnt/extra-addons/financa_website/deploy/odoo/financa_legacy.json",
+            "FINANCA_LEGACY_INVENTORY=/mnt/financa-release/deploy/odoo/financa_legacy.json",
             "mv -Tf",
             "--max-time 10",
             "for _ in {1..12}",
@@ -104,6 +104,7 @@ class ProductionCdContractTest(unittest.TestCase):
         self.assertIn("odoo_caddy_config", compose)
         self.assertIn("/etc/financa-production/Caddyfile:/etc/caddy/Caddyfile:ro", compose)
         self.assertIn("/etc/financa-production/odoo-resolv.conf:/etc/resolv.conf:ro", compose)
+        self.assertIn("/srv/financa-production/releases/current:/mnt/financa-release:ro", compose)
         self.assertNotIn("/home/deploy/odoo", compose)
         self.assertIn('"127.0.0.1:${ODOO_PORT:-8069}:8069"', compose)
         self.assertIn('"${ODOO_BIND_IP:?ODOO_BIND_IP must be set}:8069:8069"', compose)
