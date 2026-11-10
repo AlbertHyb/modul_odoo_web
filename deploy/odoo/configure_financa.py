@@ -45,6 +45,11 @@ if REQUIRE_GA4 and not website.google_analytics_key:
     )
     raise SystemExit(1)
 
+# `odoo shell` rolls the transaction back when the script ends; without this
+# commit the configuration is lost and the post-flight gate, which runs in a
+# separate process, never sees it.
+env.cr.commit()
+
 print(
     json.dumps(
         {
