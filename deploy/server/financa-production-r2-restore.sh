@@ -7,6 +7,8 @@ die() {
     printf 'R2 RESTORE FAILED: %s\n' "$*" >&2
     exit 1
 }
+# set -e stops on any failing command; name it, or a failed restore leaves no clue.
+trap 'printf "R2 RESTORE FAILED: line %s: %s\n" "$LINENO" "$BASH_COMMAND" >&2' ERR
 
 [[ ${EUID} -eq 0 ]] || die 'must run as root'
 database=${1:?usage: financa-production-r2-restore <database> <token>}

@@ -364,6 +364,16 @@ class FakeModel:
         return next(record for record in self.records if record.id == identifier)
 
 
+class FakeCursor:
+    """`odoo shell` rolls back on exit, so a step only persists what it commits."""
+
+    def __init__(self):
+        self.commits = 0
+
+    def commit(self):
+        self.commits += 1
+
+
 class FakeEnv:
     MODELS = (
         "ir.ui.view",
@@ -387,6 +397,7 @@ class FakeEnv:
     }
 
     def __init__(self):
+        self.cr = FakeCursor()
         self.models = {name: FakeModel(self, name) for name in self.MODELS}
         for name, relations in self.RELATIONS.items():
             self.models[name].relations = dict(relations)
@@ -563,6 +574,19 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
         self.assertEqual(
             [entry["url"] for entry in evidence["audit"]["shared_legacy_pages"]], ["/our-services"]
         )
+
+    def test_cleanup_commits_its_changes(self):
+        environment = build_production_like_env()
+        _, _, status = run_step(CLEANUP, environment)
+        self.assertEqual(status, 0)
+        self.assertEqual(environment.cr.commits, 1)
+
+    def test_postflight_never_commits(self):
+        environment = build_production_like_env()
+        run_step(CLEANUP, environment)
+        commits = environment.cr.commits
+        run_step(POSTFLIGHT, environment)
+        self.assertEqual(environment.cr.commits, commits)
 
     def test_cleanup_matches_a_menu_the_shell_language_does_not_name(self):
         environment = build_production_like_env()

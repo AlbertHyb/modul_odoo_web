@@ -223,6 +223,10 @@ remaining_menus = Menu.browse([menu.id for menu in foreign_menus if visible_to_p
 
 shared_pages = Page.search([("website_id", "=", False), ("url", "in", inventory["pages"])])
 
+# `odoo shell` rolls the transaction back when the script ends; without this
+# commit the cleanup is lost and the post-flight gate never sees it.
+env.cr.commit()
+
 print(
     json.dumps(
         {

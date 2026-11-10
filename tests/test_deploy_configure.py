@@ -52,12 +52,23 @@ class Model:
         return Recordset(self.records)
 
 
+class Cursor:
+    """`odoo shell` rolls back on exit, so a step only persists what it commits."""
+
+    def __init__(self):
+        self.commits = 0
+
+    def commit(self):
+        self.commits += 1
+
+
 class FakeEnv:
     def __init__(self, website, menus, module_menu=None):
         self.website = website
         self.models = {"website": Model([website]), "website.menu": Model(menus)}
         self.module_menu = module_menu
         self.hidden_group = type("Group", (), {"id": 99})()
+        self.cr = Cursor()
 
     def __getitem__(self, name):
         return self.models[name]
@@ -74,6 +85,7 @@ class ConfigureTest(unittest.TestCase):
     def configure(self, website, menus=(), module_menu=None, require_ga4="true"):
         output, errors = io.StringIO(), io.StringIO()
         environment = FakeEnv(website, list(menus), module_menu)
+        self.environment = environment
         variables = {"FINANCA_DOMAIN": DOMAIN, "REQUIRE_GA4": require_ga4}
         status = 0
         with mock.patch.dict(os.environ, variables):
@@ -92,6 +104,16 @@ class ConfigureTest(unittest.TestCase):
         self.assertEqual(evidence["analytics_tag_kind"], "gtm")
         self.assertTrue(evidence["ga4_configured"])
         self.assertTrue(website.cookies_bar)
+
+    def test_the_configuration_is_committed(self):
+        _, _, status = self.configure(Website("G-ABCDEF1234"))
+        self.assertEqual(status, 0)
+        self.assertEqual(self.environment.cr.commits, 1)
+
+    def test_a_failed_configuration_is_not_committed(self):
+        _, _, status = self.configure(Website(None))
+        self.assertEqual(status, 1)
+        self.assertEqual(self.environment.cr.commits, 0)
 
     def test_evidence_reports_a_ga4_measurement_id(self):
         stdout, _, status = self.configure(Website("G-ABCDEF1234"))
