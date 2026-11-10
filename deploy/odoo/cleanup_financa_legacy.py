@@ -19,6 +19,7 @@ import unicodedata
 # cleanup step and the deployment gate share one definition of legacy content.
 # --- Financa legacy inventory helpers ---
 MODULE_RECORD_PREFIX = "financa_website."
+HIDDEN_MENU_GROUP = "base.group_no_one"
 
 
 def load_legacy_inventory(path):
@@ -107,6 +108,10 @@ def legacy_pages(pages, inventory, website_id):
     ]
 
 
+def visible_to_public(menu, public_groups):
+    return not menu.group_ids or bool(menu.group_ids & public_groups)
+
+
 # --- end Financa legacy inventory helpers ---
 
 
@@ -162,6 +167,8 @@ websites = env["website"].sudo().search([("domain", "=", DOMAIN)])
 if len(websites) != 1:
     abort(f"expected exactly one website for {DOMAIN!r}, found {len(websites)}")
 website = websites.ensure_one()
+hidden_group = env.ref(HIDDEN_MENU_GROUP)
+public_groups = website.user_id.all_group_ids
 
 Menu = env["website.menu"].sudo()
 Page = env["website.page"].sudo()
@@ -188,15 +195,17 @@ doomed = targets | Menu.browse(
 rescued = [menu for menu in rescue_scope if is_module_record(menu)]
 
 before = {
-    "active_menus": [describe(menu) for menu in foreign_menus if menu.active],
+    "visible_menus": [
+        describe(menu) for menu in foreign_menus if visible_to_public(menu, public_groups)
+    ],
     "published_pages": [describe_page(page) for page in website_pages if page.is_published],
 }
 
-deactivated = []
+hidden = []
 for menu in doomed:
-    if menu.active:
-        deactivated.append(describe(menu))
-        menu.write({"active": False})
+    if hidden_group not in menu.group_ids:
+        hidden.append(describe(menu))
+        menu.write({"group_ids": [(4, hidden_group.id)]})
 
 reparented = []
 for menu in rescued:
@@ -210,9 +219,7 @@ for page in legacy_pages(list(website_pages), inventory, website.id):
         unpublished.append(describe_page(page))
         page.write({"is_published": False})
 
-remaining_menus = Menu.search(
-    [("website_id", "=", website.id), ("active", "=", True), ("id", "!=", root_menu.id)]
-)
+remaining_menus = Menu.browse([menu.id for menu in foreign_menus if visible_to_public(menu, public_groups)])
 
 shared_pages = Page.search([("website_id", "=", False), ("url", "in", inventory["pages"])])
 
@@ -223,12 +230,12 @@ print(
             "domain": website.domain,
             "inventory": {"menus": len(inventory["menus"]), "pages": len(inventory["pages"])},
             "before": before,
-            "deactivated_menus": deactivated,
+            "hidden_menus": hidden,
             "reparented_menus": reparented,
             "unpublished_pages": unpublished,
-            "changed": bool(deactivated or reparented or unpublished),
+            "changed": bool(hidden or reparented or unpublished),
             "audit": {
-                "remaining_foreign_active_menus": [
+                "remaining_foreign_visible_menus": [
                     describe(menu) for menu in remaining_menus if not is_module_record(menu)
                 ],
                 "remaining_published_pages": [

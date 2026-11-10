@@ -27,13 +27,18 @@ class Website:
         self.google_analytics_key = tag
 
     def write(self, values):
-        self.__dict__.update(values)
+        if "group_ids" in values:
+            self.group_ids.extend(command[1] for command in values["group_ids"] if command[0] == 4)
+        self.__dict__.update({key: value for key, value in values.items() if key != "group_ids"})
 
 
 class Menu:
-    def __init__(self, identifier, active=True):
+    def __init__(self, identifier, group_ids=()):
         self.id = identifier
-        self.active = active
+        self.group_ids = list(group_ids)
+
+    def write(self, values):
+        self.group_ids.extend(command[1] for command in values.get("group_ids", []) if command[0] == 4)
 
 
 class Model:
@@ -52,11 +57,14 @@ class FakeEnv:
         self.website = website
         self.models = {"website": Model([website]), "website.menu": Model(menus)}
         self.module_menu = module_menu
+        self.hidden_group = type("Group", (), {"id": 99})()
 
     def __getitem__(self, name):
         return self.models[name]
 
     def ref(self, xmlid, raise_if_not_found=True):
+        if xmlid == "base.group_no_one":
+            return self.hidden_group
         if self.module_menu is None and raise_if_not_found:
             raise KeyError(xmlid)
         return self.module_menu
@@ -109,14 +117,14 @@ class ConfigureTest(unittest.TestCase):
     def test_only_the_module_contact_menu_survives(self):
         module_menu = Menu(2)
         duplicate = Menu(1)
-        inactive = Menu(3, active=False)
+        inactive = Menu(3, group_ids=[99])
         stdout, _, status = self.configure(
             Website("G-ABCDEF1234"), [duplicate, module_menu, inactive], module_menu
         )
         self.assertEqual(status, 0)
-        self.assertFalse(duplicate.active)
-        self.assertTrue(module_menu.active)
-        self.assertFalse(inactive.active)
+        self.assertTrue(duplicate.group_ids)
+        self.assertFalse(module_menu.group_ids)
+        self.assertTrue(inactive.group_ids)
         self.assertEqual(json.loads(stdout)["website_id"], 7)
 
 

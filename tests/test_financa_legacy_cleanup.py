@@ -183,7 +183,7 @@ class FinancaLegacyDeploymentContractTest(unittest.TestCase):
     def test_cleanup_only_deactivates_and_unpublishes(self):
         cleanup = CLEANUP.read_text()
         self.assertIn('INVENTORY = os.environ["FINANCA_LEGACY_INVENTORY"]', cleanup)
-        self.assertIn('menu.write({"active": False})', cleanup)
+        self.assertIn('menu.write({"group_ids": [(4, hidden_group.id)]})', cleanup)
         self.assertIn('page.write({"is_published": False})', cleanup)
         self.assertIn('menu.write({"parent_id": root_menu.id})', cleanup)
         self.assertNotIn("unlink", cleanup)
@@ -218,6 +218,13 @@ class FakeRecord:
     def write(self, values):
         resolved = {}
         for name, value in values.items():
+            if name == "group_ids" and isinstance(value, list) and value and isinstance(value[0], tuple):
+                groups = self.group_ids
+                for command in value:
+                    if command[0] == 4:
+                        groups |= self._model.env["res.groups"].browse([command[1]])
+                resolved[name] = groups
+                continue
             target = self._model.relations.get(name)
             if target and isinstance(value, int):
                 value = self._model.env[target].by_id(value)
@@ -284,6 +291,10 @@ class Recordset:
     def __contains__(self, item):
         return any(record.id == item.id for record in self._records)
 
+    def __and__(self, other):
+        identifiers = {record.id for record in iter_records(other)}
+        return Recordset(self._model, [record for record in self._records if record.id in identifiers])
+
     def __or__(self, other):
         records = list(self._records)
         known = [record.id for record in records]
@@ -310,6 +321,9 @@ class Recordset:
     def mapped(self, field):
         return [getattr(record, field) for record in self._records]
 
+    def filtered(self, predicate):
+        return Recordset(self._model, [record for record in self._records if predicate(record)])
+
     def sudo(self):
         return self
 
@@ -329,6 +343,8 @@ class FakeModel:
         self.relations = {}
 
     def add(self, xmlid=None, **values):
+        if self.name == "website.menu":
+            values.setdefault("group_ids", Recordset(self.env["res.groups"], []))
         record = FakeRecord(self, **values)
         self.records.append(record)
         if xmlid:
@@ -352,6 +368,8 @@ class FakeEnv:
     MODELS = (
         "ir.ui.view",
         "res.lang",
+        "res.groups",
+        "res.users",
         "website",
         "website.menu",
         "website.page",
@@ -362,6 +380,7 @@ class FakeEnv:
             "website_id": "website",
             "parent_id": "website.menu",
             "page_id": "website.page",
+            "group_ids": "res.groups",
         },
         "website.page": {"website_id": "website"},
         "website.rewrite": {"website_id": "website"},
@@ -374,15 +393,17 @@ class FakeEnv:
         self.models["res.lang"].add(id=1, code="en_US", active=True)
         self.models["res.lang"].add(id=2, code="es_MX", active=True)
         self.models["res.lang"].add(id=3, code="fr_FR", active=False)
+        self.models["res.groups"].add(id=99)
+        self.models["res.groups"].xmlids[99] = "base.group_no_one"
 
     def __getitem__(self, name):
         return self.models[name]
 
     def ref(self, xmlid, raise_if_not_found=True):
-        model = self.models["website.menu"]
-        for identifier, key in model.xmlids.items():
-            if key == xmlid:
-                return model.by_id(identifier)
+        for model in self.models.values():
+            for identifier, key in model.xmlids.items():
+                if key == xmlid:
+                    return model.by_id(identifier)
         if raise_if_not_found:
             raise KeyError(xmlid)
         return False
@@ -396,12 +417,14 @@ def build_production_like_env():
     "Blog", and the previous site's pages are still published.
     """
     env = FakeEnv()
+    public_user = env["res.users"].add(id=10, all_group_ids=Recordset(env["res.groups"], []))
     website = env["website"].add(
         id=1,
         name="Financa Consultores",
         domain="https://financa.mx",
         cookies_bar=True,
         google_analytics_key="G-TEST",
+        user_id=public_user,
     )
     root = env["website.menu"].add(
         id=100,
@@ -518,7 +541,7 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
 
         self.assertTrue(evidence["changed"])
         self.assertEqual(
-            {entry["id"] for entry in evidence["deactivated_menus"]}, {102, 103, 104, 105}
+            {entry["id"] for entry in evidence["hidden_menus"]}, {102, 103, 104, 105}
         )
         self.assertEqual(evidence["reparented_menus"], [])
         self.assertEqual(
@@ -526,16 +549,16 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
         )
 
         for identifier in (102, 103, 104, 105):
-            self.assertFalse(menu(identifier).active)
-        self.assertTrue(menu(101).active)
+            self.assertTrue(menu(identifier).group_ids)
+        self.assertFalse(menu(101).group_ids)
         for identifier in (110, 111, 112, 106, 113, 114):
-            self.assertTrue(menu(identifier).active)
+            self.assertFalse(menu(identifier).group_ids)
             self.assertEqual(menu(identifier).parent_id, environment["website"].by_id(1).menu_id)
         self.assertFalse(environment["website.page"].by_id(202).is_published)
         self.assertFalse(environment["website.page"].by_id(204).is_published)
         self.assertTrue(environment["website.page"].by_id(200).is_published)
         self.assertEqual(
-            [entry["id"] for entry in evidence["audit"]["remaining_foreign_active_menus"]], [101]
+            [entry["id"] for entry in evidence["audit"]["remaining_foreign_visible_menus"]], [101]
         )
         self.assertEqual(
             [entry["url"] for entry in evidence["audit"]["shared_legacy_pages"]], ["/our-services"]
@@ -548,8 +571,8 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
         stdout, _, status = run_step(CLEANUP, environment)
         self.assertEqual(status, 0)
         evidence = json.loads(stdout)
-        self.assertIn(103, {entry["id"] for entry in evidence["deactivated_menus"]})
-        self.assertFalse(noticias.active)
+        self.assertIn(103, {entry["id"] for entry in evidence["hidden_menus"]})
+        self.assertTrue(noticias.group_ids)
 
     def test_cleanup_reparents_a_module_menu_under_a_legacy_parent(self):
         environment = build_production_like_env()
@@ -559,9 +582,9 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
         evidence = json.loads(stdout)
         procesal = environment["website.menu"].by_id(106)
 
-        self.assertFalse(legacy_parent.active)
+        self.assertTrue(legacy_parent.group_ids)
         self.assertIn(106, {entry["id"] for entry in evidence["reparented_menus"]})
-        self.assertTrue(procesal.active)
+        self.assertFalse(procesal.group_ids)
         self.assertEqual(procesal.parent_id, environment["website"].by_id(1).menu_id)
 
     def test_cleanup_is_idempotent(self):
@@ -571,7 +594,7 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
         self.assertEqual(status, 0)
         evidence = json.loads(stdout)
         self.assertFalse(evidence["changed"])
-        self.assertEqual(evidence["deactivated_menus"], [])
+        self.assertEqual(evidence["hidden_menus"], [])
         self.assertEqual(evidence["reparented_menus"], [])
         self.assertEqual(evidence["unpublished_pages"], [])
 
@@ -594,7 +617,7 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
     def test_postflight_rejects_catalogued_content_that_came_back(self):
         environment = build_production_like_env()
         run_step(CLEANUP, environment)
-        environment["website.menu"].by_id(102).write({"active": True})
+        environment["website.menu"].by_id(102).write({"group_ids": []})
         stdout, stderr, status = run_step(POSTFLIGHT, environment)
         self.assertEqual(status, 1)
         self.assertEqual(stdout, "")
@@ -604,7 +627,7 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
     def test_postflight_rejects_a_module_menu_that_left_the_top_level(self):
         environment = build_production_like_env()
         nest_a_module_menu_under_a_legacy_parent(environment)
-        environment["website.menu"].by_id(103).write({"active": False})
+        environment["website.menu"].by_id(103).write({"group_ids": Recordset(environment["res.groups"], [environment["res.groups"].by_id(99)])})
         stdout, stderr, status = run_step(POSTFLIGHT, environment)
         self.assertEqual(status, 1)
         self.assertEqual(stdout, "")
@@ -617,7 +640,6 @@ class FinancaLegacyRuntimeTest(unittest.TestCase):
             id=120,
             name="Acceso a clientes",
             url="/portal",
-            active=True,
             parent_id=False,
             page_id=False,
             child_id=Recordset(environment["website.menu"], []),

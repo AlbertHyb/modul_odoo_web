@@ -27,6 +27,7 @@ if len(websites) != 1:
 
 website = websites.ensure_one()
 website.write({"cookies_bar": True})
+hidden_group = env.ref("base.group_no_one")
 
 # ponytail: Odoo creates a stock "Contact us" menu per website; the module ships the single Contacto entry
 module_menu = env.ref("financa_website.menu_financa_contact", raise_if_not_found=False)
@@ -34,8 +35,8 @@ contact_menus = env["website.menu"].sudo().search([("website_id", "=", website.i
 for menu in contact_menus:
     if module_menu and menu.id == module_menu.id:
         continue
-    if menu.active:
-        menu.active = False
+    if hidden_group not in menu.group_ids:
+        menu.write({"group_ids": [(4, hidden_group.id)]})
 if REQUIRE_GA4 and not website.google_analytics_key:
     print(
         "CONFIGURATION FAILED: the target website has no analytics tag; set the GA4 "

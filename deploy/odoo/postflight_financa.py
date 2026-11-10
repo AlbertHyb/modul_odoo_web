@@ -9,6 +9,7 @@ import unicodedata
 # cleanup step and the deployment gate share one definition of legacy content.
 # --- Financa legacy inventory helpers ---
 MODULE_RECORD_PREFIX = "financa_website."
+HIDDEN_MENU_GROUP = "base.group_no_one"
 
 
 def load_legacy_inventory(path):
@@ -97,6 +98,10 @@ def legacy_pages(pages, inventory, website_id):
     ]
 
 
+def visible_to_public(menu, public_groups):
+    return not menu.group_ids or bool(menu.group_ids & public_groups)
+
+
 # --- end Financa legacy inventory helpers ---
 
 
@@ -122,6 +127,7 @@ websites = env["website"].sudo().search([("domain", "=", DOMAIN)])
 if len(websites) != 1:
     fail(f"expected exactly one website for {DOMAIN!r}")
 website = websites.ensure_one()
+public_groups = website.user_id.all_group_ids
 
 Page = env["website.page"].sudo()
 homepage = Page.search(
@@ -184,7 +190,7 @@ detached = []
 module_menus = []
 for key in FINANCA_MENU_KEYS:
     menu = env.ref(key, raise_if_not_found=False)
-    if not menu or menu.website_id != website or not menu.active:
+    if not menu or menu.website_id != website or not visible_to_public(menu, public_groups):
         absent.append(key)
         continue
     module_menus.append(menu)
@@ -196,7 +202,9 @@ if detached:
     fail("these Financa menus are no longer top-level navigation items: " + ", ".join(detached))
 
 surviving_menus = [
-    menu for menu in legacy_menus(list(foreign_menus), inventory, labels) if menu.active
+    menu
+    for menu in legacy_menus(list(foreign_menus), inventory, labels)
+    if visible_to_public(menu, public_groups)
 ]
 surviving_pages = [
     page for page in legacy_pages(list(website_pages), inventory, website.id) if page.is_published
@@ -217,7 +225,7 @@ module_labels = {
 duplicates = [
     menu
     for menu in foreign_menus
-    if menu.active
+    if visible_to_public(menu, public_groups)
     and not is_module_record(menu)
     and any(
         normalize_label(label) in module_labels for label in labels.get(menu.id, [menu.name])
