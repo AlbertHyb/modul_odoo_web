@@ -68,7 +68,8 @@
     padding-block: 64px;
 }
 
-.financa-homepage section[id] {
+.financa-homepage section[id],
+.financa-service-card[id] {
     scroll-margin-top: 90px;
 }
 
@@ -277,29 +278,51 @@
 
 .financa-carousel-controls { display: none; align-items: center; justify-content: center; gap: 16px; margin-top: 18px; }
 
-.financa-carousel-arrow,
-.financa-carousel-dots button {
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(17, 17, 17, 0.82);
-    color: var(--financa-white);
-}
-
 .financa-carousel-arrow {
     display: inline-flex;
     width: 42px;
     height: 42px;
     align-items: center;
     justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
+    background: rgba(17, 17, 17, 0.82);
+    color: var(--financa-white);
     font-size: 1.1rem;
+
+    // author display would otherwise override the hidden attribute
+    &[hidden] { display: none; }
+    .fa { font-size: 0.8rem; }
 }
 
+// 24px hit area (WCAG 2.5.8) around an 11px visual dot
 .financa-carousel-dots {
     display: flex;
-    gap: 9px;
 
-    button { width: 11px; height: 11px; padding: 0; border-radius: 50%; }
-    button[aria-current="true"] { border-color: var(--financa-gold); background: var(--financa-gold); }
+    button {
+        position: relative;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+    }
+
+    button::before {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 11px;
+        height: 11px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        background: rgba(17, 17, 17, 0.82);
+        content: "";
+        transform: translate(-50%, -50%);
+    }
+
+    button[aria-current="true"]::before { border-color: var(--financa-gold); background: var(--financa-gold); }
 }
 
 .financa-visually-hidden {
@@ -315,7 +338,7 @@
 }
 
 .financa-hero-carousel.is-enhanced {
-    .financa-hero-panels { isolation: isolate; }
+    .financa-hero-panels { isolation: isolate; touch-action: pan-y; }
 
     // ponytail: stacked deck needs opaque panels, else the panels behind bleed through
     .financa-hero-panel {
@@ -436,7 +459,6 @@
 
 .financa-service-card {
     padding: clamp(26px, 4vw, 40px);
-    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 
     h3 {
         margin-block: 22px 14px;
@@ -685,7 +707,6 @@
 
 .financa-case-card {
     padding: clamp(26px, 4vw, 40px);
-    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 
     h3 {
         margin-bottom: 10px;
@@ -695,23 +716,6 @@
         margin-bottom: 0;
         color: var(--financa-muted);
     }
-}
-
-// ponytail: lift only on real pointers; :focus-visible gives keyboard the same feedback
-@media (hover: hover) {
-    .financa-service-card:hover,
-    .financa-case-card:hover {
-        transform: translateY(-6px);
-        border-color: rgba(198, 161, 91, 0.55);
-        box-shadow: 0 18px 42px rgba(17, 17, 17, 0.12);
-    }
-}
-
-.financa-service-card:focus-visible,
-.financa-case-card:focus-visible {
-    transform: translateY(-6px);
-    border-color: rgba(198, 161, 91, 0.55);
-    box-shadow: 0 18px 42px rgba(17, 17, 17, 0.12);
 }
 
 .financa-diagnosis-grid {
@@ -834,7 +838,7 @@
     }
 
     .financa-eyebrow {
-        color: rgba(17, 17, 17, 0.66);
+        color: var(--financa-dark);
     }
 
     h2 {
@@ -944,9 +948,12 @@
 .financa-footer-logo {
     display: inline-block;
     margin-bottom: 16px;
-    color: var(--financa-white) !important;
-    font-size: 1.3rem;
-    font-weight: 700;
+
+    img {
+        display: block;
+        width: 150px;
+        height: auto;
+    }
 }
 
 .financa-footer-heading {
@@ -1294,8 +1301,9 @@
     }
 }
 
-// ponytail: Odoo renders the cookie bar in a modal outside #wrap, so this applies instance-wide
-.o_cookies_discrete {
+// ponytail: Odoo renders the cookie bar in a modal outside #wrap; the domain-scoped
+// header class keeps this off the other websites of the instance
+body:has(.financa-site-header) .o_cookies_discrete {
     .modal-content {
         border-top: 1px solid rgba(198, 161, 91, 0.4);
         background: var(--financa-dark);

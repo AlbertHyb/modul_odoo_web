@@ -8,6 +8,7 @@
         <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
         <field name="is_published" eval="True"/>
         <field name="website_indexed" eval="False"/>
+        <field name="website_meta_title">Gracias por contactarnos | Financa Consultores</field>
         <field name="arch" type="xml">
             <t name="Gracias por solicitar un diagnóstico" t-name="financa_website.financa_thank_you_page">
                 <t t-call="website.layout">
@@ -34,6 +35,8 @@
         <field name="url">/contactus</field>
         <field name="website_id" search="[('domain', '=', '__FINANCA_DOMAIN__')]"/>
         <field name="is_published" eval="True"/>
+        <field name="website_meta_title">Contacto | Financa Consultores</field>
+        <field name="website_meta_description">Cuéntanos sobre tu empresa. Financa Consultores te ayuda a ordenar finanzas, operación y tecnología para crecer con control.</field>
         <field name="arch" type="xml">
             <t name="Contacto" t-name="financa_website.contactus_page_financa_route">
                 <t t-call="website.contactus"/>

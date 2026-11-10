@@ -145,6 +145,7 @@ function initCarousel(carousel) {
     // ponytail: autoplay pauses on hover/focus/hidden tab/reduced-motion; no aria-live spam on auto-advance
     const AUTOPLAY_MS = 5000;
     let timer = null;
+    let userPaused = false;
     function stop() {
         if (timer) {
             clearInterval(timer);
@@ -152,13 +153,49 @@ function initCarousel(carousel) {
         }
     }
     function start() {
-        if (timer || reducedMotion.matches || document.hidden) return;
+        if (timer || userPaused || reducedMotion.matches || document.hidden) return;
         timer = setInterval(() => show(active + 1, false), AUTOPLAY_MS);
     }
     function restart() {
         stop();
         start();
     }
+
+    // Visible pause control: hover/focus pausing alone does not help touch or keyboard users.
+    const toggle = carousel.querySelector("[data-financa-carousel-toggle]");
+    if (toggle) {
+        if (reducedMotion.matches) {
+            toggle.hidden = true;
+        }
+        toggle.addEventListener("click", () => {
+            userPaused = !userPaused;
+            toggle.setAttribute("aria-label", userPaused ? "Reanudar carrusel" : "Pausar carrusel");
+            const icon = toggle.querySelector(".fa");
+            icon?.classList.toggle("fa-pause", !userPaused);
+            icon?.classList.toggle("fa-play", userPaused);
+            if (userPaused) {
+                stop();
+            } else {
+                start();
+            }
+        });
+    }
+
+    // Swipe on touch/pen; CSS sets touch-action: pan-y so vertical scrolling stays native.
+    const SWIPE_MIN_PX = 40;
+    let swipeStartX = null;
+    carousel.addEventListener("pointerdown", (event) => {
+        swipeStartX = event.pointerType === "mouse" || event.target.closest("button") ? null : event.clientX;
+    });
+    carousel.addEventListener("pointerup", (event) => {
+        if (swipeStartX === null) return;
+        const delta = event.clientX - swipeStartX;
+        swipeStartX = null;
+        if (Math.abs(delta) < SWIPE_MIN_PX) return;
+        show(active + (delta < 0 ? 1 : -1));
+        restart();
+    });
+    carousel.addEventListener("pointercancel", () => { swipeStartX = null; });
     carousel.addEventListener("pointerenter", stop);
     carousel.addEventListener("pointerleave", start);
     carousel.addEventListener("focusin", stop);
@@ -167,6 +204,8 @@ function initCarousel(carousel) {
 
     show(0, false);
     carousel.classList.add("is-enhanced");
+    // The hero is not a .financa-reveal section, so its counters are started here.
+    carousel.querySelectorAll("[data-count]").forEach(animateCount);
     start();
 }
 
@@ -182,8 +221,15 @@ function init() {
         }
     }).observe(document.body, { childList: true, subtree: true });
 
-    if (window.location.hash) {
-        document.querySelector(window.location.hash)?.scrollIntoView({ block: "start" });
+    // getElementById: a hash is not always a valid CSS selector (#:~:text=, #123).
+    if (window.location.hash.length > 1) {
+        let targetId = window.location.hash.slice(1);
+        try {
+            targetId = decodeURIComponent(targetId);
+        } catch {
+            // Keep the raw hash when it is not valid percent-encoding.
+        }
+        document.getElementById(targetId)?.scrollIntoView({ block: "start" });
     }
 }
 
