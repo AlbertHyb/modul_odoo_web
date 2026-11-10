@@ -47,9 +47,10 @@
                             </ul>
                         </article>
                     </div>
-                    <div class="financa-carousel-controls" aria-label="Controles del carrusel">
+                    <div class="financa-carousel-controls" role="group" aria-label="Controles del carrusel">
+                        <button type="button" class="financa-carousel-arrow" data-financa-carousel-toggle="1" aria-label="Pausar carrusel"><i class="fa fa-pause" aria-hidden="true"/></button>
                         <button type="button" class="financa-carousel-arrow" data-financa-carousel-prev="1" aria-label="Mostrar panel anterior">&#8592;</button>
-                        <div class="financa-carousel-dots" aria-label="Elegir panel">
+                        <div class="financa-carousel-dots" role="group" aria-label="Elegir panel">
                             <button type="button" data-financa-carousel-dot="0" aria-label="Mostrar Control y decisiones" aria-current="true"/>
                             <button type="button" data-financa-carousel-dot="1" aria-label="Mostrar Empresa conectada" aria-current="false"/>
                             <button type="button" data-financa-carousel-dot="2" aria-label="Mostrar Ecosistema Financa" aria-current="false"/>
@@ -90,22 +91,22 @@
                     <h2>Una empresa. Una visión integral.</h2>
                 </div>
                 <div class="financa-services-grid">
-                    <article class="financa-card financa-service-card">
+                    <article id="finanzas-negocio" class="financa-card financa-service-card">
                         <span class="financa-icon" aria-hidden="true">01</span>
                         <h3>Finanzas y negocio</h3>
                         <p>Planeación, rentabilidad, flujo, presupuestos y estrategia.</p>
                     </article>
-                    <article class="financa-card financa-service-card">
+                    <article id="fiscal-contabilidad" class="financa-card financa-service-card">
                         <span class="financa-icon" aria-hidden="true">02</span>
                         <h3>Fiscal y contabilidad</h3>
                         <p>Contabilidad, fiscal, nómina, SIROC, riesgos y cumplimiento.</p>
                     </article>
-                    <article class="financa-card financa-service-card">
+                    <article id="tecnologia-erp" class="financa-card financa-service-card">
                         <span class="financa-icon" aria-hidden="true">03</span>
                         <h3>Tecnología ERP</h3>
                         <p>Odoo, implementación, optimización y rescate.</p>
                     </article>
-                    <article class="financa-card financa-service-card">
+                    <article id="integracion-automatizacion" class="financa-card financa-service-card">
                         <span class="financa-icon" aria-hidden="true">04</span>
                         <h3>Integración y automatización</h3>
                         <p>APIs, sistemas, automatización, IA y datos.</p>
@@ -162,7 +163,7 @@
                     <h2>La tecnología debe convertir la operación en información.</h2>
                     <p>Implementamos Odoo desde una perspectiva financiera y empresarial: conectamos Ventas → Compras → Inventario → Operación → Finanzas para obtener información confiable, control y decisiones.</p>
                 </div>
-                <div class="financa-odoo-map" aria-label="Servicios de Odoo que ofrece Financa">
+                <div class="financa-odoo-map" role="group" aria-label="Servicios de Odoo que ofrece Financa">
                     <div class="financa-odoo-core">
                         <span>De la operación a la decisión</span>
                         <strong>Odoo ERP</strong>

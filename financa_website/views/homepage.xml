@@ -108,15 +108,15 @@
                     <section class="financa-footer-main" data-name="Financa Footer">
                         <div class="financa-container financa-footer-grid">
                             <div class="financa-footer-brand">
-                                <a href="/" class="financa-footer-logo">Financa Consultores</a>
+                                <a href="/" class="financa-footer-logo"><img src="/financa_website/static/src/img/logo_financa_dorado.png" alt="Financa Consultores" width="150" height="116" loading="lazy"/></a>
                                 <p>Más que números. Más que contabilidad. Más que fiscal.</p>
                             </div>
                             <div>
                                 <h3 class="financa-footer-heading">Soluciones</h3>
                                 <ul>
-                                    <li><a href="/#ecosistema">Finanzas y negocio</a></li>
-                                    <li><a href="/#ecosistema">Fiscal y contabilidad</a></li>
-                                    <li><a href="/#ecosistema">Tecnología ERP</a></li>
+                                    <li><a href="/#finanzas-negocio">Finanzas y negocio</a></li>
+                                    <li><a href="/#fiscal-contabilidad">Fiscal y contabilidad</a></li>
+                                    <li><a href="/#tecnologia-erp">Tecnología ERP</a></li>
                                     <li><a href="/#tecnologia">Integración y automatización</a></li>
                                     <li><a href="/#odoo-erp">Odoo ERP</a></li>
                                 </ul>
@@ -144,7 +144,7 @@
                     </section>
                 </div>
                 <div class="financa-footer-bottom">
-                    <div class="financa-container">&#169; 2026 Financa Consultores</div>
+                    <div class="financa-container">&#169; <t t-out="datetime.date.today().year"/> Financa Consultores</div>
                 </div>
             </footer>
         </xpath>

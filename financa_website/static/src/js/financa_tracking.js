@@ -181,7 +181,7 @@ function trackConfirmedLead() {
 function onClick(event) {
     const loginLink = event.target.closest("a[href='/web/login']");
     if (loginLink) {
-        emit("financa_login_click", { cta_location: "header" });
+        emit("financa_login_click", { cta_location: loginLink.closest("footer") ? "footer" : "header" });
         return;
     }
 
