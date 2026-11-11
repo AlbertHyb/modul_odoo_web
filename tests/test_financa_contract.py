@@ -14,14 +14,14 @@ class FinancaContractTest(unittest.TestCase):
         manifest = ast.literal_eval((ADDON / "__manifest__.py").read_text())
         self.assertEqual(manifest["version"], "19.0.1.0.0")
         self.assertEqual(manifest["depends"], ["website"])
-        self.assertEqual(len(manifest["assets"]["web.assets_frontend"]), 4)
+        self.assertEqual(len(manifest["assets"]["web.assets_frontend"]), 5)
         self.assertIn("data/homepage_ensure.xml", manifest["data"])
 
         for xml_file in ADDON.rglob("*.xml"):
             ElementTree.parse(xml_file)
 
         snippets = (ADDON / "views/snippets.xml").read_text()
-        self.assertEqual(snippets.count("t-snippet=\"financa_website.snippet_"), 11)
+        self.assertEqual(snippets.count("t-snippet=\"financa_website.snippet_"), 6)
         self.assertEqual(snippets.count("<h1>"), 1)
 
         redirects = (ADDON / "data/redirects.xml").read_text()
@@ -56,6 +56,30 @@ class FinancaContractTest(unittest.TestCase):
 
         model_init = (ADDON / "models/__init__.py").read_text()
         self.assertIn("website_page", model_init)
+
+    def test_homepage_calls_every_registered_snippet(self):
+        """Every t-call on the homepage has a template, and every snippet is on the homepage."""
+        snippets = (ADDON / "views/snippets.xml").read_text()
+        homepage = (ADDON / "views/homepage.xml").read_text()
+        defined = set(re.findall(r'<template id="(snippet_[a-z_]+)"', snippets))
+        called = re.findall(r't-call="financa_website\.(snippet_[a-z_]+)"', homepage)
+        registered = set(re.findall(r't-snippet="financa_website\.(snippet_[a-z_]+)"', snippets))
+        self.assertEqual(len(called), 6)
+        self.assertEqual(set(called), defined)
+        self.assertEqual(registered, defined)
+
+    def test_season_layer_is_one_switch(self):
+        """The year-end layer hangs off financa_season so it can be switched off in January."""
+        homepage = (ADDON / "views/homepage.xml").read_text()
+        snippets = (ADDON / "views/snippets.xml").read_text()
+        manifest = ast.literal_eval((ADDON / "__manifest__.py").read_text())
+        self.assertEqual(homepage.count('t-set="financa_season"'), 1)
+        self.assertIn("financa_season and website.domain == '__FINANCA_DOMAIN__'", homepage)
+        self.assertIn('<aside t-if="financa_season" class="financa-ledger"', snippets)
+        self.assertIn("financa_website/static/src/js/financa_season.js", manifest["assets"]["web.assets_frontend"])
+        scss = (ADDON / "static/src/scss/financa.scss").read_text()
+        self.assertIn("@media (prefers-reduced-motion: reduce)", scss)
+        self.assertIn("animation: none;", scss)
 
     def test_the_module_ships_no_third_party_tag(self):
         """The analytics tag is configured natively in the website, never in the addon."""

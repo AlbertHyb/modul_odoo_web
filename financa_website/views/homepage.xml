@@ -15,17 +15,15 @@
             <t name="Financa Consultores" t-name="financa_website.financa_homepage">
                 <t t-call="website.layout">
                     <t t-set="additional_title">Crecer con control | Financa Consultores</t>
-                    <div id="wrap" class="financa-homepage oe_structure">
+                    <!-- TEMPORADA: True durante el cierre de año. En enero cámbialo a False
+                         (ver el bloque TEMPORADA de financa.scss y financa_season.js). -->
+                    <t t-set="financa_season" t-value="True"/>
+                    <div id="wrap" t-attf-class="financa-homepage #{'financa-season' if financa_season else ''} oe_structure">
                         <t t-call="financa_website.snippet_hero"/>
                         <t t-call="financa_website.snippet_problems"/>
-                        <t t-call="financa_website.snippet_before_after"/>
                         <t t-call="financa_website.snippet_services"/>
-                        <t t-call="financa_website.snippet_technology"/>
-                        <t t-call="financa_website.snippet_odoo_center"/>
-                        <t t-call="financa_website.snippet_diagnosis"/>
                         <t t-call="financa_website.snippet_process"/>
                         <t t-call="financa_website.snippet_experience"/>
-                        <t t-call="financa_website.snippet_cases"/>
                         <t t-call="financa_website.snippet_final_cta"/>
                     </div>
                 </t>
@@ -80,6 +78,19 @@
     <template id="layout_financa_header_class" inherit_id="website.layout" name="Financa Header Scope">
         <xpath expr="//header" position="attributes">
             <attribute name="t-attf-class" add="#{'financa-site-header' if website.domain == '__FINANCA_DOMAIN__' else ''}" separator=" "/>
+        </xpath>
+    </template>
+
+    <!-- TEMPORADA: cinta sobre la cabecera; solo se pinta cuando la página define financa_season. -->
+    <template id="layout_financa_season_ribbon" inherit_id="website.layout" name="Financa Season Ribbon">
+        <xpath expr="//header" position="before">
+            <div t-if="financa_season and website.domain == '__FINANCA_DOMAIN__'" class="financa-season-ribbon" role="region" aria-label="Mensaje de temporada">
+                <div class="financa-container financa-season-ribbon-inner">
+                    <svg class="financa-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg>
+                    <span>Felices fiestas de parte de FINANCA. Empieza 2027 con control.</span>
+                    <a href="/contactus" data-financa-cta="1" data-financa-cta-name="agenda_diagnostico" data-financa-cta-location="temporada">Agenda tu diagnóstico</a>
+                </div>
+            </div>
         </xpath>
     </template>
 

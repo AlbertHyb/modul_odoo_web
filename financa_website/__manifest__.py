@@ -19,6 +19,8 @@
             "financa_website/static/src/js/financa_animations.js",
             "financa_website/static/src/js/financa_tracking.js",
             "financa_website/static/src/js/financa_experiments.js",
+            # TEMPORADA: contador de días de la tarjeta de cierre; retirar en enero.
+            "financa_website/static/src/js/financa_season.js",
         ],
     },
     "installable": True,

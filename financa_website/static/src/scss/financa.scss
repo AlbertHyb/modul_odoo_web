@@ -6,11 +6,29 @@
     --financa-white: #ffffff;
     --financa-muted: #666666;
     --financa-border: #e5e5e5;
+    // homepage "Gala": superficies tinta y papel (contraste AA verificado en la maqueta)
+    --financa-ink: #0f0f0e;
+    --financa-ink-raised: #191816;
+    --financa-ink-line: #2e2c28;
+    --financa-paper: #f6f4ef;
+    --financa-paper-line: #e2ddd2;
+    --financa-text-on-ink: #f4f1ea;
+    --financa-muted-on-ink: #b8b2a6;
+    --financa-text-on-paper: #14130f;
+    --financa-muted-on-paper: #5c574e;
+    --financa-gold-strong: #e0bd78;
+    --financa-gold-on-paper: #7a5c12;
+    --financa-pine-on-ink: #8fc3a8;
+    // TEMPORADA: verde pino de la cinta y del cierre
+    --financa-pine: #1f4d3a;
+    --financa-pine-deep: #163829;
     // escala base 4px: externo > interno
     --financa-space-section: clamp(32px, 4vw, 48px);
     --financa-space-block: clamp(24px, 3vw, 32px);
     --financa-space-gap: 20px;
     --financa-space-card: 24px;
+    --financa-radius-tile: 24px;
+    --financa-ease: 180ms ease;
 }
 
 .financa-homepage,
@@ -73,11 +91,6 @@
     padding-block: var(--financa-space-section);
 }
 
-.financa-homepage section[id],
-.financa-service-card[id] {
-    scroll-margin-top: 90px;
-}
-
 .financa-eyebrow {
     margin-bottom: 14px;
     color: var(--financa-gold-text);
@@ -85,11 +98,6 @@
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-}
-
-.financa-hero .financa-eyebrow,
-.financa-odoo-center .financa-eyebrow {
-    color: var(--financa-gold);
 }
 
 .financa-section-heading {
@@ -109,812 +117,715 @@
         font-size: 1.1rem;
     }
 
-    // el último hijo no suma margen: la distancia a las tarjetas es exactamente --financa-space-block
+    // el último hijo no suma margen: la distancia al contenido es exactamente --financa-space-block
     >:last-child {
         margin-bottom: 0;
-    }
-}
-
-.financa-section-heading-light {
-    color: var(--financa-white);
-
-    >p:not(.financa-eyebrow) {
-        color: rgba(255, 255, 255, 0.7);
     }
 }
 
 .financa-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: 12px;
     margin-top: 32px;
 }
 
 .financa-button {
     display: inline-flex;
-    min-height: 50px;
+    min-height: 48px;
     align-items: center;
     justify-content: center;
-    padding: 12px 22px;
+    gap: 8px;
+    padding: 12px 24px;
     border: 1px solid transparent;
     border-radius: 999px;
     font-weight: 700;
     text-align: center;
     text-decoration: none !important;
-    transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    transition: transform var(--financa-ease), background-color var(--financa-ease), border-color var(--financa-ease);
 
-    &:hover {
-        transform: translateY(-2px);
+    &:active {
+        transform: translateY(1px);
     }
 }
 
 .financa-button-primary {
-    background: linear-gradient(135deg, #e8bc58, #d09d32);
-    color: var(--financa-dark) !important;
-    box-shadow: 0 10px 30px rgba(212, 164, 55, 0.4);
+    background: var(--financa-gold);
+    color: var(--financa-ink) !important;
 
     &:hover {
-        background: linear-gradient(135deg, #f2c968, #ddaa3d);
-        box-shadow: 0 14px 38px rgba(212, 164, 55, 0.55);
+        background: var(--financa-gold-strong);
     }
 }
 
 .financa-button-secondary {
-    border-color: rgba(255, 255, 255, 0.38);
-    color: var(--financa-white) !important;
+    border-color: var(--financa-ink-line);
+    color: var(--financa-text-on-ink) !important;
 
     &:hover {
-        border-color: var(--financa-white);
-        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--financa-gold);
     }
 }
 
-.financa-button-light {
-    background: var(--financa-white);
-    color: var(--financa-dark) !important;
+.financa-svg {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-.financa-hero {
-    position: relative;
-    display: flex;
-    min-height: calc(100svh - 88px);
-    align-items: center;
-    overflow: hidden;
-    padding-block: clamp(40px, 5vw, 72px);
-    // ponytail: dim gradient keeps the owl watermark subtle; single-value size scales proportionally (no distortion)
-    background:
-        radial-gradient(circle at 78% 20%, rgba(198, 161, 91, 0.2), transparent 32%),
-        linear-gradient(rgba(17, 17, 17, 0.9), rgba(17, 17, 17, 0.9)),
-        url("../img/logo_financa_dorado.png") center / clamp(280px, 72vw, 560px) no-repeat,
-        var(--financa-dark);
-    color: var(--financa-white);
+// ---------------------------------------------------------------------------
+// Homepage "Gala de cierre de año": seis secciones alternando tinta y papel.
+// Todo va anidado en .financa-homepage: así gana al reset `p { margin-top: 0 }`
+// del bloque común sin depender del orden.
+// ---------------------------------------------------------------------------
+.financa-homepage {
+    --financa-space-section: 72px;
+    --financa-space-block: 32px;
 
-    &::before,
-    &::after {
-        position: absolute;
-        border-radius: 50%;
-        background:
-            radial-gradient(circle at 18% 24%, rgba(221, 153, 17, 0.72) 0 2px, transparent 3px),
-            radial-gradient(circle at 72% 38%, rgba(255, 255, 255, 0.32) 0 1px, transparent 2px),
-            radial-gradient(circle at 42% 78%, rgba(221, 153, 17, 0.42) 0 2px, transparent 3px);
-        content: "";
-        pointer-events: none;
-        animation: financa-particles 16s ease-in-out infinite alternate;
+    background: var(--financa-ink);
+    color: var(--financa-text-on-ink);
+
+    h1,
+    h2,
+    h3,
+    p,
+    ul,
+    ol {
+        margin-bottom: 0;
     }
 
-    &::before { top: 4%; right: -5%; width: 38vw; height: 38vw; }
-    &::after { right: 22%; bottom: -20%; width: 24vw; height: 24vw; opacity: 0.55; animation-delay: -8s; }
-}
-
-@keyframes financa-particles {
-    to { transform: translate3d(-24px, 32px, 0) rotate(4deg); }
-}
-
-.financa-hero-grid {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    align-items: center;
-    gap: clamp(44px, 7vw, 88px);
-    grid-template-columns: minmax(0, 1.08fr) minmax(380px, 0.92fr);
-}
-
-.financa-hero-carousel { min-width: 0; perspective: 1100px; }
-
-.financa-hero-panels { display: grid; gap: 18px; }
-
-.financa-hero-panel {
-    min-width: 0;
-    min-height: 410px;
-    padding: clamp(20px, 3vw, 30px);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 24px;
-    background: rgba(17, 17, 17, 0.9);
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
-    overflow-wrap: anywhere;
-
-    h2 { margin-bottom: 24px; color: var(--financa-white); font-size: clamp(1.55rem, 3vw, 2.15rem); }
-}
-
-.financa-hero-panel-kicker {
-    margin-bottom: 8px;
-    color: var(--financa-gold);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.financa-connected-flow,
-.financa-tech-grid { margin: 0; padding: 0; list-style: none; }
-
-.financa-connected-flow {
-    display: grid;
-    gap: 9px;
-
-    li {
-        position: relative;
-        padding: 10px 36px 10px 14px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.05);
-        font-weight: 700;
-    }
-
-    li:not(:last-child)::after {
-        position: absolute;
-        top: 50%;
-        right: 14px;
-        color: var(--financa-gold);
-        content: "\2193";
-        transform: translateY(-50%);
-    }
-}
-
-.financa-tech-grid {
-    display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    li {
-        display: flex;
-        min-height: 82px;
-        align-items: center;
-        justify-content: center;
-        padding: 14px;
-        border: 1px solid rgba(221, 153, 17, 0.42);
-        border-radius: 16px;
-        background: radial-gradient(circle at top, rgba(221, 153, 17, 0.16), rgba(255, 255, 255, 0.04));
-        font-weight: 700;
-        text-align: center;
-    }
-}
-
-.financa-carousel-controls { display: none; align-items: center; justify-content: center; gap: 16px; margin-top: 18px; }
-
-.financa-carousel-arrow {
-    display: inline-flex;
-    width: 42px;
-    height: 42px;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    background: rgba(17, 17, 17, 0.82);
-    color: var(--financa-white);
-    font-size: 1.1rem;
-
-    // author display would otherwise override the hidden attribute
-    &[hidden] { display: none; }
-    .fa { font-size: 0.8rem; }
-}
-
-// 24px hit area (WCAG 2.5.8) around an 11px visual dot
-.financa-carousel-dots {
-    display: flex;
-
-    button {
-        position: relative;
-        width: 24px;
-        height: 24px;
+    ul,
+    ol {
         padding: 0;
-        border: 0;
-        border-radius: 50%;
-        background: transparent;
+        list-style: none;
     }
 
-    button::before {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 11px;
-        height: 11px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        background: rgba(17, 17, 17, 0.82);
-        content: "";
-        transform: translate(-50%, -50%);
-    }
-
-    button[aria-current="true"]::before { border-color: var(--financa-gold); background: var(--financa-gold); }
-}
-
-.financa-visually-hidden {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    border: 0 !important;
-    margin: -1px !important;
-    clip: rect(0, 0, 0, 0) !important;
-    overflow: hidden !important;
-    white-space: nowrap !important;
-}
-
-.financa-hero-carousel.is-enhanced {
-    .financa-hero-panels { isolation: isolate; touch-action: pan-y; }
-
-    // ponytail: stacked deck needs opaque panels, else the panels behind bleed through
-    .financa-hero-panel {
-        background: var(--financa-dark);
-        backdrop-filter: none;
-    }
-
-    // composite of rgba(255,255,255,.07) glass over --financa-dark
-    .financa-dashboard.financa-hero-panel { background: #222222; }
-
-    .financa-hero-panel {
-        grid-area: 1 / 1;
-        opacity: 0.38;
-        pointer-events: none;
-        transform: translateX(-9%) rotateY(7deg) scale(0.9);
-        transform-origin: right center;
-        transition: opacity 320ms ease, transform 420ms ease;
-    }
-
-    .financa-hero-panel[data-financa-state="active"] { z-index: 3; opacity: 1; pointer-events: auto; transform: none; }
-    .financa-hero-panel[data-financa-state="next"] { transform: translateX(9%) rotateY(-7deg) scale(0.9); transform-origin: left center; }
-    .financa-carousel-controls { display: flex; }
-}
-
-.financa-hero-copy {
-    h1 {
-        max-width: 640px;
-        margin-bottom: 24px;
-        font-size: clamp(2.25rem, 4.2vw, 3.75rem);
-    }
-}
-
-.financa-hero-lead {
-    max-width: 680px;
-    color: rgba(255, 255, 255, 0.72);
-    font-size: clamp(1.05rem, 2vw, 1.24rem);
-}
-
-.financa-dashboard {
-    padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.07);
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(12px);
-}
-
-.financa-dashboard-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.78rem;
-    text-transform: uppercase;
-}
-
-.financa-dashboard-dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    margin-right: 5px;
-    border-radius: 50%;
-    background: var(--financa-gold);
-}
-
-.financa-dashboard-grid {
-    display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    article {
-        min-width: 0;
-        padding: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        background: rgba(17, 17, 17, 0.72);
-    }
-
-    span,
-    small {
-        display: block;
-        color: rgba(255, 255, 255, 0.56);
-    }
-
-    strong {
-        display: block;
-        overflow-wrap: anywhere;
-        margin-block: 8px 4px;
-        color: var(--financa-white);
-        font-size: clamp(1.1rem, 2vw, 1.55rem);
-        line-height: 1.2;
-    }
-}
-
-.financa-illustrative-note {
-    margin: 14px 0 0;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.82rem;
-}
-
-// fondos alternados: nunca dos secciones seguidas del mismo color
-.financa-services {
-    background: var(--financa-white);
-}
-
-.financa-services-grid {
-    display: grid;
-    gap: var(--financa-space-gap);
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.financa-card {
-    border: 1px solid var(--financa-border);
-    border-radius: 20px;
-    background: var(--financa-light);
-}
-
-.financa-service-card {
-    padding: 28px var(--financa-space-card);
-
+    h1,
+    h2,
     h3 {
-        margin-block: 20px 8px;
-        font-size: 1.3rem;
+        line-height: 1.08;
     }
-
-    p {
-        margin-bottom: 0;
-        color: var(--financa-muted);
-        font-size: 0.95rem;
-    }
-}
-
-.financa-icon {
-    display: inline-flex;
-    width: 46px;
-    height: 46px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: var(--financa-dark);
-    color: var(--financa-gold);
-    font-size: 0.75rem;
-    font-weight: 700;
-
-    .fa {
-        font-size: 1.1rem;
-    }
-}
-
-.financa-odoo-center {
-    overflow: hidden;
-    background: var(--financa-dark);
-    color: var(--financa-white);
-}
-
-.financa-odoo-chain {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    margin: 20px 0 0;
-    padding: 0;
-    list-style: none;
-
-    li {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--financa-white);
-        font-size: 0.95rem;
-        font-weight: 700;
-    }
-
-    li span {
-        padding: 6px 16px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    li:not(:last-child)::after {
-        color: var(--financa-gold);
-        content: "\2192";
-    }
-}
-
-.financa-odoo-map {
-    display: grid;
-    align-items: center;
-    gap: clamp(24px, 4vw, 48px);
-    grid-template-columns: minmax(260px, 0.62fr) 1.38fr;
-}
-
-.financa-odoo-core {
-    display: flex;
-    // círculo real: width + max-width en vez de min() (libsass no mezcla unidades)
-    width: 100%;
-    max-width: 340px;
-    aspect-ratio: 1;
-    justify-self: center;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(198, 161, 91, 0.55);
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(198, 161, 91, 0.26), rgba(198, 161, 91, 0.04) 65%);
-    text-align: center;
-
-    span {
-        color: rgba(255, 255, 255, 0.58);
-        font-size: 0.78rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-    }
-
-    strong {
-        margin-top: 8px;
-        font-size: clamp(2rem, 4vw, 3.5rem);
-    }
-}
-
-.financa-odoo-modules {
-    display: grid;
-    gap: var(--financa-space-gap);
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    article {
-        display: flex;
-        min-width: 0;
-        gap: 14px;
-        padding: 20px var(--financa-space-card);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    article>span {
-        color: var(--financa-gold);
-        font-size: 0.8rem;
-        font-weight: 700;
-    }
-
-    h3 {
-        margin-bottom: 4px;
-        color: var(--financa-white);
-        font-size: 1.1rem;
-    }
-
-    p {
-        margin-bottom: 0;
-        color: rgba(255, 255, 255, 0.62);
-        font-size: 0.93rem;
-    }
-}
-
-.financa-problems {
-    background: var(--financa-white);
-}
-
-.financa-problems-grid {
-    display: grid;
-    gap: var(--financa-space-gap);
-    margin: 0;
-    padding: 0;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    list-style: none;
-}
-
-.financa-problem {
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 12px;
-    padding: var(--financa-space-card);
-    border: 1px solid var(--financa-border);
-    border-radius: 16px;
-    background: var(--financa-light);
-
-    span {
-        color: var(--financa-gold-text);
-        font-size: 0.78rem;
-        font-weight: 700;
-    }
-
-    p {
-        margin: 0;
-        color: var(--financa-muted);
-        font-size: 0.94rem;
-    }
-
-    strong {
-        display: block;
-        margin-bottom: 4px;
-        color: var(--financa-dark);
-    }
-}
-
-.financa-integration {
-    background: var(--financa-light);
-}
-
-.financa-integration-flow {
-    display: grid;
-    gap: var(--financa-space-gap);
-    margin: 0;
-    padding: 0;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    list-style: none;
-
-    li {
-        position: relative;
-        display: flex;
-        min-width: 0;
-        min-height: 112px;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: var(--financa-space-card) 16px;
-        border: 1px solid var(--financa-border);
-        border-radius: 16px;
-        background: var(--financa-white);
-        text-align: center;
-    }
-
-    // la flecha ocupa exactamente el hueco entre tarjetas
-    li:not(:last-child)::after {
-        position: absolute;
-        top: 50%;
-        right: calc(-1 * var(--financa-space-gap));
-        z-index: 1;
-        width: var(--financa-space-gap);
-        color: var(--financa-gold-text);
-        content: "\2192";
-        font-size: 1.35rem;
-        font-weight: 700;
-        text-align: center;
-        transform: translateY(-50%);
-    }
-
-    span {
-        display: block;
-        margin-bottom: 8px;
-        color: var(--financa-gold-text);
-        font-size: 0.72rem;
-        font-weight: 700;
-    }
-
-    h3 {
-        margin: 0;
-        font-size: 1.02rem;
-    }
-}
-
-.financa-technology {
-    background: var(--financa-light);
-}
-
-.financa-capabilities {
-    display: grid;
-    gap: var(--financa-space-gap);
-    margin: 0;
-    padding: 0;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    list-style: none;
-
-    li {
-        display: flex;
-        min-height: 112px;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: var(--financa-space-card);
-        border: 1px solid var(--financa-gold);
-        border-radius: 16px;
-        background: var(--financa-white);
-        font-size: 1.05rem;
-        font-weight: 700;
-        text-align: center;
-    }
-
-    li .fa {
-        color: var(--financa-gold-text);
-        font-size: 1.5rem;
-    }
-}
-
-.financa-diagnosis {
-    background: var(--financa-light);
-}
-
-// ponytail: shared closing line for narrative blocks (dolor, propuesta, ecosistema, método, experiencia)
-// .financa-homepage sube la especificidad: sin él, el reset `p { margin-top: 0 }` anulaba este margen
-.financa-homepage .financa-problems-closing,
-.financa-homepage .financa-integration-closing,
-.financa-homepage .financa-services-closing,
-.financa-homepage .financa-process-closing {
-    max-width: 760px;
-    margin: var(--financa-space-block) 0 0;
-    color: var(--financa-muted);
-    font-size: 1.1rem;
-}
-
-.financa-cases-grid {
-    display: grid;
-    gap: var(--financa-space-gap);
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.financa-case-card {
-    padding: 28px var(--financa-space-card);
-
-    h3 {
-        margin-bottom: 10px;
-    }
-
-    p {
-        margin-bottom: 0;
-        color: var(--financa-muted);
-    }
-}
-
-.financa-diagnosis-grid {
-    display: grid;
-    align-items: center;
-    gap: clamp(40px, 8vw, 96px);
-    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     h2 {
-        margin-bottom: 22px;
-    }
-
-    p {
-        color: var(--financa-muted);
-    }
-}
-
-.financa-diagnosis-checks {
-    display: grid;
-    gap: 12px;
-
-    >div {
-        display: flex;
-        gap: 14px;
-        padding: 19px;
-        border: 1px solid var(--financa-border);
-        border-radius: 16px;
-        background: var(--financa-white);
-    }
-
-    span {
-        display: inline-flex;
-        width: 28px;
-        height: 28px;
-        flex: 0 0 28px;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background: var(--financa-gold);
-        color: var(--financa-dark);
-        font-weight: 700;
-    }
-
-    p {
-        margin: 0;
-        font-size: 0.95rem;
-    }
-
-    strong {
-        display: block;
-        color: var(--financa-dark);
-    }
-}
-
-.financa-process {
-    background: var(--financa-white);
-}
-
-.financa-timeline {
-    display: grid;
-    margin: 0;
-    padding: 0;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    list-style: none;
-
-    li {
-        position: relative;
-        min-width: 0;
-        padding: 28px 22px 0 0;
-        border-top: 1px solid var(--financa-border);
-    }
-
-    li::before {
-        position: absolute;
-        top: -6px;
-        left: 0;
-        width: 11px;
-        height: 11px;
-        border-radius: 50%;
-        background: var(--financa-gold);
-        content: "";
-    }
-
-    span {
-        color: var(--financa-gold-text);
-        font-size: 0.78rem;
-        font-weight: 700;
+        font-size: clamp(1.9rem, 4vw, 3rem);
     }
 
     h3 {
-        margin-block: 14px 10px;
+        letter-spacing: -0.02em;
     }
 
-    p {
-        margin-bottom: 0;
-        color: var(--financa-muted);
-        font-size: 0.92rem;
+    a:focus-visible,
+    button:focus-visible {
+        outline-color: var(--financa-gold-strong);
     }
-}
 
-// ponytail: experience reuses the timeline; the years are the content, not a label
-.financa-experience {
-    background: var(--financa-light);
-}
-
-.financa-experience .financa-timeline span {
-    color: var(--financa-dark);
-    font-size: 1.5rem;
-    letter-spacing: -0.03em;
-}
-
-.financa-final-cta {
-    background: var(--financa-gold);
-}
-
-.financa-final-cta-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
-
-    >div {
-        max-width: 760px;
+    section[id],
+    [id] {
+        scroll-margin-top: 90px;
     }
 
     .financa-eyebrow {
-        color: var(--financa-dark);
-    }
-
-    h2 {
-        margin-bottom: 14px;
-    }
-
-    p:last-child {
         margin-bottom: 0;
+        color: var(--financa-gold);
+        font-size: 0.75rem;
+        letter-spacing: 0.16em;
     }
 
-    .financa-button {
-        flex: 0 0 auto;
+    .financa-section-heading {
+        h2 {
+            margin-block: 12px 0;
+        }
+    }
+
+    .financa-num {
+        color: var(--financa-gold);
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    // superficies
+    .financa-ink {
+        background: var(--financa-ink);
+        color: var(--financa-text-on-ink);
+    }
+
+    .financa-paper {
+        background: var(--financa-paper);
+        color: var(--financa-text-on-paper);
+
+        .financa-eyebrow,
+        .financa-num {
+            color: var(--financa-gold-on-paper);
+        }
+
+        a:focus-visible {
+            outline-color: var(--financa-text-on-paper);
+        }
+    }
+
+    // hero
+    .financa-hero {
+        position: relative;
+        overflow: hidden;
+        padding-block: 48px 72px;
+        background: var(--financa-ink);
+        color: var(--financa-text-on-ink);
+    }
+
+    .financa-hero-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 48px;
+    }
+
+    .financa-hero-copy {
+        min-width: 0;
+
+        h1 {
+            max-width: 14ch;
+            margin-block: 16px 24px;
+            font-size: clamp(2.5rem, 6.4vw, 4.6rem);
+
+            em {
+                color: var(--financa-gold);
+                font-style: normal;
+            }
+        }
+    }
+
+    .financa-hero-lead {
+        max-width: 52ch;
+        color: var(--financa-muted-on-ink);
+        font-size: 1.15rem;
+    }
+
+    // dolores: índice tipográfico
+    .financa-index-grid {
+        display: grid;
+        gap: 32px;
+    }
+
+    .financa-index-intro {
+        h2 {
+            margin-block: 12px 16px;
+        }
+
+        p {
+            max-width: 40ch;
+            color: var(--financa-muted-on-paper);
+        }
+
+        strong {
+            color: var(--financa-text-on-paper);
+        }
+    }
+
+    .financa-index-list {
+        li {
+            display: grid;
+            gap: 8px 16px;
+            padding-block: 16px;
+            border-top: 1px solid var(--financa-paper-line);
+            grid-template-columns: 2.5rem 1fr;
+        }
+
+        li:last-child {
+            border-bottom: 1px solid var(--financa-paper-line);
+        }
+
+        p {
+            grid-column: 2;
+            color: var(--financa-muted-on-paper);
+            font-size: 0.9rem;
+        }
+    }
+
+    // ecosistema: bento con Odoo ERP como pieza líder
+    .financa-bento {
+        display: grid;
+        gap: 16px;
+    }
+
+    .financa-tile {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: 12px;
+        padding: 24px;
+        border: 1px solid var(--financa-ink-line);
+        border-radius: var(--financa-radius-tile);
+        background: var(--financa-ink-raised);
+
+        p {
+            max-width: 60ch;
+            color: var(--financa-muted-on-ink);
+            font-size: 0.9rem;
+        }
+    }
+
+    .financa-tile-lead {
+        justify-content: space-between;
+        gap: 32px;
+        border-color: var(--financa-gold);
+        background:
+            radial-gradient(circle at 80% 0%, rgba(198, 161, 91, 0.22), transparent 55%),
+            var(--financa-ink-raised);
+
+        h3 {
+            margin-top: 4px;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            letter-spacing: -0.03em;
+        }
+
+        p {
+            max-width: 44ch;
+            font-size: 1rem;
+        }
+    }
+
+    .financa-chain {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+        color: var(--financa-gold);
+        font-size: 0.9rem;
+        font-weight: 700;
+
+        li {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        li:not(:last-child)::after {
+            content: "\2192";
+        }
+
+        span {
+            padding: 4px 12px;
+            border: 1px solid var(--financa-ink-line);
+            border-radius: 999px;
+            color: var(--financa-text-on-ink);
+        }
+    }
+
+    .financa-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: auto;
+        padding-top: 12px;
+
+        li {
+            padding: 4px 12px;
+            border: 1px solid var(--financa-ink-line);
+            border-radius: 999px;
+            color: var(--financa-muted-on-ink);
+            font-size: 0.75rem;
+        }
+    }
+
+    // método: riel de cinco pasos
+    .financa-rail-head {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 32px;
+
+        h2 {
+            margin-top: 12px;
+        }
+
+        >p {
+            max-width: 52ch;
+            color: var(--financa-muted-on-paper);
+        }
+
+        strong {
+            color: var(--financa-text-on-paper);
+        }
+    }
+
+    .financa-rail {
+        display: grid;
+
+        li {
+            position: relative;
+            min-width: 0;
+            padding: 0 0 24px 32px;
+            border-left: 1px solid var(--financa-paper-line);
+        }
+
+        li:last-child {
+            padding-bottom: 0;
+        }
+
+        li::before {
+            position: absolute;
+            top: 4px;
+            left: -6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: var(--financa-gold);
+            content: "";
+        }
+
+        h3 {
+            margin-block: 4px;
+        }
+
+        p {
+            color: var(--financa-muted-on-paper);
+            font-size: 0.9rem;
+        }
+    }
+
+    // experiencia: banda de cifras y casos
+    .financa-stats {
+        display: grid;
+        gap: 24px 16px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        li:first-child {
+            grid-column: 1 / -1;
+        }
+
+        strong {
+            display: block;
+            color: var(--financa-gold);
+            font-size: 2rem;
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        li:first-child strong {
+            font-size: clamp(3.5rem, 12vw, 6rem);
+        }
+
+        span {
+            display: block;
+            margin-top: 8px;
+            color: var(--financa-muted-on-ink);
+            font-size: 0.9rem;
+        }
+    }
+
+    .financa-cases {
+        margin-top: 48px;
+
+        li {
+            display: grid;
+            gap: 4px;
+            padding-block: 16px;
+            border-top: 1px solid var(--financa-ink-line);
+        }
+
+        p {
+            color: var(--financa-muted-on-ink);
+            font-size: 0.9rem;
+        }
+    }
+
+    // cierre (permanente: tinta elevada; la temporada lo pasa a verde pino)
+    .financa-closing {
+        border-top: 1px solid var(--financa-ink-line);
+        background: var(--financa-ink-raised);
+        color: var(--financa-text-on-ink);
+    }
+
+    .financa-closing-inner {
+        display: grid;
+        gap: 24px;
+
+        .financa-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--financa-gold-strong);
+        }
+
+        h2 {
+            max-width: 20ch;
+            margin-block: 12px 16px;
+        }
+
+        p:not(.financa-eyebrow) {
+            max-width: 48ch;
+        }
+
+        .financa-button {
+            justify-self: start;
+        }
     }
 }
+
+@media (min-width: 768px) {
+    .financa-homepage {
+        --financa-space-section: 104px;
+
+        .financa-bento {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .financa-tile-lead,
+        .financa-tile-wide {
+            grid-column: 1 / -1;
+        }
+
+        .financa-rail {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+
+            li {
+                padding: 24px 16px 0 0;
+                border-top: 1px solid var(--financa-paper-line);
+                border-left: 0;
+            }
+
+            li::before {
+                top: -6px;
+                left: 0;
+            }
+        }
+
+        .financa-stats {
+            align-items: end;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .financa-cases li {
+            align-items: baseline;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .financa-closing-inner {
+            align-items: end;
+            grid-template-columns: 1.5fr auto;
+        }
+    }
+}
+
+@media (min-width: 1024px) {
+    .financa-homepage {
+        .financa-hero {
+            padding-block: 72px 104px;
+        }
+
+        .financa-index-grid {
+            gap: 72px;
+            grid-template-columns: 0.8fr 1.2fr;
+        }
+
+        .financa-index-intro {
+            position: sticky;
+            top: 120px;
+            align-self: start;
+        }
+
+        .financa-bento {
+            grid-template-columns: 1.3fr 1fr 1fr;
+        }
+
+        .financa-tile-lead {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+        }
+
+        .financa-tile-wide {
+            grid-column: 2 / -1;
+        }
+
+        .financa-rail-head {
+            align-items: end;
+            grid-template-columns: 1.1fr 0.9fr;
+        }
+
+        // la cifra líder comparte fila con las otras cuatro solo cuando cabe
+        .financa-stats {
+            grid-template-columns: 1.6fr repeat(4, minmax(0, 1fr));
+
+            li:first-child {
+                grid-column: auto;
+            }
+
+            li:first-child strong {
+                font-size: clamp(3rem, 5vw, 4.5rem);
+            }
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    .financa-homepage {
+        .financa-actions .financa-button,
+        .financa-closing-inner .financa-button {
+            width: 100%;
+        }
+    }
+}
+
+// ===========================================================================
+// TEMPORADA (cierre 2026). Se activa con `financa_season` en views/homepage.xml,
+// que añade .financa-season al #wrap y pinta la cinta y la tarjeta de cierre.
+// Para retirarla en enero basta con poner financa_season en False; para limpiar
+// el código, borra este bloque completo, financa_season.js y su línea del manifest.
+// ===========================================================================
+.financa-season-ribbon {
+    background: var(--financa-pine-deep);
+    color: var(--financa-text-on-ink);
+    font-size: 0.9rem;
+    line-height: 1.5;
+
+    .financa-svg {
+        color: var(--financa-gold-strong);
+    }
+
+    // el texto comparte línea con el icono; en móvil solo el enlace baja
+    span {
+        flex: 1 1 14rem;
+    }
+
+    a {
+        margin-left: auto;
+        color: var(--financa-text-on-ink);
+        font-weight: 700;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+
+        &:hover {
+            color: var(--financa-gold-strong);
+        }
+
+        &:focus-visible {
+            outline: 3px solid var(--financa-gold-strong);
+            outline-offset: 3px;
+        }
+    }
+}
+
+.financa-season-ribbon-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    padding-block: 12px;
+}
+
+.financa-homepage.financa-season {
+    // nevada lenta y decorativa sobre el hero
+    .financa-hero::before,
+    .financa-hero::after {
+        position: absolute;
+        inset: -200px 0 0;
+        background-image:
+            radial-gradient(circle, rgba(244, 241, 234, 0.55) 0 1.5px, transparent 2px),
+            radial-gradient(circle, rgba(224, 189, 120, 0.5) 0 1px, transparent 1.5px),
+            radial-gradient(circle, rgba(244, 241, 234, 0.35) 0 1px, transparent 1.5px);
+        background-position: 20px 10px, 90px 120px, 50px 60px;
+        background-size: 230px 200px, 170px 200px, 110px 200px;
+        content: "";
+        pointer-events: none;
+        animation: financa-snow 22s linear infinite;
+    }
+
+    .financa-hero::after {
+        opacity: 0.5;
+        background-size: 310px 200px, 250px 200px, 190px 200px;
+        animation-duration: 34s;
+    }
+
+    .financa-ledger {
+        align-self: end;
+        min-width: 0;
+        padding: 24px;
+        border: 1px solid var(--financa-ink-line);
+        border-radius: var(--financa-radius-tile);
+        background: var(--financa-ink-raised);
+
+        h2 {
+            margin-block: 16px 12px;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        li {
+            display: flex;
+            gap: 12px;
+            padding-block: 12px;
+            border-top: 1px solid var(--financa-ink-line);
+            color: var(--financa-muted-on-ink);
+            font-size: 0.9rem;
+        }
+
+        li strong {
+            display: block;
+            color: var(--financa-text-on-ink);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        li .financa-svg {
+            margin-top: 4px;
+            color: var(--financa-pine-on-ink);
+        }
+    }
+
+    .financa-ledger-count {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--financa-ink-line);
+
+        strong {
+            color: var(--financa-gold);
+            font-size: 3.2rem;
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        span {
+            color: var(--financa-muted-on-ink);
+            font-size: 0.9rem;
+        }
+    }
+
+    .financa-ledger-note {
+        margin-top: 12px;
+        color: var(--financa-muted-on-ink);
+        font-size: 0.75rem;
+    }
+
+    .financa-closing {
+        border-top: 0;
+        background: var(--financa-pine);
+    }
+}
+
+@keyframes financa-snow {
+    to { transform: translateY(200px); }
+}
+
+@media (min-width: 1024px) {
+    .financa-homepage.financa-season .financa-hero-grid {
+        grid-template-columns: 1.25fr 0.75fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .financa-homepage.financa-season .financa-hero::before,
+    .financa-homepage.financa-season .financa-hero::after {
+        animation: none;
+    }
+}
+// =========================== fin TEMPORADA ================================
 
 .financa-site-header {
     .navbar {
@@ -1087,6 +998,7 @@
     font-weight: 700;
 }
 
+
 // ponytail: content stays visible without JS; these states only exist under .js-financa
 .js-financa .financa-reveal {
     .financa-anim-lead,
@@ -1104,15 +1016,6 @@
         transform: translateY(16px);
     }
 
-    // diagnóstico: copy desde la izquierda, checks desde la derecha
-    .financa-diagnosis-grid > .financa-anim-lead:first-child {
-        transform: translateX(-20px);
-    }
-
-    .financa-diagnosis-checks > .financa-anim-item {
-        transform: translateX(20px);
-    }
-
     &.is-visible {
         .financa-anim-lead,
         .financa-anim-item {
@@ -1120,22 +1023,6 @@
             transform: none;
         }
     }
-}
-
-// ponytail: gold line grows on section entry; no extra markup, decorative only
-.js-financa .financa-section-heading h2::after {
-    display: block;
-    width: 0;
-    height: 2px;
-    margin-top: 14px;
-    border-radius: 2px;
-    background: var(--financa-gold);
-    content: "";
-    transition: width 500ms cubic-bezier(0.22, 1, 0.36, 1) 150ms;
-}
-
-.js-financa .financa-reveal.is-visible .financa-section-heading h2::after {
-    width: 56px;
 }
 
 .financa-contact-hero {
@@ -1245,65 +1132,7 @@
     }
 }
 
-@media (max-width: 1199.98px) {
-    .financa-services-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-// tablet: los 5 pasos siguen en una fila, sin celda vacía
-@media (min-width: 768px) and (max-width: 991.98px) {
-    .financa-integration-flow {
-        --financa-space-gap: 16px;
-
-        li { padding-inline: 8px; }
-        h3 { font-size: 0.95rem; }
-    }
-}
-
 @media (max-width: 991.98px) {
-
-    .financa-hero-grid,
-    .financa-odoo-map,
-    .financa-diagnosis-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .financa-hero {
-        min-height: auto;
-    }
-
-    .financa-hero-carousel {
-        max-width: 680px;
-    }
-
-    .financa-odoo-core {
-        max-width: none;
-        min-height: 160px;
-        aspect-ratio: auto;
-        border-radius: 20px;
-    }
-
-    .financa-problems-grid,
-    .financa-capabilities {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .financa-timeline {
-        grid-template-columns: 1fr;
-
-        li {
-            padding: 8px 0 28px 34px;
-            border-top: 0;
-            border-left: 1px solid var(--financa-border);
-        }
-
-        li::before {
-            top: 12px;
-            left: -6px;
-        }
-    }
-
     .financa-footer-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1318,57 +1147,8 @@
         --financa-space-gap: 16px;
     }
 
-    .financa-integration-flow li,
-    .financa-capabilities li {
-        min-height: 88px;
-    }
-
-    .financa-services-grid,
-    .financa-odoo-modules,
-    .financa-dashboard-grid,
     .financa-footer-grid {
         grid-template-columns: 1fr;
-    }
-
-    .financa-problems-grid,
-    .financa-integration-flow,
-    .financa-capabilities,
-    .financa-cases-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .financa-integration-flow {
-        li:not(:last-child)::after {
-            top: auto;
-            right: 50%;
-            bottom: -16px;
-            content: "\2193";
-            transform: translateX(50%);
-        }
-    }
-
-    .financa-hero-copy h1 {
-        font-size: clamp(2.1rem, 10vw, 3.1rem);
-    }
-
-    .financa-hero-panel { min-height: 0; }
-
-    .financa-hero-carousel.is-enhanced .financa-hero-panel {
-        min-height: 500px;
-        transform: translateX(-4%) scale(0.94);
-    }
-
-    .financa-hero-carousel.is-enhanced .financa-hero-panel[data-financa-state="next"] { transform: translateX(4%) scale(0.94); }
-
-    .financa-actions,
-    .financa-final-cta-inner {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .financa-actions .financa-button,
-    .financa-final-cta-inner .financa-button {
-        width: 100%;
     }
 
     .financa-footer-main {
@@ -1408,23 +1188,9 @@ body:has(.financa-site-header) .o_cookies_discrete {
 @media (prefers-reduced-motion: reduce) {
     .js-financa .financa-reveal .financa-anim-lead,
     .js-financa .financa-reveal .financa-anim-item,
-    .financa-card,
-    .financa-button,
-    .financa-hero-carousel.is-enhanced .financa-hero-panel,
-    .financa-hero-carousel.is-enhanced .financa-hero-panel[data-financa-state="next"] {
+    .financa-button {
         opacity: 1;
         transform: none;
         transition: none;
     }
-
-    .js-financa .financa-section-heading h2::after {
-        width: 56px;
-        transition: none;
-    }
-
-    .financa-hero-carousel.is-enhanced .financa-hero-panel:not([data-financa-state="active"]) { opacity: 0; }
-
-    .financa-hero::before,
-    .financa-hero::after,
-    .financa-connected-flow li:not(:last-child)::after { animation: none; transform: none; }
 }
