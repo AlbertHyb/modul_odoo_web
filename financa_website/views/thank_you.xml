@@ -18,7 +18,12 @@
                             <div class="financa-container financa-thank-you-card">
                                 <span class="financa-thank-you-icon" aria-hidden="true">✓</span>
                                 <h1>Gracias por contactarnos</h1>
-                                <p>Recibimos tu solicitud. Revisaremos la información y nos pondremos en contacto para definir el siguiente paso.</p>
+                                <p>Recibimos tu solicitud. Un consultor la revisará y te contactará en un plazo no mayor a <strong>72 horas</strong>.</p>
+                                <ul class="financa-thank-you-steps">
+                                    <li>En breve recibirás en tu correo una confirmación de seguimiento.</li>
+                                    <li>Ese correo incluye un breve cuestionario para conocer mejor tu caso; responderlo nos ayuda a preparar tu diagnóstico.</li>
+                                </ul>
+                                <p class="financa-thank-you-note">¿No lo ves? Revisa tu carpeta de spam o correo no deseado.</p>
                                 <a href="/" class="financa-button financa-button-primary">Volver al inicio</a>
                             </div>
                         </section>
