@@ -74,6 +74,8 @@ class FinancaContractTest(unittest.TestCase):
         snippets = (ADDON / "views/snippets.xml").read_text()
         manifest = ast.literal_eval((ADDON / "__manifest__.py").read_text())
         self.assertEqual(homepage.count('t-set="financa_season"'), 1)
+        contact = (ADDON / "views/thank_you.xml").read_text()
+        self.assertEqual(contact.count('t-set="financa_season"'), 1)
         self.assertIn("financa_season and website.domain == '__FINANCA_DOMAIN__'", homepage)
         self.assertIn('<aside t-if="financa_season" class="financa-ledger"', snippets)
         self.assertIn("financa_website/static/src/js/financa_season.js", manifest["assets"]["web.assets_frontend"])
