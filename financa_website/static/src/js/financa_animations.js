@@ -5,12 +5,10 @@ document.documentElement.classList.add("js-financa");
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const observed = new WeakSet();
-const initializedCarousels = new WeakSet();
 
 // ponytail: one observer for everything; JS only tags elements and sets --financa-delay, CSS owns the motion
-const STAGGER_ITEMS = ".financa-problems-grid > li, .financa-services-grid > article, .financa-cases-grid > article, .financa-capabilities > li, .financa-timeline > li, .financa-integration-flow > li, .financa-odoo-modules > article, .financa-diagnosis-checks > div";
-const LEAD_ITEMS = ".financa-section-heading, .financa-diagnosis-grid > div:first-child, .financa-final-cta-inner > div, .financa-final-cta-inner > .financa-button";
-const CLOSING_ITEMS = ".financa-problems-closing, .financa-integration-closing, .financa-services-closing, .financa-process-closing";
+const STAGGER_ITEMS = ".financa-index-list > li, .financa-bento > article, .financa-rail > li, .financa-stats > li, .financa-cases > li";
+const LEAD_ITEMS = ".financa-section-heading, .financa-index-intro, .financa-rail-head, .financa-closing-inner > div, .financa-closing-inner > .financa-button";
 const STAGGER_STEP_MS = 80;
 const STAGGER_MAX_MS = 300;
 
@@ -26,11 +24,6 @@ function prepareReveal(section) {
     items.forEach((element, index) => {
         element.classList.add("financa-anim-item");
         element.style.setProperty("--financa-delay", `${Math.min(index * STAGGER_STEP_MS, STAGGER_MAX_MS)}ms`);
-    });
-
-    section.querySelectorAll(CLOSING_ITEMS).forEach((element) => {
-        element.classList.add("financa-anim-lead");
-        element.style.setProperty("--financa-delay", `${Math.min(items.length * STAGGER_STEP_MS, STAGGER_MAX_MS)}ms`);
     });
 }
 
@@ -100,113 +93,6 @@ function register(root = document) {
             element.querySelectorAll("[data-count]").forEach(animateCount);
         }
     }
-
-    const carousels = root.matches?.(".financa-hero-carousel")
-        ? [root]
-        : root.querySelectorAll?.(".financa-hero-carousel") || [];
-    carousels.forEach(initCarousel);
-}
-
-function initCarousel(carousel) {
-    if (initializedCarousels.has(carousel)) return;
-
-    const panels = [...carousel.querySelectorAll(".financa-hero-panel")];
-    const dots = [...carousel.querySelectorAll("[data-financa-carousel-dot]")];
-    const status = carousel.querySelector("[data-financa-carousel-status]");
-    if (panels.length !== 3 || dots.length !== panels.length) return;
-    initializedCarousels.add(carousel);
-
-    let active = 0;
-    function show(index, announce = true) {
-        active = (index + panels.length) % panels.length;
-        panels.forEach((panel, panelIndex) => {
-            const state = panelIndex === active ? "active" : panelIndex === (active + 1) % panels.length ? "next" : "previous";
-            panel.dataset.financaState = state;
-            panel.setAttribute("aria-hidden", String(state !== "active"));
-        });
-        dots.forEach((dot, dotIndex) => {
-            const selected = dotIndex === active;
-            dot.setAttribute("aria-current", String(selected));
-            dot.tabIndex = selected ? 0 : -1;
-        });
-        if (announce && status) status.textContent = `${panels[active].querySelector("h2")?.textContent || "Panel"}, panel ${active + 1} de ${panels.length}`;
-    }
-
-    carousel.querySelector("[data-financa-carousel-prev]")?.addEventListener("click", () => { show(active - 1); restart(); });
-    carousel.querySelector("[data-financa-carousel-next]")?.addEventListener("click", () => { show(active + 1); restart(); });
-    dots.forEach((dot, index) => dot.addEventListener("click", () => { show(index); restart(); }));
-    carousel.addEventListener("keydown", (event) => {
-        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-        event.preventDefault();
-        show(event.key === "Home" ? 0 : event.key === "End" ? panels.length - 1 : active + (event.key === "ArrowRight" ? 1 : -1));
-        restart();
-    });
-
-    // ponytail: autoplay pauses on hover/focus/hidden tab/reduced-motion; no aria-live spam on auto-advance
-    const AUTOPLAY_MS = 5000;
-    let timer = null;
-    let userPaused = false;
-    function stop() {
-        if (timer) {
-            clearInterval(timer);
-            timer = null;
-        }
-    }
-    function start() {
-        if (timer || userPaused || reducedMotion.matches || document.hidden) return;
-        timer = setInterval(() => show(active + 1, false), AUTOPLAY_MS);
-    }
-    function restart() {
-        stop();
-        start();
-    }
-
-    // Visible pause control: hover/focus pausing alone does not help touch or keyboard users.
-    const toggle = carousel.querySelector("[data-financa-carousel-toggle]");
-    if (toggle) {
-        if (reducedMotion.matches) {
-            toggle.hidden = true;
-        }
-        toggle.addEventListener("click", () => {
-            userPaused = !userPaused;
-            toggle.setAttribute("aria-label", userPaused ? "Reanudar carrusel" : "Pausar carrusel");
-            const icon = toggle.querySelector(".fa");
-            icon?.classList.toggle("fa-pause", !userPaused);
-            icon?.classList.toggle("fa-play", userPaused);
-            if (userPaused) {
-                stop();
-            } else {
-                start();
-            }
-        });
-    }
-
-    // Swipe on touch/pen; CSS sets touch-action: pan-y so vertical scrolling stays native.
-    const SWIPE_MIN_PX = 40;
-    let swipeStartX = null;
-    carousel.addEventListener("pointerdown", (event) => {
-        swipeStartX = event.pointerType === "mouse" || event.target.closest("button") ? null : event.clientX;
-    });
-    carousel.addEventListener("pointerup", (event) => {
-        if (swipeStartX === null) return;
-        const delta = event.clientX - swipeStartX;
-        swipeStartX = null;
-        if (Math.abs(delta) < SWIPE_MIN_PX) return;
-        show(active + (delta < 0 ? 1 : -1));
-        restart();
-    });
-    carousel.addEventListener("pointercancel", () => { swipeStartX = null; });
-    carousel.addEventListener("pointerenter", stop);
-    carousel.addEventListener("pointerleave", start);
-    carousel.addEventListener("focusin", stop);
-    carousel.addEventListener("focusout", start);
-    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
-
-    show(0, false);
-    carousel.classList.add("is-enhanced");
-    // The hero is not a .financa-reveal section, so its counters are started here.
-    carousel.querySelectorAll("[data-count]").forEach(animateCount);
-    start();
 }
 
 function init() {
