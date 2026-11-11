@@ -161,7 +161,10 @@
                 <div class="financa-section-heading financa-section-heading-light">
                     <p class="financa-eyebrow">Tecnología y Odoo ERP</p>
                     <h2>La tecnología debe convertir la operación en información.</h2>
-                    <p>Implementamos Odoo desde una perspectiva financiera y empresarial: conectamos Ventas → Compras → Inventario → Operación → Finanzas para obtener información confiable, control y decisiones.</p>
+                    <p>Implementamos Odoo desde una perspectiva financiera y empresarial, para obtener información confiable, control y decisiones.</p>
+                    <ol class="financa-odoo-chain" aria-label="Flujo que conectamos">
+                        <li><span>Ventas</span></li><li><span>Compras</span></li><li><span>Inventario</span></li><li><span>Operación</span></li><li><span>Finanzas</span></li>
+                    </ol>
                 </div>
                 <div class="financa-odoo-map" role="group" aria-label="Servicios de Odoo que ofrece Financa">
                     <div class="financa-odoo-core">
