@@ -896,8 +896,9 @@
     }
 }
 
+// el footer sigue al cierre de 104px: un relleno menor evita la doble banda vacía
 .financa-footer-main {
-    padding-block: 64px;
+    padding-block: 40px 32px;
 }
 
 .financa-footer-grid {
@@ -916,6 +917,10 @@
 
 .financa-footer-brand {
     max-width: 310px;
+
+    p {
+        margin-bottom: 0;
+    }
 }
 
 .financa-footer-logo {
@@ -1152,7 +1157,7 @@
     }
 
     .financa-footer-main {
-        padding-block: 48px;
+        padding-block: 32px 24px;
     }
 }
 
