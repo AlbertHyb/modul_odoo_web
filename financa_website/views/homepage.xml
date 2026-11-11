@@ -91,15 +91,21 @@
                     <a href="/contactus" data-financa-cta="1" data-financa-cta-name="agenda_diagnostico" data-financa-cta-location="temporada">Agenda tu diagnóstico</a>
                 </div>
             </div>
-            <!-- TEMPORADA: búho de la marca con gorro navideño que cruza la pantalla; decorativo, no recibe clics. -->
-            <div t-if="financa_season and website.domain == '__FINANCA_DOMAIN__'" class="financa-season-owl" aria-hidden="true">
-                <div class="financa-season-owl-body">
-                    <img src="/financa_website/static/src/img/buho_financa_dorado.png" alt="" width="256" height="166" loading="lazy"/>
-                    <svg class="financa-season-owl-hat" viewBox="0 0 64 44" focusable="false">
-                        <path class="financa-season-owl-hat-cone" d="M11 33 Q19 5 41 7 Q56 9 57 27 Q48 15 37 33 Z"/>
-                        <rect class="financa-season-owl-hat-trim" x="7" y="31" width="36" height="9" rx="4.5"/>
-                        <circle class="financa-season-owl-hat-trim" cx="57" cy="29" r="5"/>
-                    </svg>
+            <!-- TEMPORADA: búho de la marca con gorro navideño. Se posa en una esquina inferior, vuela
+                 aleteando al otro lado y aterriza (financa_season.js). Decorativo, no recibe clics.
+                 La misma imagen se pinta tres veces y el CSS recorta ala izquierda, cuerpo y ala derecha. -->
+            <div t-if="financa_season and website.domain == '__FINANCA_DOMAIN__'" class="financa-season-owl" data-financa-owl="1" data-side="left" aria-hidden="true">
+                <div class="financa-season-owl-lift">
+                    <div class="financa-season-owl-body">
+                        <img class="financa-season-owl-part financa-season-owl-wing-left" src="/financa_website/static/src/img/buho_financa_dorado.png" alt="" width="256" height="166"/>
+                        <img class="financa-season-owl-part financa-season-owl-wing-right" src="/financa_website/static/src/img/buho_financa_dorado.png" alt="" width="256" height="166"/>
+                        <img class="financa-season-owl-part financa-season-owl-torso" src="/financa_website/static/src/img/buho_financa_dorado.png" alt="" width="256" height="166"/>
+                        <svg class="financa-season-owl-hat" viewBox="0 0 64 44" focusable="false">
+                            <path class="financa-season-owl-hat-cone" d="M11 33 Q19 5 41 7 Q56 9 57 27 Q48 15 37 33 Z"/>
+                            <rect class="financa-season-owl-hat-trim" x="7" y="31" width="36" height="9" rx="4.5"/>
+                            <circle class="financa-season-owl-hat-trim" cx="57" cy="29" r="5"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </xpath>
