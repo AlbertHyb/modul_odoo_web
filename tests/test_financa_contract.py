@@ -13,7 +13,7 @@ class FinancaContractTest(unittest.TestCase):
     def test_module_contract(self):
         manifest = ast.literal_eval((ADDON / "__manifest__.py").read_text())
         self.assertEqual(manifest["version"], "19.0.1.0.0")
-        self.assertEqual(manifest["depends"], ["website"])
+        self.assertEqual(manifest["depends"], ["website", "website_crm", "survey"])
         self.assertEqual(len(manifest["assets"]["web.assets_frontend"]), 5)
         self.assertIn("data/homepage_ensure.xml", manifest["data"])
 
@@ -114,6 +114,34 @@ class FinancaContractTest(unittest.TestCase):
         self.assertIn('<field name="url">/contactus</field>', contact)
         self.assertIn('<field name="is_published" eval="True"/>', contact)
         self.assertIn('t-call="website.contactus"', contact)
+
+    def test_contact_form_creates_a_lead_with_follow_up(self):
+        """The contact form feeds CRM, and each Financa lead gets the 72 h confirmation and questionnaire."""
+        manifest = ast.literal_eval((ADDON / "__manifest__.py").read_text())
+        self.assertIn("data/diagnostic_survey.xml", manifest["data"])
+        self.assertIn("data/mail_template_data.xml", manifest["data"])
+
+        contact = (ADDON / "views/thank_you.xml").read_text()
+        self.assertIn('<attribute name="data-model_name">crm.lead</attribute>', contact)
+        for field in ("contact_name", "partner_name", "name"):
+            self.assertIn(f'<attribute name="name">{field}</attribute>', contact)
+        self.assertIn("72 horas", contact)
+
+        controller = (ADDON / "controllers/website_form.py").read_text()
+        self.assertIn("from odoo.addons.website_crm.controllers.website_form import WebsiteForm", controller)
+        self.assertIn('model_sudo.model == "crm.lead"', controller)
+        self.assertIn("page.website_id == request.website", controller)
+        self.assertIn("with env.cr.savepoint():", controller)
+        self.assertIn("controllers", (ADDON / "__init__.py").read_text())
+
+        survey = ElementTree.parse(ADDON / "data/diagnostic_survey.xml").getroot()
+        self.assertEqual(survey.find(".//record[@id='financa_diagnostic_survey']/field[@name='access_mode']").text, "token")
+        self.assertEqual(len(survey.findall(".//record[@model='survey.question']")), 8)
+
+        template = (ADDON / "data/mail_template_data.xml").read_text()
+        self.assertIn('ref="crm.model_crm_lead"', template)
+        self.assertIn("ctx.get('financa_survey_url')", template)
+        self.assertIn("72 horas", template)
 
     def test_scss_avoids_libsass_min_with_calc(self):
         scss = (ADDON / "static/src/scss/financa.scss").read_text()

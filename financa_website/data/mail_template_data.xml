@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Lo envía controllers/website_form.py al crear un lead desde el formulario de Financa.
+         ctx['financa_survey_url'] trae el enlace personal al cuestionario. -->
+    <record id="mail_template_financa_diagnostic_follow_up" model="mail.template">
+        <field name="name">Financa: confirmación de solicitud de diagnóstico</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="subject">Recibimos tu solicitud de diagnóstico | Financa Consultores</field>
+        <field name="email_from">{{ object.company_id.email_formatted or user.company_id.email_formatted }}</field>
+        <field name="email_to">{{ object.email_from }}</field>
+        <field name="use_default_to" eval="False"/>
+        <field name="auto_delete" eval="True"/>
+        <field name="description">Confirmación y cuestionario que recibe quien solicita un diagnóstico en el sitio de Financa</field>
+        <field name="body_html" type="html">
+<div style="margin: 0; padding: 24px 0; background-color: #f6f4ef; font-family: Arial, Helvetica, sans-serif; color: #111111;">
+    <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border-collapse: separate;">
+        <tr>
+            <td style="padding: 32px 32px 8px 32px;">
+                <p style="margin: 0 0 16px 0; font-size: 16px;">
+                    Hola <t t-out="object.contact_name or object.partner_name or ''">cliente</t>,
+                </p>
+                <p style="margin: 0 0 16px 0; font-size: 15px; line-height: 1.6;">
+                    Recibimos tu solicitud de diagnóstico. Un consultor de Financa la revisará y te contactará en un plazo no mayor a <strong>72 horas</strong>.
+                </p>
+                <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6;">
+                    Para aprovechar mejor esa primera conversación, te pedimos responder un breve cuestionario sobre tu empresa y lo que quieres resolver. Toma unos 3 minutos.
+                </p>
+            </td>
+        </tr>
+        <tr t-if="ctx.get('financa_survey_url')">
+            <td style="padding: 0 32px 24px 32px; text-align: center;">
+                <a t-att-href="ctx.get('financa_survey_url')"
+                   style="display: inline-block; padding: 12px 28px; border-radius: 999px; background-color: #c6a15b; color: #111111; font-size: 15px; font-weight: bold; text-decoration: none;">
+                    Responder cuestionario
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 0 32px 32px 32px;">
+                <p style="margin: 0 0 8px 0; font-size: 13px; line-height: 1.6; color: #666666;">
+                    Si tienes información adicional, responde a este correo y la sumaremos a tu solicitud.
+                </p>
+                <p style="margin: 0; font-size: 13px; color: #666666;">
+                    Equipo <t t-out="object.company_id.name or 'Financa Consultores'">Financa Consultores</t>
+                </p>
+            </td>
+        </tr>
+    </table>
+</div>
+        </field>
+    </record>
+</odoo>

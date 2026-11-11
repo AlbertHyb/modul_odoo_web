@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cuestionario que recibe por correo cada solicitud de diagnóstico.
+         Se versiona aquí: los cambios hechos en Odoo se sobrescriben al actualizar el módulo. -->
+    <record id="financa_diagnostic_survey" model="survey.survey">
+        <field name="title">Cuestionario de diagnóstico Financa</field>
+        <field name="survey_type">survey</field>
+        <field name="access_mode">token</field>
+        <field name="is_attempts_limited" eval="True"/>
+        <field name="attempts_limit">1</field>
+        <field name="users_can_go_back" eval="True"/>
+        <field name="questions_layout">one_page</field>
+        <field name="progression_mode">percent</field>
+        <field name="description" type="html">
+            <p>Estas preguntas nos ayudan a preparar tu diagnóstico antes de la primera llamada. Responderlas toma unos 3 minutos.</p>
+        </field>
+        <field name="description_done" type="html">
+            <p>Gracias. Con tus respuestas prepararemos el diagnóstico y te contactaremos en un plazo no mayor a 72 horas.</p>
+        </field>
+    </record>
+
+    <record id="financa_diagnostic_q_industry" model="survey.question">
+        <field name="survey_id" ref="financa_diagnostic_survey"/>
+        <field name="sequence">10</field>
+        <field name="title">¿A qué giro se dedica tu empresa?</field>
+        <field name="question_type">simple_choice</field>
+        <field name="constr_mandatory" eval="True"/>
+        <field name="constr_error_msg">Esta pregunta es obligatoria.</field>
+        <field name="comments_allowed" eval="True"/>
+        <field name="comment_count_as_answer" eval="True"/>
+        <field name="comments_message">Otro (especifica)</field>
+    </record>
+    <record id="financa_diagnostic_q_industry_a1" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_industry"/>
+        <field name="sequence">10</field>
+        <field name="value">Comercio (mayoreo o menudeo)</field>
+    </record>
+    <record id="financa_diagnostic_q_industry_a2" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_industry"/>
+        <field name="sequence">20</field>
+        <field name="value">Manufactura o producción</field>
+    </record>
+    <record id="financa_diagnostic_q_industry_a3" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_industry"/>
+        <field name="sequence">30</field>
+        <field name="value">Servicios profesionales</field>
+    </record>
+    <record id="financa_diagnostic_q_industry_a4" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_industry"/>
+        <field name="sequence">40</field>
+        <field name="value">Distribución y logística</field>
+    </record>
+    <record id="financa_diagnostic_q_industry_a5" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_industry"/>
+        <field name="sequence">50</field>
+        <field name="value">Construcción o inmobiliario</field>
+    </record>
+    <record id="financa_diagnostic_q_industry_a6" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_industry"/>
+        <field name="sequence">60</field>
+        <field name="value">Alimentos y restaurantes</field>
+    </record>
+
+    <record id="financa_diagnostic_q_team_size" model="survey.question">
+        <field name="survey_id" ref="financa_diagnostic_survey"/>
+        <field name="sequence">20</field>
+        <field name="title">¿Cuántas personas trabajan en tu empresa?</field>
+        <field name="question_type">simple_choice</field>
+        <field name="constr_mandatory" eval="True"/>
+        <field name="constr_error_msg">Esta pregunta es obligatoria.</field>
+    </record>
+    <record id="financa_diagnostic_q_team_size_a1" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_team_size"/>
+        <field name="sequence">10</field>
+        <field name="value">1 a 10</field>
+    </record>
+    <record id="financa_diagnostic_q_team_size_a2" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_team_size"/>
+        <field name="sequence">20</field>
+        <field name="value">11 a 50</field>
+    </record>
+    <record id="financa_diagnostic_q_team_size_a3" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_team_size"/>
+        <field name="sequence">30</field>
+        <field name="value">51 a 200</field>
+    </record>
+    <record id="financa_diagnostic_q_team_size_a4" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_team_size"/>
+        <field name="sequence">40</field>
+        <field name="value">Más de 200</field>
+    </record>
+
+    <record id="financa_diagnostic_q_revenue" model="survey.question">
+        <field name="survey_id" ref="financa_diagnostic_survey"/>
+        <field name="sequence">30</field>
+        <field name="title">¿Cuál es la facturación anual aproximada?</field>
+        <field name="question_type">simple_choice</field>
+        <field name="constr_mandatory" eval="False"/>
+    </record>
+    <record id="financa_diagnostic_q_revenue_a1" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_revenue"/>
+        <field name="sequence">10</field>
+        <field name="value">Menos de 5 millones de pesos</field>
+    </record>
+    <record id="financa_diagnostic_q_revenue_a2" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_revenue"/>
+        <field name="sequence">20</field>
+        <field name="value">De 5 a 20 millones de pesos</field>
+    </record>
+    <record id="financa_diagnostic_q_revenue_a3" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_revenue"/>
+        <field name="sequence">30</field>
+        <field name="value">De 20 a 100 millones de pesos</field>
+    </record>
+    <record id="financa_diagnostic_q_revenue_a4" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_revenue"/>
+        <field name="sequence">40</field>
+        <field name="value">Más de 100 millones de pesos</field>
+    </record>
+    <record id="financa_diagnostic_q_revenue_a5" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_revenue"/>
+        <field name="sequence">50</field>
+        <field name="value">Prefiero no decirlo</field>
+    </record>
+
+    <record id="financa_diagnostic_q_systems" model="survey.question">
+        <field name="survey_id" ref="financa_diagnostic_survey"/>
+        <field name="sequence">40</field>
+        <field name="title">¿Qué herramientas usan hoy para administrar la operación?</field>
+        <field name="question_type">multiple_choice</field>
+        <field name="constr_mandatory" eval="True"/>
+        <field name="constr_error_msg">Esta pregunta es obligatoria.</field>
+        <field name="comments_allowed" eval="True"/>
+        <field name="comment_count_as_answer" eval="True"/>
+        <field name="comments_message">Otro (especifica)</field>
+    </record>
+    <record id="financa_diagnostic_q_systems_a1" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_systems"/>
+        <field name="sequence">10</field>
+        <field name="value">Hojas de cálculo</field>
+    </record>
+    <record id="financa_diagnostic_q_systems_a2" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_systems"/>
+        <field name="sequence">20</field>
+        <field name="value">CONTPAQi o Aspel</field>
+    </record>
+    <record id="financa_diagnostic_q_systems_a3" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_systems"/>
+        <field name="sequence">30</field>
+        <field name="value">Odoo</field>
+    </record>
+    <record id="financa_diagnostic_q_systems_a4" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_systems"/>
+        <field name="sequence">40</field>
+        <field name="value">Otro ERP (SAP, Microsip, NetSuite…)</field>
+    </record>
+    <record id="financa_diagnostic_q_systems_a5" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_systems"/>
+        <field name="sequence">50</field>
+        <field name="value">Sistema hecho a la medida</field>
+    </record>
+
+    <record id="financa_diagnostic_q_areas" model="survey.question">
+        <field name="survey_id" ref="financa_diagnostic_survey"/>
+        <field name="sequence">50</field>
+        <field name="title">¿En qué áreas necesitas apoyo?</field>
+        <field name="question_type">multiple_choice</field>
+        <field name="constr_mandatory" eval="True"/>
+        <field name="constr_error_msg">Esta pregunta es obligatoria.</field>
+        <field name="comments_allowed" eval="True"/>
+        <field name="comment_count_as_answer" eval="True"/>
+        <field name="comments_message">Otro (especifica)</field>
+    </record>
+    <record id="financa_diagnostic_q_areas_a1" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_areas"/>
+        <field name="sequence">10</field>
+        <field name="value">Contabilidad y cumplimiento fiscal</field>
+    </record>
+    <record id="financa_diagnostic_q_areas_a2" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_areas"/>
+        <field name="sequence">20</field>
+        <field name="value">Flujo de efectivo y cobranza</field>
+    </record>
+    <record id="financa_diagnostic_q_areas_a3" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_areas"/>
+        <field name="sequence">30</field>
+        <field name="value">Costos y rentabilidad</field>
+    </record>
+    <record id="financa_diagnostic_q_areas_a4" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_areas"/>
+        <field name="sequence">40</field>
+        <field name="value">Inventarios y almacén</field>
+    </record>
+    <record id="financa_diagnostic_q_areas_a5" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_areas"/>
+        <field name="sequence">50</field>
+        <field name="value">Ventas y seguimiento de clientes</field>
+    </record>
+    <record id="financa_diagnostic_q_areas_a6" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_areas"/>
+        <field name="sequence">60</field>
+        <field name="value">Compras y proveedores</field>
+    </record>
+    <record id="financa_diagnostic_q_areas_a7" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_areas"/>
+        <field name="sequence">70</field>
+        <field name="value">Reportes para tomar decisiones</field>
+    </record>
+
+    <record id="financa_diagnostic_q_challenge" model="survey.question">
+        <field name="survey_id" ref="financa_diagnostic_survey"/>
+        <field name="sequence">60</field>
+        <field name="title">Describe el principal problema que quieres resolver.</field>
+        <field name="question_type">text_box</field>
+        <field name="constr_mandatory" eval="True"/>
+        <field name="constr_error_msg">Esta pregunta es obligatoria.</field>
+    </record>
+
+    <record id="financa_diagnostic_q_timeline" model="survey.question">
+        <field name="survey_id" ref="financa_diagnostic_survey"/>
+        <field name="sequence">70</field>
+        <field name="title">¿Cuándo te gustaría empezar?</field>
+        <field name="question_type">simple_choice</field>
+        <field name="constr_mandatory" eval="True"/>
+        <field name="constr_error_msg">Esta pregunta es obligatoria.</field>
+    </record>
+    <record id="financa_diagnostic_q_timeline_a1" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_timeline"/>
+        <field name="sequence">10</field>
+        <field name="value">Lo antes posible (este mes)</field>
+    </record>
+    <record id="financa_diagnostic_q_timeline_a2" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_timeline"/>
+        <field name="sequence">20</field>
+        <field name="value">En 1 a 3 meses</field>
+    </record>
+    <record id="financa_diagnostic_q_timeline_a3" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_timeline"/>
+        <field name="sequence">30</field>
+        <field name="value">En 3 a 6 meses</field>
+    </record>
+    <record id="financa_diagnostic_q_timeline_a4" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_timeline"/>
+        <field name="sequence">40</field>
+        <field name="value">Solo estoy explorando opciones</field>
+    </record>
+
+    <record id="financa_diagnostic_q_decision" model="survey.question">
+        <field name="survey_id" ref="financa_diagnostic_survey"/>
+        <field name="sequence">80</field>
+        <field name="title">¿Quién toma la decisión sobre este proyecto?</field>
+        <field name="question_type">simple_choice</field>
+        <field name="constr_mandatory" eval="False"/>
+    </record>
+    <record id="financa_diagnostic_q_decision_a1" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_decision"/>
+        <field name="sequence">10</field>
+        <field name="value">Yo decido</field>
+    </record>
+    <record id="financa_diagnostic_q_decision_a2" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_decision"/>
+        <field name="sequence">20</field>
+        <field name="value">Decido junto con socios o dirección</field>
+    </record>
+    <record id="financa_diagnostic_q_decision_a3" model="survey.question.answer">
+        <field name="question_id" ref="financa_diagnostic_q_decision"/>
+        <field name="sequence">30</field>
+        <field name="value">Otra persona decide; yo estoy recopilando información</field>
+    </record>
+</odoo>
