@@ -6,6 +6,11 @@
     --financa-white: #ffffff;
     --financa-muted: #666666;
     --financa-border: #e5e5e5;
+    // escala base 4px: externo > interno
+    --financa-space-section: clamp(32px, 4vw, 48px);
+    --financa-space-block: clamp(24px, 3vw, 32px);
+    --financa-space-gap: 20px;
+    --financa-space-card: 24px;
 }
 
 .financa-homepage,
@@ -65,7 +70,7 @@
 }
 
 .financa-section {
-    padding-block: 64px;
+    padding-block: var(--financa-space-section);
 }
 
 .financa-homepage section[id],
@@ -89,22 +94,31 @@
 
 .financa-section-heading {
     max-width: 760px;
-    margin-bottom: 48px;
+    margin-bottom: var(--financa-space-block);
 
-    h2 {
-        margin-bottom: 18px;
+    .financa-eyebrow {
+        margin-bottom: 12px;
     }
 
-    >p:last-child {
+    h2 {
+        margin-bottom: 16px;
+    }
+
+    >p:not(.financa-eyebrow) {
         color: var(--financa-muted);
         font-size: 1.1rem;
+    }
+
+    // el último hijo no suma margen: la distancia a las tarjetas es exactamente --financa-space-block
+    >:last-child {
+        margin-bottom: 0;
     }
 }
 
 .financa-section-heading-light {
     color: var(--financa-white);
 
-    >p:last-child {
+    >p:not(.financa-eyebrow) {
         color: rgba(255, 255, 255, 0.7);
     }
 }
@@ -440,34 +454,35 @@
     font-size: 0.82rem;
 }
 
+// fondos alternados: nunca dos secciones seguidas del mismo color
 .financa-services {
-    background: var(--financa-light);
+    background: var(--financa-white);
 }
 
 .financa-services-grid {
     display: grid;
-    gap: 22px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--financa-space-gap);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .financa-card {
     border: 1px solid var(--financa-border);
     border-radius: 20px;
-    background: var(--financa-white);
-    box-shadow: 0 12px 32px rgba(17, 17, 17, 0.05);
+    background: var(--financa-light);
 }
 
 .financa-service-card {
-    padding: clamp(26px, 4vw, 40px);
+    padding: 28px var(--financa-space-card);
 
     h3 {
-        margin-block: 22px 14px;
-        font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+        margin-block: 20px 8px;
+        font-size: 1.3rem;
     }
 
     p {
         margin-bottom: 0;
         color: var(--financa-muted);
+        font-size: 0.95rem;
     }
 }
 
@@ -494,16 +509,51 @@
     color: var(--financa-white);
 }
 
+.financa-odoo-chain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--financa-white);
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+
+    li span {
+        padding: 6px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    li:not(:last-child)::after {
+        color: var(--financa-gold);
+        content: "\2192";
+    }
+}
+
 .financa-odoo-map {
     display: grid;
-    align-items: stretch;
-    gap: 24px;
-    grid-template-columns: 0.72fr 1.28fr;
+    align-items: center;
+    gap: clamp(24px, 4vw, 48px);
+    grid-template-columns: minmax(260px, 0.62fr) 1.38fr;
 }
 
 .financa-odoo-core {
     display: flex;
-    min-height: 330px;
+    // círculo real: width + max-width en vez de min() (libsass no mezcla unidades)
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 1;
+    justify-self: center;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -527,14 +577,14 @@
 
 .financa-odoo-modules {
     display: grid;
-    gap: 12px;
+    gap: var(--financa-space-gap);
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
     article {
         display: flex;
         min-width: 0;
         gap: 14px;
-        padding: 20px;
+        padding: 20px var(--financa-space-card);
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 18px;
         background: rgba(255, 255, 255, 0.05);
@@ -547,8 +597,9 @@
     }
 
     h3 {
-        margin-bottom: 6px;
+        margin-bottom: 4px;
         color: var(--financa-white);
+        font-size: 1.1rem;
     }
 
     p {
@@ -564,7 +615,7 @@
 
 .financa-problems-grid {
     display: grid;
-    gap: 16px;
+    gap: var(--financa-space-gap);
     margin: 0;
     padding: 0;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -576,7 +627,7 @@
     min-width: 0;
     flex-direction: column;
     gap: 12px;
-    padding: 22px;
+    padding: var(--financa-space-card);
     border: 1px solid var(--financa-border);
     border-radius: 16px;
     background: var(--financa-light);
@@ -606,7 +657,7 @@
 
 .financa-integration-flow {
     display: grid;
-    gap: 16px;
+    gap: var(--financa-space-gap);
     margin: 0;
     padding: 0;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -614,20 +665,26 @@
 
     li {
         position: relative;
+        display: flex;
         min-width: 0;
-        padding: 22px 18px;
+        min-height: 112px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--financa-space-card) 16px;
         border: 1px solid var(--financa-border);
         border-radius: 16px;
         background: var(--financa-white);
         text-align: center;
     }
 
+    // la flecha ocupa exactamente el hueco entre tarjetas
     li:not(:last-child)::after {
         position: absolute;
         top: 50%;
-        right: -17px;
+        right: calc(-1 * var(--financa-space-gap));
         z-index: 1;
-        width: 18px;
+        width: var(--financa-space-gap);
         color: var(--financa-gold-text);
         content: "\2192";
         font-size: 1.35rem;
@@ -651,12 +708,12 @@
 }
 
 .financa-technology {
-    background: var(--financa-white);
+    background: var(--financa-light);
 }
 
 .financa-capabilities {
     display: grid;
-    gap: 16px;
+    gap: var(--financa-space-gap);
     margin: 0;
     padding: 0;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -664,15 +721,15 @@
 
     li {
         display: flex;
-        min-height: 120px;
+        min-height: 112px;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         gap: 12px;
-        padding: 22px;
+        padding: var(--financa-space-card);
         border: 1px solid var(--financa-gold);
         border-radius: 16px;
-        background: var(--financa-light);
+        background: var(--financa-white);
         font-size: 1.05rem;
         font-weight: 700;
         text-align: center;
@@ -689,24 +746,25 @@
 }
 
 // ponytail: shared closing line for narrative blocks (dolor, propuesta, ecosistema, método, experiencia)
-.financa-problems-closing,
-.financa-integration-closing,
-.financa-services-closing,
-.financa-process-closing {
+// .financa-homepage sube la especificidad: sin él, el reset `p { margin-top: 0 }` anulaba este margen
+.financa-homepage .financa-problems-closing,
+.financa-homepage .financa-integration-closing,
+.financa-homepage .financa-services-closing,
+.financa-homepage .financa-process-closing {
     max-width: 760px;
-    margin: 32px 0 0;
+    margin: var(--financa-space-block) 0 0;
     color: var(--financa-muted);
     font-size: 1.1rem;
 }
 
 .financa-cases-grid {
     display: grid;
-    gap: 22px;
+    gap: var(--financa-space-gap);
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .financa-case-card {
-    padding: clamp(26px, 4vw, 40px);
+    padding: 28px var(--financa-space-card);
 
     h3 {
         margin-bottom: 10px;
@@ -817,6 +875,10 @@
 }
 
 // ponytail: experience reuses the timeline; the years are the content, not a label
+.financa-experience {
+    background: var(--financa-light);
+}
+
 .financa-experience .financa-timeline span {
     color: var(--financa-dark);
     font-size: 1.5rem;
@@ -1183,6 +1245,22 @@
     }
 }
 
+@media (max-width: 1199.98px) {
+    .financa-services-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+// tablet: los 5 pasos siguen en una fila, sin celda vacía
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .financa-integration-flow {
+        --financa-space-gap: 16px;
+
+        li { padding-inline: 8px; }
+        h3 { font-size: 0.95rem; }
+    }
+}
+
 @media (max-width: 991.98px) {
 
     .financa-hero-grid,
@@ -1200,19 +1278,15 @@
     }
 
     .financa-odoo-core {
-        min-height: 220px;
+        max-width: none;
+        min-height: 160px;
+        aspect-ratio: auto;
         border-radius: 20px;
     }
 
     .financa-problems-grid,
     .financa-capabilities {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .financa-integration-flow {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-
-        li:nth-child(3)::after { display: none; }
     }
 
     .financa-timeline {
@@ -1240,12 +1314,13 @@
         width: calc(100% - 28px);
     }
 
-    .financa-section {
-        padding-block: 48px;
+    :root {
+        --financa-space-gap: 16px;
     }
 
-    .financa-section-heading {
-        margin-bottom: 34px;
+    .financa-integration-flow li,
+    .financa-capabilities li {
+        min-height: 88px;
     }
 
     .financa-services-grid,
