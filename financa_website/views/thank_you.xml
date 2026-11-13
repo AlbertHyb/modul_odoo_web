@@ -18,7 +18,12 @@
                             <div class="financa-container financa-thank-you-card">
                                 <span class="financa-thank-you-icon" aria-hidden="true">✓</span>
                                 <h1>Gracias por contactarnos</h1>
-                                <p>Recibimos tu solicitud. Revisaremos la información y nos pondremos en contacto para definir el siguiente paso.</p>
+                                <p>Recibimos tu solicitud. Un consultor la revisará y te contactará en un plazo no mayor a <strong>72 horas</strong>.</p>
+                                <ul class="financa-thank-you-steps">
+                                    <li>En breve recibirás en tu correo una confirmación de seguimiento.</li>
+                                    <li>Ese correo incluye un breve cuestionario para conocer mejor tu caso; responderlo nos ayuda a preparar tu diagnóstico.</li>
+                                </ul>
+                                <p class="financa-thank-you-note">¿No lo ves? Revisa tu carpeta de spam o correo no deseado.</p>
                                 <a href="/" class="financa-button financa-button-primary">Volver al inicio</a>
                             </div>
                         </section>
@@ -76,7 +81,21 @@
                 <attribute name="data-success-mode">redirect</attribute>
                 <attribute name="data-success-page">/gracias-diagnostico?financa_submission=1</attribute>
                 <attribute name="data-financa-form-name">contacto_diagnostico</attribute>
+                <!-- crea un lead en CRM (website_crm) en vez de un correo interno; el lead dispara el seguimiento -->
+                <attribute name="data-model_name">crm.lead</attribute>
             </xpath>
+            <!-- nombres de campo de crm.lead; "name" pasa a ser el asunto (título del lead) -->
+            <xpath expr="//form[@id='contactus_form']//input[@name='name']" position="attributes">
+                <attribute name="name">contact_name</attribute>
+            </xpath>
+            <xpath expr="//form[@id='contactus_form']//input[@name='company']" position="attributes">
+                <attribute name="name">partner_name</attribute>
+            </xpath>
+            <xpath expr="//form[@id='contactus_form']//input[@name='subject']" position="attributes">
+                <attribute name="name">name</attribute>
+            </xpath>
+            <!-- email_to solo aplica a mail.mail -->
+            <xpath expr="//form[@id='contactus_form']//input[@name='email_to']/ancestor::div[hasclass('s_website_form_field')][1]" position="replace"/>
         </field>
     </record>
 </odoo>

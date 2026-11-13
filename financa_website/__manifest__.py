@@ -4,13 +4,15 @@
     "category": "Website/Website",
     "summary": "Homepage corporativa de Financa Consultores",
     "license": "LGPL-3",
-    "depends": ["website"],
+    "depends": ["website", "website_crm", "survey"],
     "data": [
         "data/redirects.xml",
         "views/homepage.xml",
         "views/snippets.xml",
         "views/legal.xml",
         "views/thank_you.xml",
+        "data/diagnostic_survey.xml",
+        "data/mail_template_data.xml",
         "data/homepage_ensure.xml",
     ],
     "assets": {

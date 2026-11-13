@@ -1156,6 +1156,41 @@ body:has(.financa-season-ribbon) .financa-contact-hero h1::before {
     p {
         color: var(--financa-muted);
     }
+
+    strong {
+        color: var(--financa-dark);
+    }
+}
+
+.financa-thank-you-steps {
+    max-width: 520px;
+    margin: 8px auto 12px;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+
+    li {
+        position: relative;
+        padding-left: 28px;
+        margin-bottom: 10px;
+        color: var(--financa-dark);
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0.6em;
+            left: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--financa-gold);
+        }
+    }
+}
+
+.financa-thank-you-card .financa-thank-you-note {
+    margin-bottom: 24px;
+    font-size: 0.875rem;
 }
 
 .financa-thank-you-icon {

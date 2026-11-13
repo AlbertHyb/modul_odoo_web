@@ -1,0 +1,47 @@
+# Entorno de desarrollo: Odoo 19 + PostgreSQL con el addon montado desde el repo.
+# Usar con ./deploy/dev/financa-dev.sh, no para staging ni producción.
+name: ${FINANCA_DEV_PROJECT:-financa_dev}
+
+services:
+  db:
+    image: postgres@sha256:1938c16e9d2f10a6a3623b344b64ae8d45f407f2c5f34f0979468bb689b9227a
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    mem_limit: 1g
+    networks: [internal]
+
+  odoo:
+    image: odoo@sha256:515f8d24be9fed0b00804211c2bed4e50b1c7405a2b7e18c12e81b2292a84c88
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["odoo", "--config=/etc/odoo/odoo.conf", "--dev=xml,reload"]
+    ports:
+      # solo localhost: se abre desde la laptop con un túnel SSH
+      - "127.0.0.1:${FINANCA_DEV_PORT:-8079}:8069"
+    volumes:
+      - odoo:/var/lib/odoo
+      - ../../financa_website:/mnt/extra-addons/financa_website:ro
+      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+    mem_limit: 2g
+    networks: [internal, edge]
+
+volumes:
+  postgres:
+  odoo:
+
+networks:
+  internal:
+    internal: true
+  edge:
