@@ -43,6 +43,10 @@ class FinancaWebsiteForm(WebsiteForm):
             nickname=lead.contact_name or lead.partner_name,
             check_attempts=False,
         )
-        survey_url = request.website.get_base_url() + answer.get_start_url()
+        base_url = request.website.get_base_url()
+        if not base_url.startswith("http"):
+            # desarrollo: el sitio conserva el marcador de dominio sin renderizar
+            base_url = request.httprequest.url_root.rstrip("/")
+        survey_url = base_url + answer.get_start_url()
         # send_mail también deja el correo en el chatter del lead
         template.with_context(financa_survey_url=survey_url).send_mail(lead.id)
